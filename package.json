@@ -1,0 +1,28 @@
+{
+  "name": "racevis",
+  "version": "1.0.0",
+  "description": "Car Racing data visualization",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/heungseok/RaceVis.git"
+  },
+  "keywords": [
+    "visualization",
+    "d3",
+    "car",
+    "racing"
+  ],
+  "author": "Heungseok Park",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/heungseok/RaceVis/issues"
+  },
+  "homepage": "https://github.com/heungseok/RaceVis#readme",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}

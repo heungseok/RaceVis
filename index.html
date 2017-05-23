@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="./style/style.css">
+
+
+    <title>Trends of Political Views by Birth Year in South Korea 2003 - 2016</title>
+</head>
+
+<body>
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3-color.v1.min.js"></script>
+    <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+
+    <nav class="navbar navbar-inverse navbar-fixed-top" style="position: absolute; left:0; top:0">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand" href="#">Trends of political views by birth year in South Korea 2003 - 2016</a>
+            </div>
+
+
+            <div id="navbar" class="navbar-collapse collapse">
+
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li id="about" class="active"><a href="#">About</a></li>
+                </ul>
+
+            </div><!-- /.navbar-collapse -->
+        </div>
+
+    </nav>
+
+    <div id="container">
+        <!--http://stackoverflow.com/questions/42150625/how-to-style-slider-on-chart-in-d3-js-and-show-label-of-dynamic-y-value-->
+        <div class="rangeWrap">
+            <div class="playBtn">
+                <button type="button" class="btn" id="button_play" onclick="playInput()">
+                    <span class="glyphicon glyphicon-play"></span>
+
+                </button>
+
+
+            </div>
+
+            <span class="rangeText"> Born in </span>
+            <span class="rangeText" id="range">1931</span>
+            <input id="slider" type="range" min="31" max="93" step="1" value="31" onchange="showValue(this.value)" list="ticks"/>
+
+
+            <datalist id="ticks">
+                <option>40</option>
+                <option>50</option>
+                <option>60</option>
+                <option>70</option>
+                <option>80</option>
+                <option>90</option>
+            </datalist>
+
+        </div>
+        <div id="canvas">
+
+        </div>
+        <div class="description">
+            <span class="text data-source">Data source: KGSS (Korean General Social Survey) 2003 - 2016</span>
+            <span class="text copyright">© 2017 Wonjae Lee and Heungseok Park, KAIST </span>
+            <span class="text data-source"><br>(KGSS was not conducted in 2015)</span>
+
+        </div>
+
+
+        <script>
+            // Set the dimensions of the canvas / graph
+            var margin = {top: 20, right: 50, bottom: 70, left: 100},
+                width = 1000 - margin.left - margin.right,
+                height = 600 - margin.top - margin.bottom;
+
+            // Parse the date / time
+//            var parseDate = d3.timeParse("%b %Y");
+            var parseDate = d3.timeParse("%Y");
+
+            // Set the ranges
+            var x = d3.scaleTime().range([0, width]);
+            var y = d3.scaleLinear().range([height, 0]);
+
+            // Define the line
+            var valueline = d3.line()
+//                .curve(d3.curveCatmullRomOpen) // curved option for line
+                .curve(d3.curveBasis)
+//                .curve(d3.curveMonotoneX)
+//                .curve(d3.curveCatmullRom)
+//                .curve(d3.curveCardinal)
+                .x(function(d) { return x(d.date); })
+                .y(function(d) { return y(d.values); });
+
+            /*
+                --- d3 curve option ----
+                 d3.curveMonotoneX, d3.curveCatmullRom, d3.curveCardinal, d3.curveBasis, d3.curveStepAfter, d3.curveStepBefore, d3.curveStep, d3.curveLinear
+             */
+
+            // Adds the svg canvas
+            var svg = d3.select("#canvas")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+                .append("g")
+                .attr("transform",
+                    "translate(" + margin.left + "," + margin.top + ")");
+
+            var len_category = 0;
+            var dataNest;
+            var active_yob = 1931;
+
+            // Get the data
+            d3.csv("./data/politic_view_revised.csv", function(error, data) {
+                data.forEach(function(d) {
+
+                    d.date = parseDate(d.date);
+                    d.values = +d.values;
+                });
+
+                // Scale the range of the data
+                x.domain(d3.extent(data, function(d) { return d.date; }));
+                y.domain([2.0, d3.max(data, function(d) { return d.values; })]);
+                // set the colour scale
+                // var color = d3.scaleOrdinal(d3.schemeCategory10);
+                var color = d3.scaleLinear()
+                    .domain([1931, 1993])           // 1931년부터 1993년 까지의 domain을
+                    .range(["#B71C1C", "#0D47A1"])         // 아래 컬러 range 로 변환
+                    .interpolate(d3.interpolateHcl);
+//                console.log(color(1931))
+//                console.log(color(1993))
+
+
+
+
+                // Nest the entries by symbol
+                dataNest = d3.nest()
+                    .key(function(d) {return d.yob;})
+                    .entries(data);
+                // init length of category
+                len_category = dataNest.length;
+
+                legendSpace = width/dataNest.length; // spacing for the legend
+
+
+                // Loop through each symbol / key
+                dataNest.forEach(function(d,i) {
+
+                    svg.append("path")
+                        .attr("class", "line")
+                        .style("stroke", function() { // Add the colours dynamically
+//                            console.log(Number(d.key))
+                            return d.color = color(Number(d.key));
+                             })
+                        .attr("id", 'tag'+d.key.replace(/\s+/g, '')) // assign an ID
+                        .attr("d", valueline(d.values))
+                        .style("opacity", function () {
+                            if(Number(d.key) == active_yob) return 1;
+                            else return 0.2;
+
+                        });
+
+
+                    // Add the Legend by the right of the graph (그래프 오른쪽에 legend, mouseover event)
+                    svg.append("text")
+                        .attr("transform", function() {
+                            var len = d.values.length;
+                            return "translate(" + x(d.values[len-1].date) + ", " + y(d.values[len-1].values) + ")";
+                        })
+//                        .attr("x", width + 5)  // space legend
+//                        .attr("y", y(d.values[d.values.length-1].values))
+                        .attr("id", 'text_id'+d.key.replace(/\s+/g, ''))
+                        .attr("class", "legend")    // style the legend
+                        // mouse 이벤트 len_category는 yob(year of birth) 카테고리의 길이를 나타냄.
+                        .on("mouseover", function(){
+                            for(j=0; j < len_category; j++){
+                                if(i !== j){
+                                    d3.select("#tag"+dataNest[j].key.replace(/\s+/g, '')).style("opacity", 0.1);
+                                    d3.select("#text_id"+dataNest[j].key.replace(/\s+/g, '')).style("opacity", 0.2);
+                                }
+                            }
+                        })
+                        .on("mouseout", function(){
+                            for(j=0; j < len_category; j++){
+                                d3.select("#tag"+dataNest[j].key.replace(/\s+/g, '')).style("opacity", 1);
+                                d3.select("#text_id"+dataNest[j].key.replace(/\s+/g, '')).style("opacity",1);
+                            }
+                        })
+                        .text(d.key);
+
+                });
+
+
+                // Add the X Axis
+                svg.append("g")
+                    .attr("class", "axis")
+                    .attr("transform", "translate(0," + height + ")")
+                    .call(d3.axisBottom(x));
+
+                // Add text label for the x axis
+                svg.append("text")
+                    .attr("transform",
+                        "translate(" + (width/2) + " ," + (height + margin.top + 20) + ")")
+                    .style("text-anchor", "middle")
+                    .style("font-weight", "bold")
+                    .style("font-size", "15px")
+                    .text("Year");
+
+
+                // Add the Y Axis
+                svg.append("g")
+                    .attr("class", "axis")
+                    .call(d3.axisLeft(y));
+
+                // Add text label for the y axis
+                svg.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 0 - margin.left + 20)
+                    .attr("x", 0 - (height/2))
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+                    .style("font-weight", "bold")
+                    .style("font-size", "15px")
+                    .text("Mean")
+
+                // Additional label for the y axis
+                // Progressive label to top of the y axis
+                svg.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 0 - margin.left + 50)
+                    .attr("x", 0 - (height/10))
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+//                    .style("font-weight", "bold")
+                    .style("font-size", "15px")
+                    .text("conservative")
+
+
+                // Conservative label to bottom of the y axis
+                svg.append("text")
+                    .attr("transform", "rotate(-90)")
+                    .attr("y", 0 - margin.left + 50)
+                    .attr("x", 0 - (9*height/10))
+                    .attr("dy", "1em")
+                    .style("text-anchor", "middle")
+//                    .style("font-weight", "bold")
+                    .style("font-size", "15px")
+                    .text("progressive")
+/*
+
+                // Add copyright and data source to bottom of the x Axis
+                svg.append("text")
+                    .attr("transform",
+                        "translate(" + (width - margin.right - 100) + " ," + (height + margin.top + 50) + ")")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "15px")
+                    .style("font-family", "Times New Roman")
+                    .html("&copy; 2017 Wonjae Lee and Heungseok Park, KAIST")
+
+
+                // Add text label for the x axis
+                svg.append("text")
+                    .attr("transform",
+                        "translate(" + (0 + margin.left + 100) + " ," + (height + margin.top + 50) + ")")
+                    .style("text-anchor", "middle")
+                    .style("font-size", "15px")
+                    .style("font-family", "Times New Roman")
+                    .text("Data source: KGSS (Korean General Social Survey) 2013 - 2016");
+
+*/
+
+
+
+            });
+
+
+            function showValue(newValue){
+
+//                var value = 19 + String(-1*Number(newValue));
+                var value = 19 + newValue;
+                document.getElementById("range").innerHTML = value;
+                var active_index = 0;
+                for(var i=0; i<dataNest.length; i++){
+                    if(value !== dataNest[i].key){
+                        d3.select("#tag"+dataNest[i].key.replace(/\s+/g, '')).style("opacity", 0.1);
+                        d3.select("#text_id"+dataNest[i].key.replace(/\s+/g, '')).style("opacity", 0.2);
+                    }else{
+                        active_index = i
+                    }
+                }
+//                console.log(dataNest[active_index]);
+                d3.select("#tag"+dataNest[active_index].key.replace(/\s+/g, '')).style("opacity", 1);
+                d3.select("#text_id"+dataNest[active_index].key.replace(/\s+/g, '')).style("opacity", 1);
+            }
+
+            var index = 31;
+            var flag = false;
+            var state = "play";
+
+            function playInput() {
+                // change button css
+                if(state == "play"){
+                    pause();
+                }else if(state == "pause"){
+                    resume();
+                    return;
+                }
+
+
+
+                // -93 to -31
+                // now is from 31 to 93 (2017.05.16)
+                index = Number(document.getElementById("slider").value);
+
+                // 플래그가 true일 경우 함수를 실행하지 않고 return.
+                if(!flag) {
+                    flag = true;
+                    delayedLoop();
+                }else {
+                    return;
+                }
+
+                // delayed Loop 가 완전히 끝났을 경우 flag를 true로 하고 함수종료
+                flag = true;
+            }
+            function delayedLoop()
+            {
+                if(document.getElementById("button_play").value == "true"){
+                    document.getElementById("button_play").value = "false"
+                    flag = false;
+                    return;
+                }else{
+                    console.log(document.getElementById("button_play").value)
+                }
+
+
+                // (3) do action
+                $("#slider").val(index);
+                $("#slider").change();
+
+                // (4) if the end of the array has been reached, stop
+                if(++index == 93){
+                    resetPlay();
+                    return;
+                }
+
+
+                // (5) recursively call the delayed loop function with a delay
+                window.setTimeout(delayedLoop, 500);
+
+            }
+
+            function resetPlay(){
+                document.getElementById("slider").value = 31;
+                flag = false;
+                var button = d3.select("#button_play").classed("btn-success", false);
+                button.select("span").attr("class", "glyphicon glyphicon-play");
+                state = "play";
+            }
+            function pause() {
+                state = 'pause';
+                var button = d3.select("#button_play").classed("btn-success", true);
+                button.attr("value", "false");
+                button.select("span").attr("class", "glyphicon glyphicon-pause");
+            }
+            function resume() {
+                state = "play";
+                var button = d3.select("#button_play").classed("btn-success", true);
+                button.attr("value", "true");
+                button.select("span").attr("class", "glyphicon glyphicon-play");
+                window.clearTimeout();
+            }
+            
+
+
+        </script>
+
+
+    </div>
+
+    <!-- Modals -->
+    <div id="aboutModal" class="modal">
+        <!-- about Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h3>About</h3>
+            </div>
+            <div class="modal-body">
+                <section>
+                    <h4>PolView</h4>
+                    <p>This work represent trends of political views by birth year in South Korea.</p>
+                    <br>
+
+                </section>
+
+                <section>
+                    <h4>Data Source</h4>
+                    <p> KGSS (Korean General Social Survey) from 2003 to 2016. KGSS was not conducted in 2015
+                    </p>
+                    <br>
+
+
+                </section>
+
+                <section>
+                    <h4>Development</h4>
+                    <p>Powered by d3.js</p>
+                    <br>
+
+                </section>
+
+            </div>
+            <div class="modal-footer">
+                <!--<h5>Modal Footer</h5>-->
+                <p>Developed and Designed by Heungseok Park. </p>
+                <p>&copy; 2017 All rights reserved. </p>
+            </div>
+        </div>
+
+    </div>
+
+
+    <script>
+
+        // get the modal
+        var modal = document.getElementById("aboutModal");
+
+        // get the button that opens the modal
+        var btn = document.getElementById("about");
+
+        // get the <span> element that cloases the modal;
+        var span = document.getElementsByClassName("close")[0];
+
+        // When the user clicks the button, open the modal
+        btn.onclick = function () {
+            modal.style.display = "block";
+        }
+
+        // When the user clicks on <span> (x), close the modal
+        span.onclick = function () {
+            modal.style.display = "none";
+        }
+
+        // When the user clicks anywhere outside of the modal, close it
+        window.onclick = function (event) {
+            if(event.target == modal){
+                modal.style.display = "none";
+            }
+        }
+
+
+        function closeNavLeft() {
+            document.getElementById("sideNavLeft").style.width = "0";
+
+        }
+
+        function closeNavRight() {
+            document.getElementById("sideNavRight").style.width = "0";
+
+        }
+
+
+    </script>
+
+
+</body>
+</html>
