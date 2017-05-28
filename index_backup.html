@@ -45,19 +45,19 @@
 
         <script>
             // Set the dimensions of the canvas / graph
-       /*     var margin = {top: 20, right: 20, bottom: 110, left: 40},
+            var margin = {top: 20, right: 20, bottom: 110, left: 40},
                 margin2 = {top: 430, right: 20, bottom: 50, left: 40},
                 width = 960 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
-                height2 = 500 - margin2.top - margin2.bottom;*/
+                height2 = 500 - margin2.top - margin2.bottom;
 
             // Adds the svg canvas
-//            var svg = d3.select("#canvas")
-//                .append("svg")
-//                .attr("width", width + margin.left + margin.right)
-//                .attr("height", height + margin.top + margin.bottom)
-//
-//            var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+            var svg = d3.select("#canvas")
+                .append("svg")
+                .attr("width", width + margin.left + margin.right)
+                .attr("height", height + margin.top + margin.bottom)
+
+            var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 //                .append("g")
 //                .attr("transform",
 //                    "translate(" + margin.left + "," + margin.top + ")");
@@ -98,23 +98,17 @@
                 .y1(function(d) { return y2(d.price); });
 */
 
-            var margin = {top: 100, right: 150, bottom: 50, left: 30},
-                width = 960 - margin.left - margin.right,
-                height = 300 - margin.top - margin.bottom;
+            var parseTime = d3.timeParse("%Y%m%d");
 
-            var x = d3.scaleLinear().range([0, width]);
-            var y = d3.local();
-            var line = d3.local();
+            var x = d3.scaleTime().range([0, width]),
+                y = d3.scaleLinear().range([height, 0]),
+                z = d3.scaleOrdinal(d3.schemeCategory10);
 
-//            y = d3.scaleLinear().range([height, 0]),
-//                z = d3.scaleOrdinal(d3.schemeCategory10);
+            var line = d3.line()
+                .curve(d3.curveBasis)
+                .x(function(d) { return x(d.x); })
+                .y(function(d) { return y(d.feature_val); });
 
-//            var line = d3.line()
-//                .curve(d3.curveBasis)
-//                .x(function(d) { return x(d.x); })
-//                .y(function(d) { return y(d.feature_val); });
-
-/*
             svg.append("defs").append("clipPath")
                 .attr("id", "clip")
                 .append("rect")
@@ -129,8 +123,8 @@
                 .attr("class", "context")
                 .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
             
-*/
 
+            var dataset;
 
 //            d3.csv("./data/test.csv", type, function(error, data) {
 //            d3.csv("./data/sp500.csv", type, function(error, data) {
@@ -146,56 +140,8 @@
                     };
                 });
 
-                // filter the specific features ( 기본값은 GPS_Speed / RPM )
-                var filtered_features = [];
-                features.forEach(function(d){
-                    if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)")
-                        filtered_features.push(d)
-
-                });
-                console.log(features);
-                console.log(filtered_features);
-
                 // x domain은 TimeStamp 또는 Distance로 ...
                 x.domain(d3.extent(data, function(d) { return d.x; }));
-
-
-                var svg = d3.select("#canvas").selectAll("svg")
-                    .data(filtered_features)
-                    .enter().append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
-                    .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
-                    .each(function (d) {
-
-                        var ty = y.set(this, d3.scaleLinear()
-//                            .domain([
-//                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
-//                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
-                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ])
-                            .range([height, 0]));
-
-//                        console.log(d);
-
-                        line.set(this, d3.line().curve(d3.curveBasis)
-                            .x(function(d){ return x(d.x);})
-                            .y(function(d){ return ty(d.feature_val); }));
-                    });
-
-                svg.append("path")
-                    .attr("class", "line")
-                    .attr("d", function(d) { return line.get(this)(d.values); });
-
-                svg.append("text")
-//                    .attr("x", width - 6)
-                    .attr("y", height - 50)
-                    .attr("x", 10)
-//                    .attr("y", 10)
-
-                    .text(function(d) { return d.id; });
-
-/*
 
 
 
@@ -212,7 +158,6 @@
                     .attr("class", "axis axis--x")
                     .attr("transform", "translate(0," + height + ")")
                     .call(d3.axisBottom(x));
-
 
                 g.append("g")
                     .attr("class", "axis axis--y")
@@ -243,7 +188,6 @@
                     .text(function(d) { return d.id; });
 
 
-*/
 
 /*
                 x.domain(d3.extent(data, function(d) { return d.date; }));

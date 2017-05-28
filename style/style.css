@@ -19,13 +19,36 @@ nav {
     z-index: 1;
 }
 
+#canvas{
+    /*margin-bottom: 50px;*/
+}
+
+svg{
+    margin-bottom: 0px;
+    margin-top: 10px;
+}
+
+.area {
+    fill: steelblue;
+    clip-path: url(#clip);
+}
+
+.zoom {
+    cursor: move;
+    fill: none;
+    pointer-events: all;
+}
+
 
 .line {
     fill: none;
-    /*There's the fairly standard fill of none and a stroke width of 2 pixels, but the stroke: url(#line-gradient); is something different.*/
-    stroke: url(#line-gradient);
-    stroke-width: 3px;
+    stroke: steelblue;
+    stroke-width: 1px;
 }
+
+/*
+
+
 
 
 .axis path,
@@ -34,81 +57,6 @@ nav {
     stroke: grey;
     stroke-width: 1;
     shape-rendering: crispEdges;
-}
-
-.legend {
-    font-size: 10px;
-    font-weight: bold;
-    text-anchor: middle;
-}
-
-.playBtn{
-    margin-bottom: 10px;
-}
-
-.rangeWrap{
-    width: 500px;
-    height: 50px;
-    margin-left: 5vw;
-    margin-bottom: 0;
-}
-
-.rangeText{
-    margin-bottom: 10px;
-    margin-top: 5px;
-    font-size: 16px;
-}
-
-#slider{
-    margin-top: 20px;
-    margin-bottom: 20px;
-    z-index: 10000;
-}
-
-#canvas{
-    margin-top: 50px;
-}
-.description{
-    width: 1000px;
-    /*margin-top: 5px;*/
-    margin-right: 50px;
-    margin-left: 100px;
-}
-
-.text.copyright{
-    float: right;
-    margin-right: 150px
-}
-
-
-/*
-.rangeWrap input {
-    width: 100%;
-    margin: 0;
-}
-.rangeWrap .ticks {
-    display: flex;
-    justify-content: space-between;
-    height: 6px;
-    margin: -1.5em 5px 0 6px;
-    font: 10px Arial;
-    counter-reset: count -1;
-}
-.rangeWrap .ticks > div {
-    height: 100%;
-    width: 1px;
-    background: silver;
-    counter-increment: count 1;
-}
-.rangeWrap .ticks > div:nth-child(5n - 4) {
-    height: 200%;
-}
-.rangeWrap .ticks > div:nth-child(5n - 4)::before {
-    display: block;
-    content: counter(count,decimal);
-    transform: translate(-50%, 100%);
-    text-align: center;
-    width: 16px;
 }
 
 */
