@@ -16,14 +16,9 @@ app.get('/', function (req, res) {
     res.sendFile(__dirname + '/index.html');
 });
 
-app.get('/index_nonSmooth', function (req, res) {
-    res.sendFile(__dirname + '/index_nonSmooth.html');
-});
-
 app.get('/backup', function (req, res) {
     res.sendFile(__dirname + '/index_backup.html');
 });
-
 
 
 http.listen(5555, function(){

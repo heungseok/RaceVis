@@ -17,6 +17,7 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-color.v1.min.js"></script>
     <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="js/underscore.js"></script>
 
     <nav class="navbar navbar-inverse navbar-fixed-top" style="position: absolute; left:0; top:0">
         <div class="container-fluid">
@@ -96,60 +97,58 @@
             </select>
             </div>
 
-
-
-
         </div>
 
 
         <div id="canvas" class="col-xs-6">
 
         </div>
+
         <div class="checkbox_wrapper col-xs-3">
             <div class="checkbox">
-                <label><input type="checkbox" value="">GPS_Speed (kmh)</label>
+                <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleClick(this); checked="checked">GPS_Speed (kmh)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">PosLat (deg)</label>
+                <label><input type="checkbox" value="PosLat (deg)" onclick=handleClick(this);>PosLat (deg)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">PosLon (deg)</label>
+                <label><input type="checkbox" value="PosLon (deg)" onclick=handleClick(this);>PosLon (deg)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">AccelForward (g)</label>
+                <label><input type="checkbox" value="AccelForward (g)" onclick=handleClick(this);>AccelForward (g)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">AccelLateral (g)</label>
+                <label><input type="checkbox" value="AccelLateral (g)" onclick=handleClick(this);>AccelLateral (g)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">YawRate (deg/s)</label>
+                <label><input type="checkbox" value="YawRate (deg/s)" onclick=handleClick(this);>YawRate (deg/s)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">GPS_Height (m)</label>
+                <label><input type="checkbox" value="GPS_Height (m)" onclick=handleClick(this);>GPS_Height (m)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">GPS_NumSat (NA)</label>
+                <label><input type="checkbox" value="GPS_NumSat (NA)" onclick=handleClick(this);>GPS_NumSat (NA)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">RPM (NA)</label>
+                <label><input type="checkbox" value="RPM (NA)" onclick=handleClick(this); checked="checked">RPM (NA)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">Pedal_throttle (percent)</label>
+                <label><input type="checkbox" value="Pedal_throttle (percent)" onclick=handleClick(this);>Pedal_throttle (percent)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="">Pedal_brake (percent)</label>
+                <label><input type="checkbox" value="Pedal_brake (percent)" onclick=handleClick(this);>Pedal_brake (percent)</label>
             </div>
             <div class="checkbox disabled">
-                <label><input type="checkbox" value="" disabled>Steer_angle (deg)</label>
+                <label><input type="checkbox" value="Steer_angle (deg)"  onclick=handleClick(this); disabled>Steer_angle (deg)</label>
             </div>
             <div class="checkbox disabled">
-                <label><input type="checkbox" value="" disabled>Gear (NA)</label>
+                <label><input type="checkbox" value="Gear (NA)"  onclick=handleClick(this); disabled>Gear (NA)</label>
             </div>
             <div class="checkbox disabled">
-                <label><input type="checkbox" value="" disabled>CoolantT (c)</label>
+                <label><input type="checkbox" value="CoolantT (c)"  onclick=handleClick(this); disabled>CoolantT (c)</label>
             </div>
             <div class="checkbox disabled">
-                <label><input type="checkbox" value="" disabled>OilT (c)</label>
+                <label><input type="checkbox" value="OilT (c)"  onclick=handleClick(this); disabled>OilT (c)</label>
             </div>
 
 
@@ -168,12 +167,15 @@
             var line = d3.local();
 
             var xAxis = d3.axisBottom(x);
-
             var svg;
+
+            var all_features;
+            var selected_features = [];
+            var selected_feat_names = [];
             d3.csv("./data/2nd_std_file.csv", type, function(error, data) {
                 if (error) throw error;
 
-                var features = data.columns.slice(1).map(function(id) {
+                all_features = data.columns.slice(1).map(function(id) {
                     return {
                         id: id,
                         values: data.map(function(d) {
@@ -183,14 +185,18 @@
                 });
 
                 // filter the specific features ( 기본값은 GPS_Speed / RPM )
-                var filtered_features = [];
-                features.forEach(function(d){
-                    if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)")
-                        filtered_features.push(d)
+                selected_features = [];
+                all_features.forEach(function(d){
+                    if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)"){
+                        selected_features.push(d)
+                        selected_feat_names.push(d.id);
+                    }
+
+
 
                 });
-                console.log(features);
-                console.log(filtered_features);
+//                console.log(features);
+//                console.log(selected_features);
 
                 // x domain은 TimeStamp 또는 Distance로 ...
                 x.domain(d3.extent(data, function(d) { return d.x; }));
@@ -198,7 +204,7 @@
 
 //                var svg = d3.select("#canvas").selectAll("svg")
                 svg = d3.select("#canvas").selectAll("svg")
-                    .data(filtered_features)
+                    .data(selected_features)
                     .enter().append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.bottom + margin.top)
@@ -219,12 +225,12 @@
 //                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
 
                             // local feature에 대한 y range setting
-//                            .domain([
-//                                d3.min(d.values, function(c) { return c.feature_val; }),
-//                                d3.max(d.values, function(c) { return c.feature_val; }) ])
-                            // local feature range (0~ max(y))
+                            .domain([
+                                d3.min(d.values, function(c) { return c.feature_val; }),
+                                d3.max(d.values, function(c) { return c.feature_val; }) ])
 
-                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
+                            // local feature range (0~ max(y))
+//                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
 
 
                         line.set(this, d3.line().curve(d3.curveBasis)
@@ -244,24 +250,27 @@
 //                    .attr("y", 10)
                     .text(function(d) { return d.id; });
 
-
-
                 // define y axis
-                for (var i=0; i<filtered_features.length; i++){
-                    var id = "g#" + filtered_features[i].id.split(" ")[0];
+                for (var i=0; i<selected_features.length; i++){
+                    var id = "g#" + selected_features[i].id.split(" ")[0];
 
                     var y_range = d3.scaleLinear()
                         .range([height, 0])
-                        .domain([0, d3.max(filtered_features[i].values, function (c) { return c.feature_val }) ]);
+//                        .domain([0, d3.max(selected_features[i].values, function (c) { return c.feature_val }) ]);
+                        .domain([
+                            d3.min(selected_features[i].values, function(c) { return c.feature_val; }),
+                            d3.max(selected_features[i].values, function (c) { return c.feature_val })
+                        ]);
 
                     d3.select(id).append("g")
                         .call(d3.axisLeft(y_range))
 //                        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
 
                     // 마지막 인덱스인 그래프에만 x axis
-                    if( i == filtered_features.length -1){
+                    if( i == selected_features.length -1){
                         d3.select(id).append("g")
                             .call(xAxis)
+                            .attr("id", "x-axis")
                             .attr("transform", "translate(" + 0 + "," + height + ")");
                     }
                 }
@@ -274,6 +283,104 @@
 
 
 
+            function updateChart(value, checked){
+
+                // chart 업데이트 by the checked value of check-box
+                var feat_names = _.pluck(selected_features, 'id'); // current feat_names
+
+                // if checked is true
+                if(checked){
+                    // if the value is NOT contained in array, then add to the array
+                    if(! (_.contains(feat_names, value)) ){
+                        all_features.forEach(function (d) {
+                            if(d.id == value){
+                                selected_features.push(d);
+                            }
+                        })
+                    }
+
+                // if checked is false
+                }else{
+                    // if the value is contained in array, then remove from the array
+                    if(_.contains(feat_names, value)){
+                        var index = _.indexOf(feat_names, value);
+                        selected_features.splice(index, 1);
+                    }
+                }
+
+                console.log(selected_features)
+
+
+                ///////////////// update Chart ///////////////////
+                var update_svg = d3.select("#canvas").selectAll("svg")
+                    .data(selected_features);
+                update_svg.exit().remove();
+                update_svg.enter().append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.bottom + margin.top)
+                    .append("g")
+                    .attr("id", function (d) {
+                        return d.id.split(" ")[0];
+                        // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
+                    })
+                    .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+                    //                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
+                    .each(function (d) {
+
+                        var ty = y.set(this, d3.scaleLinear()
+                            .range([height, 0]))
+//                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
+                            .domain([
+                                d3.min(d.values, function(c) { return c.feature_val; }),
+                                d3.max(d.values, function(c) { return c.feature_val; }) ])
+
+
+                        line.set(this, d3.line().curve(d3.curveBasis)
+                            .x(function(d){ return x(d.x);})
+                            .y(function(d){ return ty(d.feature_val); }));
+
+                    })
+                    // append path
+                    .append("path")
+                    .attr("class", "line")
+                    .attr("d", function(d) { return line.get(this)(d.values);})
+                    // append text of features
+                    .append("text")
+                    .attr("y", height -50)
+                    .attr("x", 10)
+                    .text(function(d) { return d.id; });
+
+
+
+                // define y axis
+                for (var i=0; i<selected_features.length; i++){
+
+                   var id = "g#" + selected_features[i].id.split(" ")[0];
+
+                    var y_range = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([
+                            d3.min(selected_features[i].values, function(c) { return c.feature_val; }),
+                            d3.max(selected_features[i].values, function (c) { return c.feature_val })
+                        ]);
+
+                    d3.select(id).append("g")
+                        .call(d3.axisLeft(y_range))
+
+                    // 마지막 인덱스인 그래프에만 x axis
+                    if( i == selected_features.length -1){
+                        d3.select("#x-axis").remove(); // 이전 x-axis 삭제
+
+                        d3.select(id).append("g")
+                            .call(xAxis)
+                            .attr("id", "x-axis")
+                            .attr("transform", "translate(" + 0 + "," + height + ")");
+
+                    }
+
+                }
+
+            }
 
             function brushed() {
                 if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
@@ -296,6 +403,28 @@
             }
 
 
+
+            // checkbox click listener
+            function handleClick(cb){
+                // check박스가 하나라도 클릭되었을 경우 check 되어진 값들 가져온 뒤 chart update
+                console.log(cb.checked);
+
+                var checked_values = []
+                $("input[type=checkbox]:checked").each(function () {
+//                    console.log($(this).val())
+                    checked_values.push($(this).val())
+                });
+
+                if(checked_values.length ==4){
+
+                    return;
+                }
+
+                updateChart(cb.value, cb.checked);
+            }
+
+
+            // This function supports parsing the column from input data.
             function type(d, _, columns) {
 
                 d.x = d["TimeStamp (sec)"]
