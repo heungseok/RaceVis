@@ -26,6 +26,7 @@ nav {
 svg{
     margin-bottom: 0px;
     margin-top: 10px;
+    margin-left: 50px;
 }
 
 .area {
@@ -44,6 +45,11 @@ svg{
     fill: none;
     stroke: steelblue;
     stroke-width: 1px;
+}
+
+.sel_box{
+    margin-top: 10px;
+    margin-right: 10px;
 }
 
 /*

@@ -39,101 +39,137 @@
 
     <div id="container">
 
-        <div id="canvas">
+        <div class="track_nav col-xs-2">
+
+            <div class="sel_box">
+                <label for="sel1">Select a Track:</label>
+                <select class="form-control" id="sel1">
+                    <option>KIC Short-1</option>
+                    <option>KIC Short-2</option>
+                    <option>KIC Short-3</option>
+                    <option>KIC Short-4</option>
+                </select>
+            </div>
+
+            <div class="sel_box">
+            <label for="sel2">Select a Session:</label>
+            <select class="form-control" id="sel2">
+                <option>Session-1</option>
+                <option>Session-2</option>
+                <option>Session-3</option>
+                <option>Session-4</option>
+
+            </select>
+            </div>
+
+            <div class="sel_box">
+            <label for="sel3">Select a Lap from the Selected Session:</label>
+            <select class="form-control" id="sel3">
+                <option>Lap-1</option>
+                <option>Lap-2</option>
+                <option>Lap-3</option>
+                <option>Lap-4</option>
+            </select>
+            </div>
+
+
+
+            <h4 style="margin-top:30px"> Select a Reference Lap:</h4>
+
+            <div class="sel_box">
+            <label for="sel4">Select a Session:</label>
+            <select class="form-control" id="sel4">
+                <option>Session-1</option>
+                <option>Session-2</option>
+                <option>Session-3</option>
+                <option>Session-4</option>
+            </select>
+            </div>
+
+            <div class="sel_box">
+            <label for="sel5">Select a Lap from the Selected Session:</label>
+            <select class="form-control" id="sel5">
+                <option>Lap-1</option>
+                <option>Lap-2</option>
+                <option>Lap-3</option>
+                <option>Lap-4</option>
+            </select>
+            </div>
+
+
+
 
         </div>
 
+
+        <div id="canvas" class="col-xs-6">
+
+        </div>
+        <div class="checkbox_wrapper col-xs-3">
+            <div class="checkbox">
+                <label><input type="checkbox" value="">GPS_Speed (kmh)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">PosLat (deg)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">PosLon (deg)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">AccelForward (g)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">AccelLateral (g)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">YawRate (deg/s)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">GPS_Height (m)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">GPS_NumSat (NA)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">RPM (NA)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">Pedal_throttle (percent)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="">Pedal_brake (percent)</label>
+            </div>
+            <div class="checkbox disabled">
+                <label><input type="checkbox" value="" disabled>Steer_angle (deg)</label>
+            </div>
+            <div class="checkbox disabled">
+                <label><input type="checkbox" value="" disabled>Gear (NA)</label>
+            </div>
+            <div class="checkbox disabled">
+                <label><input type="checkbox" value="" disabled>CoolantT (c)</label>
+            </div>
+            <div class="checkbox disabled">
+                <label><input type="checkbox" value="" disabled>OilT (c)</label>
+            </div>
+
+
+        </div>
+
+
+
         <script>
-            // Set the dimensions of the canvas / graph
-       /*     var margin = {top: 20, right: 20, bottom: 110, left: 40},
-                margin2 = {top: 430, right: 20, bottom: 50, left: 40},
+
+            var margin = {top: 20, right: 20, bottom: 0, left: 70},
                 width = 960 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom;
-                height2 = 500 - margin2.top - margin2.bottom;*/
-
-            // Adds the svg canvas
-//            var svg = d3.select("#canvas")
-//                .append("svg")
-//                .attr("width", width + margin.left + margin.right)
-//                .attr("height", height + margin.top + margin.bottom)
-//
-//            var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-//                .append("g")
-//                .attr("transform",
-//                    "translate(" + margin.left + "," + margin.top + ")");
-
-//            var parseDate = d3.timeParse("%b %Y");
-
-/*
-
-            var x = d3.scaleTime().range([0, width]),
-                x2 = d3.scaleTime().range([0, width]),
-                y = d3.scaleLinear().range([height, 0]),
-                y2 = d3.scaleLinear().range([height2, 0]);
-
-            var xAxis = d3.axisBottom(x),
-                xAxis2 = d3.axisBottom(x2),
-                yAxis = d3.axisLeft(y);
-
-            var brush = d3.brushX()
-                .extent([[0, 0], [width, height2]])
-                .on("brush end", brushed);
-
-            var zoom = d3.zoom()
-                .scaleExtent([1, Infinity])
-                .translateExtent([[0, 0], [width, height]])
-                .extent([[0, 0], [width, height]])
-                .on("zoom", zoomed);
-
-            var area = d3.area()
-                .curve(d3.curveMonotoneX)
-                .x(function(d) { return x(d.date); })
-                .y0(height)
-                .y1(function(d) { return y(d.price); });
-
-            var area2 = d3.area()
-                .curve(d3.curveMonotoneX)
-                .x(function(d) { return x2(d.date); })
-                .y0(height2)
-                .y1(function(d) { return y2(d.price); });
-*/
-
-            var margin = {top: 100, right: 150, bottom: 50, left: 30},
-                width = 960 - margin.left - margin.right,
-                height = 300 - margin.top - margin.bottom;
+                height = 300 - margin.bottom - margin.top;
 
             var x = d3.scaleLinear().range([0, width]);
             var y = d3.local();
             var line = d3.local();
 
-//            y = d3.scaleLinear().range([height, 0]),
-//                z = d3.scaleOrdinal(d3.schemeCategory10);
+            var xAxis = d3.axisBottom(x);
 
-//            var line = d3.line()
-//                .curve(d3.curveBasis)
-//                .x(function(d) { return x(d.x); })
-//                .y(function(d) { return y(d.feature_val); });
-
-/*
-            svg.append("defs").append("clipPath")
-                .attr("id", "clip")
-                .append("rect")
-                .attr("width", width)
-                .attr("height", height);
-
-            var focus = svg.append("g")
-                .attr("class", "focus")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var context = svg.append("g")
-                .attr("class", "context")
-                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-            
-*/
-
-
-//            d3.csv("./data/test.csv", type, function(error, data) {
-//            d3.csv("./data/sp500.csv", type, function(error, data) {
+            var svg;
             d3.csv("./data/2nd_std_file.csv", type, function(error, data) {
                 if (error) throw error;
 
@@ -141,7 +177,7 @@
                     return {
                         id: id,
                         values: data.map(function(d) {
-                            return {x: d.x, feature_val: d[id]};
+                            return {x: d.x, feature_val: parseFloat(d[id])};
                         })
                     };
                 });
@@ -160,134 +196,84 @@
                 x.domain(d3.extent(data, function(d) { return d.x; }));
 
 
-                var svg = d3.select("#canvas").selectAll("svg")
+//                var svg = d3.select("#canvas").selectAll("svg")
+                svg = d3.select("#canvas").selectAll("svg")
                     .data(filtered_features)
                     .enter().append("svg")
                     .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.top + margin.bottom)
+                    .attr("height", height + margin.bottom + margin.top)
                     .append("g")
-                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
+                    .attr("id", function (d) {
+                        return d.id.split(" ")[0];
+                        // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
+                    })
+                    .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+//                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
                     .each(function (d) {
 
                         var ty = y.set(this, d3.scaleLinear()
+                            .range([height, 0]))
+                            // Global feature에 대한 y range setting
 //                            .domain([
 //                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
 //                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
-                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ])
-                            .range([height, 0]));
 
-//                        console.log(d);
+                            // local feature에 대한 y range setting
+//                            .domain([
+//                                d3.min(d.values, function(c) { return c.feature_val; }),
+//                                d3.max(d.values, function(c) { return c.feature_val; }) ])
+                            // local feature range (0~ max(y))
+
+                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
+
 
                         line.set(this, d3.line().curve(d3.curveBasis)
                             .x(function(d){ return x(d.x);})
                             .y(function(d){ return ty(d.feature_val); }));
+
                     });
 
                 svg.append("path")
                     .attr("class", "line")
-                    .attr("d", function(d) { return line.get(this)(d.values); });
+                    .attr("d", function(d) {  return line.get(this)(d.values); });
 
                 svg.append("text")
 //                    .attr("x", width - 6)
                     .attr("y", height - 50)
                     .attr("x", 10)
 //                    .attr("y", 10)
-
-                    .text(function(d) { return d.id; });
-
-/*
-
-
-
-                y.domain([
-                    d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
-                    d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); })
-                ]);
-
-                z.domain(features.map(function(c) { return c.id; }));
-
-                console.log(features);
-
-                g.append("g")
-                    .attr("class", "axis axis--x")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x));
-
-
-                g.append("g")
-                    .attr("class", "axis axis--y")
-                    .call(d3.axisLeft(y))
-                    .append("text")
-                    .attr("transform", "rotate(-90)")
-                    .attr("y", 6)
-                    .attr("dy", "0.71em")
-                    .attr("fill", "#000")
-                    .text("Values");
-
-                var feature = g.selectAll(".features")
-                    .data(features)
-                    .enter().append("g")
-                    .attr("class", "features");
-
-                feature.append("path")
-                    .attr("class", "line")
-                    .attr("d", function(d) { return line(d.values); })
-                    .style("stroke", function(d) { return z(d.id); });
-
-                feature.append("text")
-                    .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
-                    .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.feature_val) + ")"; })
-                    .attr("x", 3)
-                    .attr("dy", "0.35em")
-                    .style("font", "10px sans-serif")
                     .text(function(d) { return d.id; });
 
 
-*/
 
-/*
-                x.domain(d3.extent(data, function(d) { return d.date; }));
-                y.domain([0, d3.max(data, function(d) { return d.price; })]);
-                x2.domain(x.domain());
-                y2.domain(y.domain());
+                // define y axis
+                for (var i=0; i<filtered_features.length; i++){
+                    var id = "g#" + filtered_features[i].id.split(" ")[0];
 
-                focus.append("path")
-                    .datum(data)
-                    .attr("class", "area")
-                    .attr("d", area);
+                    var y_range = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([0, d3.max(filtered_features[i].values, function (c) { return c.feature_val }) ]);
 
-                focus.append("g")
-                    .attr("class", "axis axis--x")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
+                    d3.select(id).append("g")
+                        .call(d3.axisLeft(y_range))
+//                        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
 
-                focus.append("g")
-                    .attr("class", "axis axis--y")
-                    .call(yAxis);
+                    // 마지막 인덱스인 그래프에만 x axis
+                    if( i == filtered_features.length -1){
+                        d3.select(id).append("g")
+                            .call(xAxis)
+                            .attr("transform", "translate(" + 0 + "," + height + ")");
+                    }
+                }
 
-                context.append("path")
-                    .datum(data)
-                    .attr("class", "area")
-                    .attr("d", area2);
-
-                context.append("g")
-                    .attr("class", "axis axis--x")
-                    .attr("transform", "translate(0," + height2 + ")")
-                    .call(xAxis2);
-
-                context.append("g")
-                    .attr("class", "brush")
-                    .call(brush)
-                    .call(brush.move, x.range());
-
-                svg.append("rect")
-                    .attr("class", "zoom")
-                    .attr("width", width)
-                    .attr("height", height)
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                    .call(zoom);
-                    */
+                // gloabl x-axis 달기
+//                svg.append("g")
+//                    .call(xAxis)
+//                    .attr("transform", "translate(" + 0 + "," + height + ")");
             });
+
+
+
 
             function brushed() {
                 if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
@@ -312,25 +298,13 @@
 
             function type(d, _, columns) {
 
-//                d.date = parseTime(d.date);
                 d.x = d["TimeStamp (sec)"]
 
                 for (var i = 1, n = columns.length, c; i < n; ++i) {
                     d[c = columns[i]]  =  +d[c];
                     return d;
-
                 }
-
             }
-
-            function type_old(d) {
-
-                d.date = parseDate(d.date);
-                d.price = +d.price;
-                d.price2 = +d.price2;
-                return d;
-            }
-
 
         </script>
 

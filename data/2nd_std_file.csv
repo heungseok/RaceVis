@@ -1,4 +1,4 @@
-TimeStamp (sec),Distance (m),GPS_Speed (kmh),PosLat (deg),PosLon (deg),AccelForward (g),AccelLateral (g),AccelCombi (g),YawRate (deg/s),GPS_Height (m),GPS_NumSat (NA),RPM (NA),Pedal_throttle (percent),Pedal_brake (percent),Steer_angle (deg),Gear (NA),CoolantT ?,OilT ?,Fuel (percent),IntakeBoost (bar),IntakeTemp ?,AFR (NA)
+TimeStamp (sec),Distance (m),GPS_Speed (kmh),PosLat (deg),PosLon (deg),AccelForward (g),AccelLateral (g),AccelCombi (g),YawRate (deg/s),GPS_Height (m),GPS_NumSat (NA),RPM (NA),Pedal_throttle (percent),Pedal_brake (percent),Steer_angle (deg),Gear (NA),CoolantT (c),OilT (c),Fuel (percent),IntakeBoost (bar),IntakeTemp (c),AFR (NA)
 0,0,123.8066984,34.73858342,126.4134082,0.200075,0.027252,,,0,7,6775,100,0,0,3,82,101,,,,
 0.1,11,124.5066969,34.73858344,126.4134462,0.195633,0.012026,,,0,7,6840,100,0,0,3,82,101,,,,
 0.2,23,125.2066938,34.7385835,126.4134846,0.193083,0.003741,,,0,7,6867,100,0,0,3,82,101,,,,
