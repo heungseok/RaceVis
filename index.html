@@ -219,6 +219,7 @@
                             $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
                         }
 
+                        // default feature로 GPS_Speed, RPM 을 plotting.
                         if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)"){
                             selected_features.push(d)
                             selected_feat_names.push(d.id);
@@ -226,9 +227,10 @@
 
                     });
 
+
+
                     // x domain은 TimeStamp 또는 Distance로 ... default로는 TimeStamp
                     x.domain(d3.extent(data, function(d) { return d.x; }));
-
 
                     svg = d3.select("#canvas").selectAll("svg")
                         .data(selected_features)
@@ -301,6 +303,8 @@
                         }
                     }
 
+
+
                     // gloabl x-axis 달기
 //                svg.append("g")
 //                    .call(xAxis)
@@ -310,9 +314,21 @@
                 });
 
             }
+            function removeChart(id) {
+
+                var target_id = "g#" + id.split(" ")[0];
+
+                console.log(d3.select(target_id));
+
+                d3.select(target_id)
+                    .select(function() { return this.parentNode; })
+                    .remove();
+
+            }
 
 
             function updateChart(value, checked){
+                ///////////////// update data ///////////////////////
 
                 // chart 업데이트 by the checked value of check-box (_.pluck => dictionary array의 특정 value만을 array로 return.)
                 var feat_names = _.pluck(selected_features, 'id'); // current feat_names
@@ -328,17 +344,24 @@
                         })
                     }
 
+
+
                 // if checked is false
                 }else{
                     // if the value is contained in array, then remove from the array
                     if(_.contains(feat_names, value)){
                         var index = _.indexOf(feat_names, value);
+                        console.log(value);
+
+                        // remove target chart (해당 value값을 가진 chart 삭제)
+                        removeChart(value);
                         selected_features.splice(index, 1);
                     }
                 }
 
                 console.log(selected_features)
 
+                /*
 
                 ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
                 var update_svg = d3.select("#canvas").selectAll("svg")
@@ -408,7 +431,7 @@
                     }
 
                 }
-
+*/
             }
 
             function brushed() {
