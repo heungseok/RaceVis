@@ -106,55 +106,73 @@
 
         <div class="checkbox_wrapper col-xs-3">
             <div class="checkbox">
-                <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleClick(this); checked="checked">GPS_Speed (kmh)</label>
+                <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleCBclick(this); checked="checked">GPS_Speed (kmh)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="PosLat (deg)" onclick=handleClick(this);>PosLat (deg)</label>
+                <label><input type="checkbox" value="PosLat (deg)" onclick=handleCBclick(this);>PosLat (deg)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="PosLon (deg)" onclick=handleClick(this);>PosLon (deg)</label>
+                <label><input type="checkbox" value="PosLon (deg)" onclick=handleCBclick(this);>PosLon (deg)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="AccelForward (g)" onclick=handleClick(this);>AccelForward (g)</label>
+                <label><input type="checkbox" value="AccelForward (g)" onclick=handleCBclick(this);>AccelForward (g)</label>
+            </div>
+
+            <div class="checkbox">
+                <label><input type="checkbox" value="AccelLateral (g)" onclick=handleCBclick(this);>AccelLateral (g)</label>
+            </div>
+
+            <div class="checkbox">
+                <label><input type="checkbox" value="AccelCombi (g)" onclick=handleCBclick(this);>AccelCombi (g)</label>
+            </div>
+
+            <div class="checkbox">
+                <label><input type="checkbox" value="YawRate (deg/s)" onclick=handleCBclick(this);>YawRate (deg/s)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="AccelLateral (g)" onclick=handleClick(this);>AccelLateral (g)</label>
+                <label><input type="checkbox" value="GPS_Height (m)" onclick=handleCBclick(this);>GPS_Height (m)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="YawRate (deg/s)" onclick=handleClick(this);>YawRate (deg/s)</label>
+                <label><input type="checkbox" value="GPS_NumSat (NA)" onclick=handleCBclick(this);>GPS_NumSat (NA)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="GPS_Height (m)" onclick=handleClick(this);>GPS_Height (m)</label>
+                <label><input type="checkbox" value="RPM (NA)" onclick=handleCBclick(this); checked="checked">RPM (NA)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="GPS_NumSat (NA)" onclick=handleClick(this);>GPS_NumSat (NA)</label>
+                <label><input type="checkbox" value="Pedal_throttle (percent)" onclick=handleCBclick(this);>Pedal_throttle (percent)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="RPM (NA)" onclick=handleClick(this); checked="checked">RPM (NA)</label>
+                <label><input type="checkbox" value="Pedal_brake (percent)" onclick=handleCBclick(this);>Pedal_brake (percent)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="Pedal_throttle (percent)" onclick=handleClick(this);>Pedal_throttle (percent)</label>
+                <label><input type="checkbox" value="Steer_angle (deg)"  onclick=handleCBclick(this);>Steer_angle (deg)</label>
             </div>
             <div class="checkbox">
-                <label><input type="checkbox" value="Pedal_brake (percent)" onclick=handleClick(this);>Pedal_brake (percent)</label>
+                <label><input type="checkbox" value="Gear (NA)"  onclick=handleCBclick(this);>Gear (NA)</label>
             </div>
-            <div class="checkbox disabled">
-                <label><input type="checkbox" value="Steer_angle (deg)"  onclick=handleClick(this); disabled>Steer_angle (deg)</label>
+            <div class="checkbox">
+                <label><input type="checkbox" value="CoolantT (c)"  onclick=handleCBclick(this);>CoolantT (c)</label>
             </div>
-            <div class="checkbox disabled">
-                <label><input type="checkbox" value="Gear (NA)"  onclick=handleClick(this); disabled>Gear (NA)</label>
+            <div class="checkbox">
+                <label><input type="checkbox" value="OilT (c)"  onclick=handleCBclick(this); >OilT (c)</label>
             </div>
-            <div class="checkbox disabled">
-                <label><input type="checkbox" value="CoolantT (c)"  onclick=handleClick(this); disabled>CoolantT (c)</label>
+            <div class="checkbox">
+                <label><input type="checkbox" value="Fuel (percent)"  onclick=handleCBclick(this); >Fuel (percent)</label>
             </div>
-            <div class="checkbox disabled">
-                <label><input type="checkbox" value="OilT (c)"  onclick=handleClick(this); disabled>OilT (c)</label>
+            <div class="checkbox">
+                <label><input type="checkbox" value="IntakeBoost (bar)"  onclick=handleCBclick(this); >IntakeBoost (bar)</label>
             </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="IntakeTemp (c)"  onclick=handleCBclick(this); >IntakeTemp (c)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="AFR (NA)"  onclick=handleCBclick(this); >AFR (NA)</label>
+            </div>
+
+
 
 
         </div>
-
-
 
         <script>
 
@@ -172,120 +190,131 @@
             var all_features;
             var selected_features = [];
             var selected_feat_names = [];
-            d3.csv("./data/2nd_std_file.csv", type, function(error, data) {
-                if (error) throw error;
 
-                all_features = data.columns.slice(1).map(function(id) {
-                    return {
-                        id: id,
-                        values: data.map(function(d) {
-                            return {x: d.x, feature_val: parseFloat(d[id])};
+
+            drawLineChart();
+
+            function drawLineChart(){
+
+                d3.csv("./data/2nd_std_file.csv", type, function(error, data) {
+                    if (error) throw error;
+
+                    all_features = data.columns.slice(1).map(function(id) {
+
+                        return {
+                            id: id,
+                            values: data.map(function(d) {
+                                return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                            })
+                        };
+                    });
+
+                    // filter the specific features ( 기본값은 GPS_Speed / RPM )
+                    selected_features = [];
+                    all_features.forEach(function(d){
+
+                        // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
+                        if(isNaN(d.values[0].feature_val)){
+                            console.log(d.id);
+                            $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
+                        }
+
+                        if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)"){
+                            selected_features.push(d)
+                            selected_feat_names.push(d.id);
+                        }
+
+                    });
+
+                    // x domain은 TimeStamp 또는 Distance로 ... default로는 TimeStamp
+                    x.domain(d3.extent(data, function(d) { return d.x; }));
+
+
+                    svg = d3.select("#canvas").selectAll("svg")
+                        .data(selected_features)
+                        .enter().append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.bottom + margin.top)
+                        .append("g")
+                        .attr("id", function (d) {
+                            return d.id.split(" ")[0];
+                            // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
                         })
-                    };
-                });
+                        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+                        //                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
+                        .each(function (d) {
 
-                // filter the specific features ( 기본값은 GPS_Speed / RPM )
-                selected_features = [];
-                all_features.forEach(function(d){
-                    if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)"){
-                        selected_features.push(d)
-                        selected_feat_names.push(d.id);
-                    }
-
-
-
-                });
-//                console.log(features);
-//                console.log(selected_features);
-
-                // x domain은 TimeStamp 또는 Distance로 ...
-                x.domain(d3.extent(data, function(d) { return d.x; }));
-
-
-//                var svg = d3.select("#canvas").selectAll("svg")
-                svg = d3.select("#canvas").selectAll("svg")
-                    .data(selected_features)
-                    .enter().append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.bottom + margin.top)
-                    .append("g")
-                    .attr("id", function (d) {
-                        return d.id.split(" ")[0];
-                        // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
-                    })
-                    .attr("transform", "translate(" + margin.left + "," + 0 + ")")
-//                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
-                    .each(function (d) {
-
-                        var ty = y.set(this, d3.scaleLinear()
-                            .range([height, 0]))
+                            var ty = y.set(this, d3.scaleLinear()
+                                .range([height, 0]))
                             // Global feature에 대한 y range setting
-//                            .domain([
-//                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
-//                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
+                            //                            .domain([
+                            //                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
+                            //                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
 
                             // local feature에 대한 y range setting
-                            .domain([
-                                d3.min(d.values, function(c) { return c.feature_val; }),
-                                d3.max(d.values, function(c) { return c.feature_val; }) ])
+                                .domain([
+                                    d3.min(d.values, function(c) { return c.feature_val; }),
+                                    d3.max(d.values, function(c) { return c.feature_val; }) ])
 
                             // local feature range (0~ max(y))
 //                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
 
+                            line.set(this, d3.line().curve(d3.curveBasis)
+                                .x(function(d){ return x(d.x);})
+                                .y(function(d){ return ty(d.feature_val); }));
 
-                        line.set(this, d3.line().curve(d3.curveBasis)
-                            .x(function(d){ return x(d.x);})
-                            .y(function(d){ return ty(d.feature_val); }));
+                        });
 
-                    });
+                    svg.append("path")
+                        .attr("class", "line")
+                        .attr("d", function(d) {  return line.get(this)(d.values); });
 
-                svg.append("path")
-                    .attr("class", "line")
-                    .attr("d", function(d) {  return line.get(this)(d.values); });
+                    svg.append("text")
+                    //                    .attr("x", width - 6)
+                        .attr("y", height - 50)
+                        .attr("x", 10)
+                        //                    .attr("y", 10)
+                        .text(function(d) { return d.id; });
 
-                svg.append("text")
-//                    .attr("x", width - 6)
-                    .attr("y", height - 50)
-                    .attr("x", 10)
-//                    .attr("y", 10)
-                    .text(function(d) { return d.id; });
+                    // define y axis
+                    for (var i=0; i<selected_features.length; i++){
+                        var id = "g#" + selected_features[i].id.split(" ")[0];
 
-                // define y axis
-                for (var i=0; i<selected_features.length; i++){
-                    var id = "g#" + selected_features[i].id.split(" ")[0];
+                        var y_range = d3.scaleLinear()
+                            .range([height, 0])
+                            //                        .domain([0, d3.max(selected_features[i].values, function (c) { return c.feature_val }) ]);
+                            .domain([
+                                d3.min(selected_features[i].values, function(c) { return c.feature_val; }),
+                                d3.max(selected_features[i].values, function (c) { return c.feature_val })
+                            ]);
 
-                    var y_range = d3.scaleLinear()
-                        .range([height, 0])
-//                        .domain([0, d3.max(selected_features[i].values, function (c) { return c.feature_val }) ]);
-                        .domain([
-                            d3.min(selected_features[i].values, function(c) { return c.feature_val; }),
-                            d3.max(selected_features[i].values, function (c) { return c.feature_val })
-                        ]);
-
-                    d3.select(id).append("g")
-                        .call(d3.axisLeft(y_range))
+                        d3.select(id).append("g")
+                            .call(d3.axisLeft(y_range))
 //                        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
 
-                    // 마지막 인덱스인 그래프에만 x axis
-                    if( i == selected_features.length -1){
-                        d3.select(id).append("g")
-                            .call(xAxis)
-                            .attr("id", "x-axis")
-                            .attr("transform", "translate(" + 0 + "," + height + ")");
+                        // 마지막 인덱스인 그래프에만 x axis
+                        if( i == selected_features.length -1){
+                            d3.select(id).append("g")
+                                .call(xAxis)
+                                .attr("id", "x-axis")
+                                .attr("transform", "translate(" + 0 + "," + height + ")");
+                        }
                     }
-                }
 
-                // gloabl x-axis 달기
+                    // gloabl x-axis 달기
 //                svg.append("g")
 //                    .call(xAxis)
 //                    .attr("transform", "translate(" + 0 + "," + height + ")");
-            });
 
+
+                });
+
+            }
 
 
             function updateChart(value, checked){
 
-                // chart 업데이트 by the checked value of check-box
+                // chart 업데이트 by the checked value of check-box (_.pluck => dictionary array의 특정 value만을 array로 return.)
                 var feat_names = _.pluck(selected_features, 'id'); // current feat_names
 
                 // if checked is true
@@ -311,7 +340,7 @@
                 console.log(selected_features)
 
 
-                ///////////////// update Chart ///////////////////
+                ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
                 var update_svg = d3.select("#canvas").selectAll("svg")
                     .data(selected_features);
                 update_svg.exit().remove();
@@ -405,7 +434,7 @@
 
 
             // checkbox click listener
-            function handleClick(cb){
+            function handleCBclick(cb){
                 // check박스가 하나라도 클릭되었을 경우 check 되어진 값들 가져온 뒤 chart update
                 console.log(cb.checked);
 
