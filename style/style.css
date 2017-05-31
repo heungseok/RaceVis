@@ -17,10 +17,20 @@ nav {
     position: absolute;
     top: 10vh;
     z-index: 1;
+    width: 100%;
+
+
 }
 
 #canvas{
+    /*position: absolute;*/
+    /*right: 30vh*/
     /*margin-bottom: 50px;*/
+    width:40%;
+    height: 900px;
+
+    /*width: 1000px;*/
+    /*height: 900px;*/
 }
 
 svg{
@@ -47,9 +57,25 @@ svg{
     stroke-width: 1px;
 }
 
+
+/* select track, sesssion box */
 .sel_box{
     margin-top: 10px;
     margin-right: 10px;
+}
+
+.track_nav {
+    /*position: absolute;*/
+    left:2vw;
+    width: 25%;
+
+}
+
+/* right checkbox */
+.checkbox_wrapper{
+    width: 25%;
+    position: absolute;
+    right: 1vw;
 }
 
 /*

@@ -40,7 +40,7 @@
 
     <div id="container">
 
-        <div class="track_nav col-xs-2">
+        <div class="track_nav col-xs-3">
 
             <div class="sel_box">
                 <label for="sel1">Select a Track:</label>
@@ -97,6 +97,18 @@
             </select>
             </div>
 
+            <div class="track_summary">
+
+                <img style="height: 300px;" class="img_summary">
+
+                <div class="table_summary">
+                    <span>
+                        summary statistic
+                    </span>
+                </div>
+
+            </div>
+
         </div>
 
 
@@ -104,7 +116,7 @@
 
         </div>
 
-        <div class="checkbox_wrapper col-xs-3">
+        <div class="checkbox_wrapper col-xs-2">
             <div class="checkbox">
                 <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleCBclick(this); checked="checked">GPS_Speed (kmh)</label>
             </div>
@@ -177,7 +189,7 @@
         <script>
 
             var margin = {top: 20, right: 20, bottom: 0, left: 70},
-                width = 960 - margin.left - margin.right,
+                width = document.getElementById("canvas").offsetWidth - margin.left - margin.right,
                 height = 300 - margin.bottom - margin.top;
 
             var x = d3.scaleLinear().range([0, width]);
@@ -303,8 +315,6 @@
                         }
                     }
 
-
-
                     // gloabl x-axis 달기
 //                svg.append("g")
 //                    .call(xAxis)
@@ -318,11 +328,64 @@
 
                 var target_id = "g#" + id.split(" ")[0];
 
-                console.log(d3.select(target_id));
-
                 d3.select(target_id)
                     .select(function() { return this.parentNode; })
                     .remove();
+
+            }
+
+            function addChart(id) {
+
+                d3.select("#x-axis")
+                    .transition()
+                    .duration(500)
+                    .remove(); // 이전 x-axis 삭제
+
+                // extract target data which is stored in last index of selected_features
+                var target_data = selected_features[selected_features.length-1];
+                console.log(target_data);
+
+                ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
+                var update_svg = d3.select("#canvas").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.bottom + margin.top)
+                    .append("g")
+                    .attr("id", id.split(" ")[0] )
+                    .attr("transform", "translate(" + margin.left + "," + 0 + ")");
+
+                var y_range = d3.scaleLinear()
+                    .range([height, 0])
+                    .domain([
+                        d3.min(target_data.values, function(d) { return d.feature_val; }),
+                        d3.max(target_data.values, function(d) { return d.feature_val; })
+                    ]);
+
+                var drawline = d3.line()
+                    .curve(d3.curveBasis)
+                    .x( function(d) { return x(d.x); })
+                    .y( function(d) { return y_range(d.feature_val); });
+
+
+                update_svg.append("path")
+                    .attr("class", "line")
+                    .attr("d", drawline(target_data.values) );
+
+                update_svg.append("text")
+                    .attr("y", height - 50)
+                    .attr("x", 10)
+                    .text(id);
+
+                update_svg.append("g")
+                    .call(d3.axisLeft(y_range));
+
+                // x axis
+                update_svg.append("g")
+                    .call(xAxis)
+                    .attr("id", "x-axis")
+                    .attr("transform", "translate(" + 0 + "," + height + ")");
+//                    .attr("transform", "translate(" + 0 + "," + (height +margin.bottom)+ ")");
+
+
 
             }
 
@@ -337,44 +400,52 @@
                 if(checked){
                     // if the value is NOT contained in array, then add to the array
                     if(! (_.contains(feat_names, value)) ){
+
+                        // selected features array update
                         all_features.forEach(function (d) {
                             if(d.id == value){
                                 selected_features.push(d);
                             }
-                        })
+                        });
+                        // add target chart (해당 value값을 가진 chart 추가)
+                        addChart(value);
+
                     }
-
-
 
                 // if checked is false
                 }else{
                     // if the value is contained in array, then remove from the array
                     if(_.contains(feat_names, value)){
                         var index = _.indexOf(feat_names, value);
-                        console.log(value);
-
+                        console.log(value, index);
                         // remove target chart (해당 value값을 가진 chart 삭제)
                         removeChart(value);
                         selected_features.splice(index, 1);
                     }
                 }
 
-                console.log(selected_features)
 
-                /*
+
+/*
+
+
 
                 ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
                 var update_svg = d3.select("#canvas").selectAll("svg")
                     .data(selected_features);
-                update_svg.exit().remove();
+
+                // 필요없는 데이터, 이전에 있고 지금은 없는 데이터 삭제.
+                update_svg.exit()
+                    .transition()
+                    .duration(300)
+                    .remove();
+
+                // data that needs DOM = enter() (a set/selection, not an event!)
                 update_svg.enter().append("svg")
                     .attr("width", width + margin.left + margin.right)
                     .attr("height", height + margin.bottom + margin.top)
                     .append("g")
-                    .attr("id", function (d) {
-                        return d.id.split(" ")[0];
-                        // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
-                    })
+                    .attr("id", function (d) { return d.id.split(" ")[0]; })
                     .attr("transform", "translate(" + margin.left + "," + 0 + ")")
                     //                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
                     .each(function (d) {
@@ -432,6 +503,7 @@
 
                 }
 */
+
             }
 
             function brushed() {
@@ -467,7 +539,7 @@
                     checked_values.push($(this).val())
                 });
 
-                if(checked_values.length ==4){
+                if(checked_values.length ==5){
 
                     return;
                 }
