@@ -17,6 +17,7 @@
     <script src="https://d3js.org/d3.v4.min.js"></script>
     <script src="https://d3js.org/d3-color.v1.min.js"></script>
     <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+    <script src="js/underscore.js"></script>
 
     <nav class="navbar navbar-inverse navbar-fixed-top" style="position: absolute; left:0; top:0">
         <div class="container-fluid">
@@ -39,199 +40,471 @@
 
     <div id="container">
 
-        <div id="canvas">
+        <div class="track_nav col-xs-3">
+
+            <div class="sel_box">
+                <label for="sel1">Select a Track:</label>
+                <select class="form-control" id="sel1">
+                    <option>KIC Short-1</option>
+                    <option>KIC Short-2</option>
+                    <option>KIC Short-3</option>
+                    <option>KIC Short-4</option>
+                </select>
+            </div>
+
+            <div class="sel_box">
+            <label for="sel2">Select a Session:</label>
+            <select class="form-control" id="sel2">
+                <option>Session-1</option>
+                <option>Session-2</option>
+                <option>Session-3</option>
+                <option>Session-4</option>
+
+            </select>
+            </div>
+
+            <div class="sel_box">
+            <label for="sel3">Select a Lap from the Selected Session:</label>
+            <select class="form-control" id="sel3">
+                <option>Lap-1</option>
+                <option>Lap-2</option>
+                <option>Lap-3</option>
+                <option>Lap-4</option>
+            </select>
+            </div>
+
+
+
+            <h4 style="margin-top:30px"> Select a Reference Lap:</h4>
+
+            <div class="sel_box">
+            <label for="sel4">Select a Session:</label>
+            <select class="form-control" id="sel4">
+                <option>Session-1</option>
+                <option>Session-2</option>
+                <option>Session-3</option>
+                <option>Session-4</option>
+            </select>
+            </div>
+
+            <div class="sel_box">
+            <label for="sel5">Select a Lap from the Selected Session:</label>
+            <select class="form-control" id="sel5">
+                <option>Lap-1</option>
+                <option>Lap-2</option>
+                <option>Lap-3</option>
+                <option>Lap-4</option>
+            </select>
+            </div>
+
+            <div class="track_summary">
+
+                <img style="height: 300px;" class="img_summary">
+
+                <div class="table_summary">
+                    <span>
+                        summary statistic
+                    </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div id="canvas" class="col-xs-6">
+
+        </div>
+
+        <div class="checkbox_wrapper col-xs-2">
+            <div class="checkbox">
+                <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleCBclick(this); checked="checked">GPS_Speed (kmh)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="PosLat (deg)" onclick=handleCBclick(this);>PosLat (deg)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="PosLon (deg)" onclick=handleCBclick(this);>PosLon (deg)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="AccelForward (g)" onclick=handleCBclick(this);>AccelForward (g)</label>
+            </div>
+
+            <div class="checkbox">
+                <label><input type="checkbox" value="AccelLateral (g)" onclick=handleCBclick(this);>AccelLateral (g)</label>
+            </div>
+
+            <div class="checkbox">
+                <label><input type="checkbox" value="AccelCombi (g)" onclick=handleCBclick(this);>AccelCombi (g)</label>
+            </div>
+
+            <div class="checkbox">
+                <label><input type="checkbox" value="YawRate (deg/s)" onclick=handleCBclick(this);>YawRate (deg/s)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="GPS_Height (m)" onclick=handleCBclick(this);>GPS_Height (m)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="GPS_NumSat (NA)" onclick=handleCBclick(this);>GPS_NumSat (NA)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="RPM (NA)" onclick=handleCBclick(this); checked="checked">RPM (NA)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="Pedal_throttle (percent)" onclick=handleCBclick(this);>Pedal_throttle (percent)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="Pedal_brake (percent)" onclick=handleCBclick(this);>Pedal_brake (percent)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="Steer_angle (deg)"  onclick=handleCBclick(this);>Steer_angle (deg)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="Gear (NA)"  onclick=handleCBclick(this);>Gear (NA)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="CoolantT (c)"  onclick=handleCBclick(this);>CoolantT (c)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="OilT (c)"  onclick=handleCBclick(this); >OilT (c)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="Fuel (percent)"  onclick=handleCBclick(this); >Fuel (percent)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="IntakeBoost (bar)"  onclick=handleCBclick(this); >IntakeBoost (bar)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="IntakeTemp (c)"  onclick=handleCBclick(this); >IntakeTemp (c)</label>
+            </div>
+            <div class="checkbox">
+                <label><input type="checkbox" value="AFR (NA)"  onclick=handleCBclick(this); >AFR (NA)</label>
+            </div>
+
+
+
 
         </div>
 
         <script>
-            // Set the dimensions of the canvas / graph
-            var margin = {top: 20, right: 20, bottom: 110, left: 40},
-                margin2 = {top: 430, right: 20, bottom: 50, left: 40},
-                width = 960 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom;
-                height2 = 500 - margin2.top - margin2.bottom;
 
-            // Adds the svg canvas
-            var svg = d3.select("#canvas")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
+            var margin = {top: 20, right: 20, bottom: 0, left: 70},
+                width = document.getElementById("canvas").offsetWidth - margin.left - margin.right,
+                height = 300 - margin.bottom - margin.top;
 
-            var g = svg.append("g").attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-//                .append("g")
-//                .attr("transform",
-//                    "translate(" + margin.left + "," + margin.top + ")");
+            var x = d3.scaleLinear().range([0, width]);
+            var y = d3.local();
+            var line = d3.local();
 
-//            var parseDate = d3.timeParse("%b %Y");
+            var xAxis = d3.axisBottom(x);
+            var svg;
+
+            var all_features;
+            var selected_features = [];
+            var selected_feat_names = [];
+
+
+            drawLineChart();
+
+            function drawLineChart(){
+
+                d3.csv("./data/2nd_std_file.csv", type, function(error, data) {
+                    if (error) throw error;
+
+                    all_features = data.columns.slice(1).map(function(id) {
+
+                        return {
+                            id: id,
+                            values: data.map(function(d) {
+                                return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                            })
+                        };
+                    });
+
+                    // filter the specific features ( 기본값은 GPS_Speed / RPM )
+                    selected_features = [];
+                    all_features.forEach(function(d){
+
+                        // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
+                        if(isNaN(d.values[0].feature_val)){
+                            console.log(d.id);
+                            $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
+                        }
+
+                        // default feature로 GPS_Speed, RPM 을 plotting.
+                        if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)"){
+                            selected_features.push(d)
+                            selected_feat_names.push(d.id);
+                        }
+
+                    });
+
+
+
+                    // x domain은 TimeStamp 또는 Distance로 ... default로는 TimeStamp
+                    x.domain(d3.extent(data, function(d) { return d.x; }));
+
+                    svg = d3.select("#canvas").selectAll("svg")
+                        .data(selected_features)
+                        .enter().append("svg")
+                        .attr("width", width + margin.left + margin.right)
+                        .attr("height", height + margin.bottom + margin.top)
+                        .append("g")
+                        .attr("id", function (d) {
+                            return d.id.split(" ")[0];
+                            // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
+                        })
+                        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+                        //                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
+                        .each(function (d) {
+
+                            var ty = y.set(this, d3.scaleLinear()
+                                .range([height, 0]))
+                            // Global feature에 대한 y range setting
+                            //                            .domain([
+                            //                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
+                            //                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
+
+                            // local feature에 대한 y range setting
+                                .domain([
+                                    d3.min(d.values, function(c) { return c.feature_val; }),
+                                    d3.max(d.values, function(c) { return c.feature_val; }) ])
+
+                            // local feature range (0~ max(y))
+//                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
+
+                            line.set(this, d3.line().curve(d3.curveBasis)
+                                .x(function(d){ return x(d.x);})
+                                .y(function(d){ return ty(d.feature_val); }));
+
+                        });
+
+                    svg.append("path")
+                        .attr("class", "line")
+                        .attr("d", function(d) {  return line.get(this)(d.values); });
+
+                    svg.append("text")
+                    //                    .attr("x", width - 6)
+                        .attr("y", height - 50)
+                        .attr("x", 10)
+                        //                    .attr("y", 10)
+                        .text(function(d) { return d.id; });
+
+                    // define y axis
+                    for (var i=0; i<selected_features.length; i++){
+                        var id = "g#" + selected_features[i].id.split(" ")[0];
+
+                        var y_range = d3.scaleLinear()
+                            .range([height, 0])
+                            //                        .domain([0, d3.max(selected_features[i].values, function (c) { return c.feature_val }) ]);
+                            .domain([
+                                d3.min(selected_features[i].values, function(c) { return c.feature_val; }),
+                                d3.max(selected_features[i].values, function (c) { return c.feature_val })
+                            ]);
+
+                        d3.select(id).append("g")
+                            .call(d3.axisLeft(y_range))
+//                        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+
+                        // 마지막 인덱스인 그래프에만 x axis
+                        if( i == selected_features.length -1){
+                            d3.select(id).append("g")
+                                .call(xAxis)
+                                .attr("id", "x-axis")
+                                .attr("transform", "translate(" + 0 + "," + height + ")");
+                        }
+                    }
+
+                    // gloabl x-axis 달기
+//                svg.append("g")
+//                    .call(xAxis)
+//                    .attr("transform", "translate(" + 0 + "," + height + ")");
+
+
+                });
+
+            }
+            function removeChart(id) {
+
+                var target_id = "g#" + id.split(" ")[0];
+
+                d3.select(target_id)
+                    .select(function() { return this.parentNode; })
+                    .remove();
+
+            }
+
+            function addChart(id) {
+
+                d3.select("#x-axis")
+                    .transition()
+                    .duration(500)
+                    .remove(); // 이전 x-axis 삭제
+
+                // extract target data which is stored in last index of selected_features
+                var target_data = selected_features[selected_features.length-1];
+                console.log(target_data);
+
+                ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
+                var update_svg = d3.select("#canvas").append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.bottom + margin.top)
+                    .append("g")
+                    .attr("id", id.split(" ")[0] )
+                    .attr("transform", "translate(" + margin.left + "," + 0 + ")");
+
+                var y_range = d3.scaleLinear()
+                    .range([height, 0])
+                    .domain([
+                        d3.min(target_data.values, function(d) { return d.feature_val; }),
+                        d3.max(target_data.values, function(d) { return d.feature_val; })
+                    ]);
+
+                var drawline = d3.line()
+                    .curve(d3.curveBasis)
+                    .x( function(d) { return x(d.x); })
+                    .y( function(d) { return y_range(d.feature_val); });
+
+
+                update_svg.append("path")
+                    .attr("class", "line")
+                    .attr("d", drawline(target_data.values) );
+
+                update_svg.append("text")
+                    .attr("y", height - 50)
+                    .attr("x", 10)
+                    .text(id);
+
+                update_svg.append("g")
+                    .call(d3.axisLeft(y_range));
+
+                // x axis
+                update_svg.append("g")
+                    .call(xAxis)
+                    .attr("id", "x-axis")
+                    .attr("transform", "translate(" + 0 + "," + height + ")");
+//                    .attr("transform", "translate(" + 0 + "," + (height +margin.bottom)+ ")");
+
+
+
+            }
+
+
+            function updateChart(value, checked){
+                ///////////////// update data ///////////////////////
+
+                // chart 업데이트 by the checked value of check-box (_.pluck => dictionary array의 특정 value만을 array로 return.)
+                var feat_names = _.pluck(selected_features, 'id'); // current feat_names
+
+                // if checked is true
+                if(checked){
+                    // if the value is NOT contained in array, then add to the array
+                    if(! (_.contains(feat_names, value)) ){
+
+                        // selected features array update
+                        all_features.forEach(function (d) {
+                            if(d.id == value){
+                                selected_features.push(d);
+                            }
+                        });
+                        // add target chart (해당 value값을 가진 chart 추가)
+                        addChart(value);
+
+                    }
+
+                // if checked is false
+                }else{
+                    // if the value is contained in array, then remove from the array
+                    if(_.contains(feat_names, value)){
+                        var index = _.indexOf(feat_names, value);
+                        console.log(value, index);
+                        // remove target chart (해당 value값을 가진 chart 삭제)
+                        removeChart(value);
+                        selected_features.splice(index, 1);
+                    }
+                }
+
+
 
 /*
 
-            var x = d3.scaleTime().range([0, width]),
-                x2 = d3.scaleTime().range([0, width]),
-                y = d3.scaleLinear().range([height, 0]),
-                y2 = d3.scaleLinear().range([height2, 0]);
-
-            var xAxis = d3.axisBottom(x),
-                xAxis2 = d3.axisBottom(x2),
-                yAxis = d3.axisLeft(y);
-
-            var brush = d3.brushX()
-                .extent([[0, 0], [width, height2]])
-                .on("brush end", brushed);
-
-            var zoom = d3.zoom()
-                .scaleExtent([1, Infinity])
-                .translateExtent([[0, 0], [width, height]])
-                .extent([[0, 0], [width, height]])
-                .on("zoom", zoomed);
-
-            var area = d3.area()
-                .curve(d3.curveMonotoneX)
-                .x(function(d) { return x(d.date); })
-                .y0(height)
-                .y1(function(d) { return y(d.price); });
-
-            var area2 = d3.area()
-                .curve(d3.curveMonotoneX)
-                .x(function(d) { return x2(d.date); })
-                .y0(height2)
-                .y1(function(d) { return y2(d.price); });
-*/
-
-            var parseTime = d3.timeParse("%Y%m%d");
-
-            var x = d3.scaleTime().range([0, width]),
-                y = d3.scaleLinear().range([height, 0]),
-                z = d3.scaleOrdinal(d3.schemeCategory10);
-
-            var line = d3.line()
-                .curve(d3.curveBasis)
-                .x(function(d) { return x(d.x); })
-                .y(function(d) { return y(d.feature_val); });
-
-            svg.append("defs").append("clipPath")
-                .attr("id", "clip")
-                .append("rect")
-                .attr("width", width)
-                .attr("height", height);
-
-            var focus = svg.append("g")
-                .attr("class", "focus")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var context = svg.append("g")
-                .attr("class", "context")
-                .attr("transform", "translate(" + margin2.left + "," + margin2.top + ")");
-            
-
-            var dataset;
-
-//            d3.csv("./data/test.csv", type, function(error, data) {
-//            d3.csv("./data/sp500.csv", type, function(error, data) {
-            d3.csv("./data/2nd_std_file.csv", type, function(error, data) {
-                if (error) throw error;
-
-                var features = data.columns.slice(1).map(function(id) {
-                    return {
-                        id: id,
-                        values: data.map(function(d) {
-                            return {x: d.x, feature_val: d[id]};
-                        })
-                    };
-                });
-
-                // x domain은 TimeStamp 또는 Distance로 ...
-                x.domain(d3.extent(data, function(d) { return d.x; }));
 
 
+                ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
+                var update_svg = d3.select("#canvas").selectAll("svg")
+                    .data(selected_features);
 
-                y.domain([
-                    d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
-                    d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); })
-                ]);
+                // 필요없는 데이터, 이전에 있고 지금은 없는 데이터 삭제.
+                update_svg.exit()
+                    .transition()
+                    .duration(300)
+                    .remove();
 
-                z.domain(features.map(function(c) { return c.id; }));
+                // data that needs DOM = enter() (a set/selection, not an event!)
+                update_svg.enter().append("svg")
+                    .attr("width", width + margin.left + margin.right)
+                    .attr("height", height + margin.bottom + margin.top)
+                    .append("g")
+                    .attr("id", function (d) { return d.id.split(" ")[0]; })
+                    .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+                    //                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
+                    .each(function (d) {
 
-                console.log(features);
+                        var ty = y.set(this, d3.scaleLinear()
+                            .range([height, 0]))
+//                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
+                            .domain([
+                                d3.min(d.values, function(c) { return c.feature_val; }),
+                                d3.max(d.values, function(c) { return c.feature_val; }) ])
 
-                g.append("g")
-                    .attr("class", "axis axis--x")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(d3.axisBottom(x));
 
-                g.append("g")
-                    .attr("class", "axis axis--y")
-                    .call(d3.axisLeft(y))
-                    .append("text")
-                    .attr("transform", "rotate(-90)")
-                    .attr("y", 6)
-                    .attr("dy", "0.71em")
-                    .attr("fill", "#000")
-                    .text("Values");
+                        line.set(this, d3.line().curve(d3.curveBasis)
+                            .x(function(d){ return x(d.x);})
+                            .y(function(d){ return ty(d.feature_val); }));
 
-                var feature = g.selectAll(".features")
-                    .data(features)
-                    .enter().append("g")
-                    .attr("class", "features");
-
-                feature.append("path")
+                    })
+                    // append path
+                    .append("path")
                     .attr("class", "line")
-                    .attr("d", function(d) { return line(d.values); })
-                    .style("stroke", function(d) { return z(d.id); });
-
-                feature.append("text")
-                    .datum(function(d) { return {id: d.id, value: d.values[d.values.length - 1]}; })
-                    .attr("transform", function(d) { return "translate(" + x(d.value.x) + "," + y(d.value.feature_val) + ")"; })
-                    .attr("x", 3)
-                    .attr("dy", "0.35em")
-                    .style("font", "10px sans-serif")
+                    .attr("d", function(d) { return line.get(this)(d.values);})
+                    // append text of features
+                    .append("text")
+                    .attr("y", height -50)
+                    .attr("x", 10)
                     .text(function(d) { return d.id; });
 
 
 
-/*
-                x.domain(d3.extent(data, function(d) { return d.date; }));
-                y.domain([0, d3.max(data, function(d) { return d.price; })]);
-                x2.domain(x.domain());
-                y2.domain(y.domain());
+                // define y axis
+                for (var i=0; i<selected_features.length; i++){
 
-                focus.append("path")
-                    .datum(data)
-                    .attr("class", "area")
-                    .attr("d", area);
+                   var id = "g#" + selected_features[i].id.split(" ")[0];
 
-                focus.append("g")
-                    .attr("class", "axis axis--x")
-                    .attr("transform", "translate(0," + height + ")")
-                    .call(xAxis);
+                    var y_range = d3.scaleLinear()
+                        .range([height, 0])
+                        .domain([
+                            d3.min(selected_features[i].values, function(c) { return c.feature_val; }),
+                            d3.max(selected_features[i].values, function (c) { return c.feature_val })
+                        ]);
 
-                focus.append("g")
-                    .attr("class", "axis axis--y")
-                    .call(yAxis);
+                    d3.select(id).append("g")
+                        .call(d3.axisLeft(y_range))
 
-                context.append("path")
-                    .datum(data)
-                    .attr("class", "area")
-                    .attr("d", area2);
+                    // 마지막 인덱스인 그래프에만 x axis
+                    if( i == selected_features.length -1){
+                        d3.select("#x-axis").remove(); // 이전 x-axis 삭제
 
-                context.append("g")
-                    .attr("class", "axis axis--x")
-                    .attr("transform", "translate(0," + height2 + ")")
-                    .call(xAxis2);
+                        d3.select(id).append("g")
+                            .call(xAxis)
+                            .attr("id", "x-axis")
+                            .attr("transform", "translate(" + 0 + "," + height + ")");
 
-                context.append("g")
-                    .attr("class", "brush")
-                    .call(brush)
-                    .call(brush.move, x.range());
+                    }
 
-                svg.append("rect")
-                    .attr("class", "zoom")
-                    .attr("width", width)
-                    .attr("height", height)
-                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-                    .call(zoom);
-                    */
-            });
+                }
+*/
+
+            }
 
             function brushed() {
                 if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
@@ -254,27 +527,37 @@
             }
 
 
+
+            // checkbox click listener
+            function handleCBclick(cb){
+                // check박스가 하나라도 클릭되었을 경우 check 되어진 값들 가져온 뒤 chart update
+                console.log(cb.checked);
+
+                var checked_values = []
+                $("input[type=checkbox]:checked").each(function () {
+//                    console.log($(this).val())
+                    checked_values.push($(this).val())
+                });
+
+                if(checked_values.length ==5){
+
+                    return;
+                }
+
+                updateChart(cb.value, cb.checked);
+            }
+
+
+            // This function supports parsing the column from input data.
             function type(d, _, columns) {
 
-//                d.date = parseTime(d.date);
                 d.x = d["TimeStamp (sec)"]
 
                 for (var i = 1, n = columns.length, c; i < n; ++i) {
                     d[c = columns[i]]  =  +d[c];
                     return d;
-
                 }
-
             }
-
-            function type_old(d) {
-
-                d.date = parseDate(d.date);
-                d.price = +d.price;
-                d.price2 = +d.price2;
-                return d;
-            }
-
 
         </script>
 

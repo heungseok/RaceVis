@@ -324,7 +324,7 @@
                 });
 
             }
-            function removeChart(id) {
+            function removeChart(id, index) {
 
                 var target_id = "g#" + id.split(" ")[0];
 
@@ -332,14 +332,25 @@
                     .select(function() { return this.parentNode; })
                     .remove();
 
+                // 만약 제거하려는 차트가 마지막 svg일 경우 차트 없앤 뒤에 새로운 x axis생성
+                if(index == selected_features.length-1){
+//                    console.log("last index!");
+//                    console.log(selected_features[index-1]);
+
+                    d3.select("g#" + selected_features[index-1].id.split(" ")[0])
+                        .append("g")
+                        .call(xAxis)
+                        .attr("id", "x-axis")
+                        .attr("transform", "translate(" + 0 + "," + height + ")");
+                }
+
             }
 
             function addChart(id) {
 
+                // 이전 x-axis 삭제
                 d3.select("#x-axis")
-                    .transition()
-                    .duration(500)
-                    .remove(); // 이전 x-axis 삭제
+                    .remove();
 
                 // extract target data which is stored in last index of selected_features
                 var target_data = selected_features[selected_features.length-1];
@@ -419,90 +430,10 @@
                         var index = _.indexOf(feat_names, value);
                         console.log(value, index);
                         // remove target chart (해당 value값을 가진 chart 삭제)
-                        removeChart(value);
+                        removeChart(value, index);
                         selected_features.splice(index, 1);
                     }
                 }
-
-
-
-/*
-
-
-
-                ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
-                var update_svg = d3.select("#canvas").selectAll("svg")
-                    .data(selected_features);
-
-                // 필요없는 데이터, 이전에 있고 지금은 없는 데이터 삭제.
-                update_svg.exit()
-                    .transition()
-                    .duration(300)
-                    .remove();
-
-                // data that needs DOM = enter() (a set/selection, not an event!)
-                update_svg.enter().append("svg")
-                    .attr("width", width + margin.left + margin.right)
-                    .attr("height", height + margin.bottom + margin.top)
-                    .append("g")
-                    .attr("id", function (d) { return d.id.split(" ")[0]; })
-                    .attr("transform", "translate(" + margin.left + "," + 0 + ")")
-                    //                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
-                    .each(function (d) {
-
-                        var ty = y.set(this, d3.scaleLinear()
-                            .range([height, 0]))
-//                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
-                            .domain([
-                                d3.min(d.values, function(c) { return c.feature_val; }),
-                                d3.max(d.values, function(c) { return c.feature_val; }) ])
-
-
-                        line.set(this, d3.line().curve(d3.curveBasis)
-                            .x(function(d){ return x(d.x);})
-                            .y(function(d){ return ty(d.feature_val); }));
-
-                    })
-                    // append path
-                    .append("path")
-                    .attr("class", "line")
-                    .attr("d", function(d) { return line.get(this)(d.values);})
-                    // append text of features
-                    .append("text")
-                    .attr("y", height -50)
-                    .attr("x", 10)
-                    .text(function(d) { return d.id; });
-
-
-
-                // define y axis
-                for (var i=0; i<selected_features.length; i++){
-
-                   var id = "g#" + selected_features[i].id.split(" ")[0];
-
-                    var y_range = d3.scaleLinear()
-                        .range([height, 0])
-                        .domain([
-                            d3.min(selected_features[i].values, function(c) { return c.feature_val; }),
-                            d3.max(selected_features[i].values, function (c) { return c.feature_val })
-                        ]);
-
-                    d3.select(id).append("g")
-                        .call(d3.axisLeft(y_range))
-
-                    // 마지막 인덱스인 그래프에만 x axis
-                    if( i == selected_features.length -1){
-                        d3.select("#x-axis").remove(); // 이전 x-axis 삭제
-
-                        d3.select(id).append("g")
-                            .call(xAxis)
-                            .attr("id", "x-axis")
-                            .attr("transform", "translate(" + 0 + "," + height + ")");
-
-                    }
-
-                }
-*/
 
             }
 
