@@ -197,7 +197,7 @@
 
             /* global variable for drawing ling graph */
 
-            var margin = {top: 20, right: 20, bottom: 0, left: 70},
+            var margin = {top: 20, right: 20, bottom: 20, left: 70},
                 width = document.getElementById("canvas").offsetWidth - margin.left - margin.right,
                 height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
 
@@ -208,6 +208,10 @@
             var x = d3.scaleLinear().range([0, width]);
             var y = d3.local();
             var line = d3.local();
+            var bisect = d3.bisector(function (d) { return d.x; }).left,
+                formatValue = d3.format(",.2f"),
+                formatCurrency = function(d) { return formatValue(d);}
+
 
 
             var xAxis = d3.axisBottom(x);
@@ -293,7 +297,7 @@
                             return d.id.split(" ")[0];
                             // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
                         })
-                        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+                        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
                         //                    .attr("transform", "translate(" + margin.left + "," + (margin.top+50) + ")")
                         .each(function (d) {
 
@@ -355,6 +359,32 @@
                         }
                     }
 
+                    var focus = svg.append("g")
+                        .attr("class", "focus")
+                        .style("display", "none");
+
+                    focus.append("circle")
+                        .attr("r", 4.5);
+                    focus.append("text")
+                        .attr("x", 9)
+                        .attr("dy", ".35em")
+                        .text("nothing");
+
+                    svg.append("rect")
+                        .attr("class", "overlay")
+                        .attr("width", width)
+                        .attr("height", height)
+                        .attr("fill", "transparent")
+                        .on("mouseover", function() { focus.style("display", null); })
+                        .on("mouseout", function() { focus.style("display", "none"); })
+                        .on("mousemove", mousemove);
+//
+
+
+
+
+
+
                     // gloabl x-axis 달기
 //                svg.append("g")
 //                    .call(xAxis)
@@ -364,8 +394,6 @@
 
 
                     /*************************** DRAWING TRACK ******************************/
-
-
 
                     // range of track x, y (Longitude, Latitude) setting
                     track_x = d3.scaleLinear().range([0, track_width])
@@ -397,6 +425,36 @@
                 });
 
             }
+
+
+            function mousemove(){
+                var x_value = x.invert(d3.mouse(this)[0]);
+                var index = 0;
+                var focuses = svg.selectAll(".focus");
+
+                focuses.attr("transform", function(d){
+                    index = bisect(d.values, x_value, 0, d.values.length -1);
+//                            console.log(index);
+
+                    var y_range = d3.scaleLinear()
+                        .range([height, 0])
+                        //                        .domain([0, d3.max(selected_features[i].values, function (c) { return c.feature_val }) ]);
+                        .domain([
+                            d3.min(d.values, function(c) { return c.feature_val; }),
+                            d3.max(d.values, function (c) { return c.feature_val })
+                        ]);
+
+                    return "translate(" + x(d.values[index].x) + "," + y_range(d.values[index].feature_val) + ")";
+
+                });
+
+                focuses.selectAll("text")
+                    .text( function (d) { return + d.values[index].feature_val; });
+
+            }
+
+
+
             function removeChart(id, index) {
 
                 var target_id = "g#" + id.split(" ")[0];
@@ -432,7 +490,7 @@
                     .attr("height", height + margin.bottom + margin.top)
                     .append("g")
                     .attr("id", id.split(" ")[0] )
-                    .attr("transform", "translate(" + margin.left + "," + 0 + ")");
+                    .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
                 var y_range = d3.scaleLinear()
                     .range([height, 0])
@@ -467,9 +525,25 @@
 //                    .attr("transform", "translate(" + 0 + "," + (height +margin.bottom)+ ")");
 
 
+                var focus = update_svg.append("g")
+                    .attr("class", "focus")
+                    .style("display", "none");
 
+                focus.append("circle")
+                    .attr("r", 4.5);
+                focus.append("text")
+                    .attr("x", 9)
+                    .attr("dy", ".35em")
+                    .text("nothing");
 
-
+                update_svg.append("rect")
+                    .attr("class", "overlay")
+                    .attr("width", width)
+                    .attr("height", height)
+                    .attr("fill", "transparent")
+                    .on("mouseover", function() { focus.style("display", null); })
+                    .on("mouseout", function() { focus.style("display", "none"); })
+                    .on("mousemove", mousemove);
 
 
             }
@@ -536,7 +610,8 @@
             // checkbox click listener
             function handleCBclick(cb){
                 // check박스가 하나라도 클릭되었을 경우 check 되어진 값들 가져온 뒤 chart update
-                console.log(cb.checked);
+//                console.log(cb.checked);
+//                console.log(cb.value);
 
                 var checked_values = []
                 $("input[type=checkbox]:checked").each(function () {
@@ -545,7 +620,8 @@
                 });
 
                 if(checked_values.length ==5){
-
+                    // 4개 이상 일때 클릭할 경우 check value 원상태로..
+                    $("input[value='" + cb.value +"']").prop("checked", false);
                     return;
                 }
 
