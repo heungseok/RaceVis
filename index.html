@@ -116,93 +116,117 @@
 
         </div>
 
-        <div class="checkbox_wrapper col-xs-2">
-            <div class="checkbox">
-                <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleCBclick(this); checked="checked">GPS_Speed (kmh)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="PosLat (deg)" onclick=handleCBclick(this);>PosLat (deg)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="PosLon (deg)" onclick=handleCBclick(this);>PosLon (deg)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="AccelForward (g)" onclick=handleCBclick(this);>AccelForward (g)</label>
+
+        <div class="right-nav col-x2-2">
+
+            <div class="checkbox_wrapper col-xs-2">
+                <div class="checkbox">
+                    <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleCBclick(this); checked="checked">GPS_Speed (kmh)</label>
+                </div>
+                <!--<div class="checkbox">-->
+                    <!--<label><input type="checkbox" value="PosLat (deg)" onclick=handleCBclick(this);>PosLat (deg)</label>-->
+                <!--</div>-->
+                <!--<div class="checkbox">-->
+                    <!--<label><input type="checkbox" value="PosLon (deg)" onclick=handleCBclick(this);>PosLon (deg)</label>-->
+                <!--</div>-->
+                <div class="checkbox">
+                    <label><input type="checkbox" value="AccelForward (g)" onclick=handleCBclick(this);>AccelForward (g)</label>
+                </div>
+
+                <div class="checkbox">
+                    <label><input type="checkbox" value="AccelLateral (g)" onclick=handleCBclick(this);>AccelLateral (g)</label>
+                </div>
+
+                <div class="checkbox">
+                    <label><input type="checkbox" value="AccelCombi (g)" onclick=handleCBclick(this);>AccelCombi (g)</label>
+                </div>
+
+                <div class="checkbox">
+                    <label><input type="checkbox" value="YawRate (deg/s)" onclick=handleCBclick(this);>YawRate (deg/s)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="GPS_Height (m)" onclick=handleCBclick(this);>GPS_Height (m)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="GPS_NumSat (NA)" onclick=handleCBclick(this);>GPS_NumSat (NA)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="RPM (NA)" onclick=handleCBclick(this); checked="checked">RPM (NA)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="Pedal_throttle (percent)" onclick=handleCBclick(this);>Pedal_throttle (percent)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="Pedal_brake (percent)" onclick=handleCBclick(this);>Pedal_brake (percent)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="Steer_angle (deg)"  onclick=handleCBclick(this);>Steer_angle (deg)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="Gear (NA)"  onclick=handleCBclick(this);>Gear (NA)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="CoolantT (c)"  onclick=handleCBclick(this);>CoolantT (c)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="OilT (c)"  onclick=handleCBclick(this); >OilT (c)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="Fuel (percent)"  onclick=handleCBclick(this); >Fuel (percent)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="IntakeBoost (bar)"  onclick=handleCBclick(this); >IntakeBoost (bar)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="IntakeTemp (c)"  onclick=handleCBclick(this); >IntakeTemp (c)</label>
+                </div>
+                <div class="checkbox">
+                    <label><input type="checkbox" value="AFR (NA)"  onclick=handleCBclick(this); >AFR (NA)</label>
+                </div>
+
             </div>
 
-            <div class="checkbox">
-                <label><input type="checkbox" value="AccelLateral (g)" onclick=handleCBclick(this);>AccelLateral (g)</label>
-            </div>
+            <div id="track_canvas">
 
-            <div class="checkbox">
-                <label><input type="checkbox" value="AccelCombi (g)" onclick=handleCBclick(this);>AccelCombi (g)</label>
             </div>
-
-            <div class="checkbox">
-                <label><input type="checkbox" value="YawRate (deg/s)" onclick=handleCBclick(this);>YawRate (deg/s)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="GPS_Height (m)" onclick=handleCBclick(this);>GPS_Height (m)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="GPS_NumSat (NA)" onclick=handleCBclick(this);>GPS_NumSat (NA)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="RPM (NA)" onclick=handleCBclick(this); checked="checked">RPM (NA)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="Pedal_throttle (percent)" onclick=handleCBclick(this);>Pedal_throttle (percent)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="Pedal_brake (percent)" onclick=handleCBclick(this);>Pedal_brake (percent)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="Steer_angle (deg)"  onclick=handleCBclick(this);>Steer_angle (deg)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="Gear (NA)"  onclick=handleCBclick(this);>Gear (NA)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="CoolantT (c)"  onclick=handleCBclick(this);>CoolantT (c)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="OilT (c)"  onclick=handleCBclick(this); >OilT (c)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="Fuel (percent)"  onclick=handleCBclick(this); >Fuel (percent)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="IntakeBoost (bar)"  onclick=handleCBclick(this); >IntakeBoost (bar)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="IntakeTemp (c)"  onclick=handleCBclick(this); >IntakeTemp (c)</label>
-            </div>
-            <div class="checkbox">
-                <label><input type="checkbox" value="AFR (NA)"  onclick=handleCBclick(this); >AFR (NA)</label>
-            </div>
-
-
 
 
         </div>
 
         <script>
 
+            /* global variable for drawing ling graph */
+
             var margin = {top: 20, right: 20, bottom: 0, left: 70},
                 width = document.getElementById("canvas").offsetWidth - margin.left - margin.right,
-                height = 300 - margin.bottom - margin.top;
+                height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
+
+            var track_margin = {top: 20, right: 20, bottom: 20, left: 20},
+                track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
+                track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
             var x = d3.scaleLinear().range([0, width]);
             var y = d3.local();
             var line = d3.local();
 
+
             var xAxis = d3.axisBottom(x);
-            var svg;
+            var svg, track_svg;
 
             var all_features;
             var selected_features = [];
             var selected_feat_names = [];
 
+            var track_data = [];
+            var track_x, track_y;
+
+            var track_line = d3.line().curve(d3.curveBasis)
+                .x(function(d) { return track_x(d.long); })
+                .y(function(d) { return track_y(d.lat); });
+
+
+
+            /* draw line chart */
 
             drawLineChart();
 
@@ -221,13 +245,14 @@
                         };
                     });
 
-                    // filter the specific features ( 기본값은 GPS_Speed / RPM )
+                    // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
                     selected_features = [];
+                    var temp_lat = [];
+                    var temp_long = [];
                     all_features.forEach(function(d){
 
                         // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
                         if(isNaN(d.values[0].feature_val)){
-                            console.log(d.id);
                             $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
                         }
 
@@ -235,11 +260,25 @@
                         if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)"){
                             selected_features.push(d)
                             selected_feat_names.push(d.id);
+                        }else if(d.id == "PosLat (deg)"){
+                            temp_lat = _.pluck(d.values, 'feature_val');
+                        }else if(d.id == "PosLon (deg)"){
+                            temp_long = _.pluck(d.values, 'feature_val');
                         }
+
+
+                    });
+                    /// ***** assign temp lat long data to global variable *****
+                    temp_lat.forEach(function(value, index){
+                        track_data.push({
+                            long: temp_long[index],
+                            lat: value
+                        });
 
                     });
 
 
+                    /*************************** DRAWING CHART ******************************/
 
                     // x domain은 TimeStamp 또는 Distance로 ... default로는 TimeStamp
                     x.domain(d3.extent(data, function(d) { return d.x; }));
@@ -260,15 +299,14 @@
 
                             var ty = y.set(this, d3.scaleLinear()
                                 .range([height, 0]))
+                                // local feature에 대한 y range setting
+                                .domain([
+                                    d3.min(d.values, function(c) { return c.feature_val; }),
+                                    d3.max(d.values, function(c) { return c.feature_val; }) ]);
                             // Global feature에 대한 y range setting
                             //                            .domain([
                             //                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
                             //                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
-
-                            // local feature에 대한 y range setting
-                                .domain([
-                                    d3.min(d.values, function(c) { return c.feature_val; }),
-                                    d3.max(d.values, function(c) { return c.feature_val; }) ])
 
                             // local feature range (0~ max(y))
 //                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
@@ -279,9 +317,11 @@
 
                         });
 
+
                     svg.append("path")
                         .attr("class", "line")
-                        .attr("d", function(d) {  return line.get(this)(d.values); });
+                        .attr("d", function(d) { return line.get(this)(d.values); });
+
 
                     svg.append("text")
                     //                    .attr("x", width - 6)
@@ -321,6 +361,39 @@
 //                    .attr("transform", "translate(" + 0 + "," + height + ")");
 
 
+
+
+                    /*************************** DRAWING TRACK ******************************/
+
+
+
+                    // range of track x, y (Longitude, Latitude) setting
+                    track_x = d3.scaleLinear().range([0, track_width])
+                        .domain([
+                            d3.min(track_data, function(d) { return d.long;}),
+                            d3.max(track_data, function(d) {return d.long;})
+                        ]);
+                    track_y = d3.scaleLinear().range([track_height, 0])
+                        .domain([
+                            d3.min(track_data, function(d) {return d.lat;}),
+                            d3.max(track_data, function(d) {return d.lat;})
+                        ]);
+
+                    // setting svg for drawing track
+                    track_svg = d3.select("#track_canvas").append("svg")
+                        .attr("width", track_width + track_margin.left + track_margin.right)
+                        .attr("height", track_height + track_margin.top + track_margin.bottom)
+                        .append("g")
+                        .attr("transform",
+                            "translate(" + track_margin.left + "," + track_margin.top + ")");
+
+                    // append path (drawing track)
+                    track_svg.append("path")
+                        .data([track_data])
+                        .attr("class", "line")
+                        .attr("d", track_line)
+
+
                 });
 
             }
@@ -334,9 +407,6 @@
 
                 // 만약 제거하려는 차트가 마지막 svg일 경우 차트 없앤 뒤에 새로운 x axis생성
                 if(index == selected_features.length-1){
-//                    console.log("last index!");
-//                    console.log(selected_features[index-1]);
-
                     d3.select("g#" + selected_features[index-1].id.split(" ")[0])
                         .append("g")
                         .call(xAxis)
@@ -395,6 +465,10 @@
                     .attr("id", "x-axis")
                     .attr("transform", "translate(" + 0 + "," + height + ")");
 //                    .attr("transform", "translate(" + 0 + "," + (height +margin.bottom)+ ")");
+
+
+
+
 
 
 

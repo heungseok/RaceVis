@@ -33,7 +33,7 @@ nav {
     /*height: 900px;*/
 }
 
-svg{
+#canvas>svg{
     margin-bottom: 0px;
     margin-top: 10px;
     margin-left: 50px;
@@ -74,27 +74,23 @@ svg{
 /* right checkbox */
 .checkbox_wrapper{
     width: 25%;
+    height: 30vh;
+    overflow-y: scroll;
     position: absolute;
     right: 1vw;
 }
 
-/*
+#track_canvas{
+    width: 25%;
+    height: 400px;
+    right: 1vw;
+    top: 35vh;
+    position:absolute;
+    /*height: 50%;*/
+    /*height: auto;*/
 
 
-
-
-.axis path,
-.axis line {
-    fill: none;
-    stroke: grey;
-    stroke-width: 1;
-    shape-rendering: crispEdges;
 }
-
-*/
-
-
-
 
 
 
