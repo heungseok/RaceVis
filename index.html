@@ -189,6 +189,9 @@
             <div id="track_canvas">
 
             </div>
+            <div id="sub_canvas">
+
+            </div>
 
 
         </div>
@@ -205,6 +208,11 @@
                 track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
                 track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
+            var sub_margin = {top: 20, right: 20, bottom: 20, left: 20},
+                sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
+                sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+
+
             var x = d3.scaleLinear().range([0, width]);
             var y = d3.local();
             var line = d3.local();
@@ -215,7 +223,7 @@
 
 
             var xAxis = d3.axisBottom(x);
-            var svg, track_svg;
+            var svg, track_svg, sub_svg;
 
             var all_features;
             var selected_features = [];
@@ -227,6 +235,13 @@
             var track_line = d3.line().curve(d3.curveBasis)
                 .x(function(d) { return track_x(d.long); })
                 .y(function(d) { return track_y(d.lat); });
+
+
+            // sub global data
+            var steer_data =[];
+//                brake_data = [],
+//                gas_data = [],
+//                gear_data = [];
 
 
 
@@ -251,8 +266,11 @@
 
                     // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
                     selected_features = [];
+//                    steer_data = [];
                     var temp_lat = [];
                     var temp_long = [];
+                    var temp_steer = [];
+
                     all_features.forEach(function(d){
 
                         // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
@@ -268,6 +286,12 @@
                             temp_lat = _.pluck(d.values, 'feature_val');
                         }else if(d.id == "PosLon (deg)"){
                             temp_long = _.pluck(d.values, 'feature_val');
+                        }else if(d.id == "Steer_angle (deg)"){
+                            steer_data = _.pluck(d.values, 'feature_val')
+                        }else if(d.id == "Pedal_brake (percent)"){
+                            brake_data = _.pluck(d.values, 'feature_val')
+                        }else if(d.id == "Gear (NA)"){
+                            gear_data = _.pluck(d.values, 'feature_val')
                         }
 
 
@@ -280,7 +304,6 @@
                         });
 
                     });
-
 
                     /*************************** DRAWING CHART ******************************/
 
@@ -400,7 +423,6 @@
                             d3.min(track_data, function(d) {return d.lat;}),
                             d3.max(track_data, function(d) {return d.lat;})
                         ]);
-                    console.log(track_data);
 
                     // setting svg for drawing track
                     track_svg = d3.select("#track_canvas").append("svg")
@@ -417,10 +439,57 @@
                         .attr("d", track_line)
 
                     var track_focus = track_svg.append("g")
-                        .attr("id", "track_focus1")
+                        .attr("id", "track_focus1");
 
                     track_focus.append("circle")
                         .attr("r", 4.5);
+
+
+                    /******************** Drawing Sub Info ****************************/
+
+                    // setting svg for drawing track
+                    sub_svg = d3.select("#sub_canvas").append("svg")
+                        .attr("width", sub_width + sub_margin.left + sub_margin.right)
+                        .attr("height", sub_height + sub_margin.top + sub_margin.bottom)
+                        .append("g")
+                        .attr("transform",
+                            "translate(" + sub_margin.left + "," + sub_margin.top + ")");
+
+                    // steering
+
+                    var steering_focus = sub_svg.append("g")
+                        .attr("id", "steer_focus1")
+
+                    steering_focus.append("image")
+                        .attr("xlink:href", "./img/steer.PNG")
+                    steering_focus.append("text")
+                        .text("Steering degree: ");
+
+
+                    // Brake
+                    var brake_focus = sub_svg.append("g")
+                        .attr("id", "brake_focus1")
+                        .attr("transform", "translate(120, 0)");
+
+                    brake_focus.append("text")
+                        .text("Brake: ");
+
+
+                    // Gas
+                    var gas_focus = sub_svg.append("g")
+                        .attr("id", "gas_focus1")
+                        .attr("transform", "translate(240, 0)");
+                    gas_focus.append("text")
+                        .text("Gas: ");
+
+                    // Gear
+                    var gear_focus = sub_svg.append("g")
+                        .attr("id", "gear_focus1")
+                        .attr("transform", "translate(360, 0)");
+                    gear_focus.append("text")
+                        .text("Gear: ");
+
+
 
 
                 });
@@ -432,11 +501,11 @@
 
                 var x_value = x.invert(d3.mouse(this)[0]);
                 var index = 0;
-//                var focuses = svg.selectAll(".focus");
+
                 var focuses = d3.select("#canvas").selectAll("svg")
                     .selectAll(".focus");
 
-
+                // set all focus elements' style to display
                 focuses.style("display", null);
 
                 focuses.attr("transform", function(d){
@@ -457,9 +526,37 @@
                 focuses.selectAll("text")
                     .text( function (d) { return + d.values[index].feature_val; });
 
-                var track_focus = d3.select("#track_focus1")
 
+
+                // moving Track
+                var track_focus = d3.select("#track_focus1");
                 track_focus.attr("transform", "translate(" + track_x(track_data[index].long) + "," + track_y(track_data[index].lat) + ")");
+
+                // handle Steering, Brake, Gas, Gear
+
+                // rotate by steering value
+                var steer_focus = d3.select("#steer_focus1");
+                // 수정필요
+                steer_focus.select("image")
+                    .attr("transform", "rotate(" + steer_data[index] + ")");
+                steer_focus.select("text")
+                    .text("Steering degree: " + steer_data[index]);
+
+                var brake_focus = d3.select("#brake_focus1");
+                brake_focus.select("text")
+                    .text("Brake: " + brake_data[index]);
+
+                var gear_focus = d3.select("#gear_focus1");
+                gear_focus.select("text")
+                    .text("Gear: " + gear_data[index]);
+
+
+
+
+
+                // this is for get array data by id
+                // console.log(_.where(all_features), function(item) { console.log(item); return item.id=="Steer_angle (deg)"});
+
 
             }
 

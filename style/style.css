@@ -74,7 +74,7 @@ nav {
 /* right checkbox */
 .checkbox_wrapper{
     width: 25%;
-    height: 30vh;
+    height: 25vh;
     overflow-y: scroll;
     position: absolute;
     right: 1vw;
@@ -82,13 +82,19 @@ nav {
 
 #track_canvas{
     width: 25%;
-    height: 400px;
+    height: 30vh;
     right: 1vw;
     top: 35vh;
     position:absolute;
-    /*height: 50%;*/
-    /*height: auto;*/
 
+}
+
+#sub_canvas{
+    width: 25%;
+    height: 20vh;
+    right: 1vw;
+    top: 65vh;
+    position:absolute;
 
 }
 
