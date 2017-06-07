@@ -18,6 +18,7 @@ nav {
     top: 10vh;
     z-index: 1;
     width: 100%;
+    overflow-y: scroll;;
 
 
 }
