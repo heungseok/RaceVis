@@ -195,10 +195,10 @@
                     <!--<div class="sel_box">-->
                         <!--<label for="sel_speed"></label>-->
                         <!--<select class="form-control" id="sel_speed" onchange="setPlaySpeed()">-->
-                            <!--<option value="0.1">1x</option>-->
-                            <!--<option value="0.05">2x</option>-->
-                            <!--<option value="0.02">3x</option>-->
-                            <!--<option value="0.01">4x</option>-->
+                            <!--<option value="50">1x</option>-->
+                            <!--<option value="25">2x</option>-->
+                            <!--<option value="10">3x</option>-->
+                            <!--<option value="1">4x</option>-->
                         <!--</select>-->
                     <!--</div>-->
                 <!--</div>-->
@@ -257,7 +257,7 @@
             // index for animating
             var animation_index =0,
                 animation_length,
-                animation_delay = 1; // default as 1 milliseconds.
+                animation_delay = 50; // default as 50 milliseconds.
 
 
             /* draw line chart */
@@ -581,7 +581,7 @@
             }
 
             function setPlaySpeed(){
-                animation_delay = 10 * Number(document.getElementById("sel_speed").value);
+                animation_delay = Number(document.getElementById("sel_speed").value);
             }
 
             function playInput(){
