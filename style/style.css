@@ -99,6 +99,14 @@ nav {
 
 }
 
+#sel_speed{
+    width: 50%;
+    float: right;
+}
+.playBtn{
+    float:left;
+}
+
 
 
 /* The Modal (background) */

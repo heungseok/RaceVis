@@ -123,12 +123,7 @@
                 <div class="checkbox">
                     <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleCBclick(this); checked="checked">GPS_Speed (kmh)</label>
                 </div>
-                <!--<div class="checkbox">-->
-                    <!--<label><input type="checkbox" value="PosLat (deg)" onclick=handleCBclick(this);>PosLat (deg)</label>-->
-                <!--</div>-->
-                <!--<div class="checkbox">-->
-                    <!--<label><input type="checkbox" value="PosLon (deg)" onclick=handleCBclick(this);>PosLon (deg)</label>-->
-                <!--</div>-->
+
                 <div class="checkbox">
                     <label><input type="checkbox" value="AccelForward (g)" onclick=handleCBclick(this);>AccelForward (g)</label>
                 </div>
@@ -190,11 +185,22 @@
 
             </div>
             <div id="sub_canvas">
-                <div class="playBtn">
-                    <button type="button" class="btn" id="button_play" onclick="playInput()">
-                        <span class="glyphicon glyphicon-play"></span>
+                <div class="animation_wrapper">
+                    <div class="playBtn">
+                        <button type="button" class="btn" id="button_play" onclick="playInput()">
+                            <span class="glyphicon glyphicon-play"></span>
 
-                    </button>
+                        </button>
+                    </div>
+                    <div class="sel_box">
+                        <label for="sel_speed"></label>
+                        <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
+                            <option value="0.1">1x</option>
+                            <option value="0.05">2x</option>
+                            <option value="0.02">3x</option>
+                            <option value="0.01">4x</option>
+                        </select>
+                    </div>
                 </div>
 
             </div>
@@ -579,6 +585,10 @@
                 // console.log(_.where(all_features), function(item) { console.log(item); return item.id=="Steer_angle (deg)"});
 
 
+            }
+
+            function setPlaySpeed(){
+                animation_delay = 10 * Number(document.getElementById("sel_speed").value);
             }
 
             function playInput(){
