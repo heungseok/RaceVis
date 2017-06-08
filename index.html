@@ -462,6 +462,7 @@
 
                     steering_focus.append("image")
                         .attr("xlink:href", "./img/steer.PNG")
+                        .attr("transform", "translate(0, 25)");
                     steering_focus.append("text")
                         .text("Steering degree: ");
 
@@ -470,6 +471,14 @@
                     var brake_focus = sub_svg.append("g")
                         .attr("id", "brake_focus1")
                         .attr("transform", "translate(120, 0)");
+
+                    brake_focus.append("rect")
+                        .attr("x", -25)
+                        .attr("y", -110)
+                        .attr("transform", "rotate(180)")
+                        .attr("width", 20)
+                        .attr("height", 1)
+                        .style("fill", "steelblue");
 
                     brake_focus.append("text")
                         .text("Brake: ");
@@ -538,11 +547,13 @@
                 var steer_focus = d3.select("#steer_focus1");
                 // 수정필요
                 steer_focus.select("image")
-                    .attr("transform", "rotate(" + steer_data[index] + ")");
+                    .attr("transform", "translate(0, 25), rotate(" + steer_data[index] + ", 35, 35)");
                 steer_focus.select("text")
                     .text("Steering degree: " + steer_data[index]);
 
                 var brake_focus = d3.select("#brake_focus1");
+                brake_focus.select("rect")
+                    .attr("height", 1+ brake_data[index]);
                 brake_focus.select("text")
                     .text("Brake: " + brake_data[index]);
 
