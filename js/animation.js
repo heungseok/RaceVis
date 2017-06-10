@@ -2,17 +2,49 @@
  * Created by totor on 2017-06-11.
  */
 
+// animation delay 변경 (1x, 2x, 3x, 4x -배속)
 function setPlaySpeed(){
     animation_delay = Number(document.getElementById("sel_speed").value);
 }
 
+
+// play button click event
 function playInput(){
-    // when play button clicked, the animation function call;
-    trackAnimation();
+
+    // change button css
+    if(animation_state == "play"){
+        console.log("play clicked and change button state as pause")
+        // 만약 pause상태 였을 경우 flag를 false로 다시 setting
+        resume_flag = false;
+        animation_flag = false;
+        pause(); // play시 버튼 상태를 pause로 변경.
+    }else if(animation_state == "pause"){
+        console.log("pause clicked and change button state as resume")
+        resume_flag = true;
+        resume(); // pause가 클릭됬을 경우.
+        return;
+    }
+
+    // 플래그가 true일 경우 함수를 실행하지 않고 return. (즉 이미 재생되고있을 경우 그냥 pass)
+    if(!animation_flag) {
+        console.log("replay or play")
+        animation_flag = true;
+        trackAnimation();
+    }else {
+        return;
+    }
+
+    // delayed Loop 가 완전히 끝났을 경우 flag를 true로 하고 함수종료
+    animation_flag = true;
+
 }
 
 function trackAnimation(){
     setTimeout(function () {
+        // resume 버튼 클릭되었을 경우 애니메이션 정지
+        if(resume_flag) return;
+        
+        
         // ************** block for animation things *************** //
         var track_focus = d3.select("#track_focus1");
         track_focus.attr("transform", "translate(" + track_x(track_data[animation_index].long) + "," + track_y(track_data[animation_index].lat) + ")");
@@ -63,9 +95,29 @@ function trackAnimation(){
             trackAnimation();
         }else{
             animation_index = 0;
+            resetPlay()
         }
     },animation_delay) // change this time (in milliseconds) to delay
 }
 
 
+function resetPlay(){
 
+    animation_flag = false;
+    var button = d3.select("#button_play").classed("btn-success", false);
+    button.select("span").attr("class", "glyphicon glyphicon-play");
+    animation_state = "play";
+}
+function pause() {
+    animation_state = 'pause';
+    var button = d3.select("#button_play").classed("btn-success", true);
+    button.attr("value", "false");
+    button.select("span").attr("class", "glyphicon glyphicon-pause");
+}
+function resume() {
+    animation_state = "play";
+    var button = d3.select("#button_play").classed("btn-success", true);
+    button.attr("value", "true");
+    button.select("span").attr("class", "glyphicon glyphicon-play");
+    window.clearTimeout();
+}

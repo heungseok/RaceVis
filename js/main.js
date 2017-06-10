@@ -36,16 +36,20 @@ var track_line = d3.line().curve(d3.curveBasis)
     .y(function(d) { return track_y(d.lat); });
 
 
-// sub global data
+// var for sub global data
 var steer_data =[],
     brake_data = [],
     gas_data = [],
     gear_data = [];
 
-// index for animating
+// variable for for animating
 var animation_index =0,
     animation_length,
+    animation_flag = false,
+    resume_flag = false,
+    animation_state = "play",
     animation_delay = 50; // default as 50 milliseconds.
+
 
 
 $(document).ready(function () {
