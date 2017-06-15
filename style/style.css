@@ -28,7 +28,8 @@ nav {
     /*right: 30vh*/
     /*margin-bottom: 50px;*/
     width:90%;
-    height: 700px;
+    /*height: 700px;*/
+    height: 900px;
     margin-left: 20px;
     margin-right: 20px;
 
@@ -39,13 +40,13 @@ nav {
     /*right: 30vh*/
     /*margin-bottom: 50px;*/
     width:90%;
-    height: 200px;
+    height: 10%;
     margin-left: 20px;
     margin-right: 20px;
 
 }
 
-#canvas>svg{
+#canvas>svg, #zoom_canvas>svg{
     margin-bottom: 0px;
     margin-top: 10px;
     margin-left: 50px;

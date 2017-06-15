@@ -9,7 +9,7 @@ var margin = {top: 20, right: 20, bottom: 20, left: 70},
 
 var zoom_margin = {top: 20, right: 20, bottom: 20, left: 70},
     zoom_width = width,
-    zoom_height = document.getElementById("canvas").offsetHeight/5 - zoom_margin.bottom - zoom_margin.top;
+    zoom_height = document.getElementById("canvas").offsetHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
 var track_margin = {top: 20, right: 20, bottom: 20, left: 20},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
