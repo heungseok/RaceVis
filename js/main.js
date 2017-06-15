@@ -65,15 +65,14 @@ var animation_index =0,
 // variable for brush
 var brush = d3.brushX()
     .extent([[0,0], [zoom_width, zoom_height]])
-    .on("brush end", brush);
+    .on("brush end", brushed);
 
 var context;
 
 
 $(document).ready(function () {
     init();
-})
-
+});
 
 function init(){
 
@@ -159,7 +158,7 @@ function type(d, _, columns) {
 }
 
 
-function brush(){
+function brushed(){
     var s = d3.event.selection || zoom_x.range();
     x.domain(s.map(zoom_x.invert, zoom_x));
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});

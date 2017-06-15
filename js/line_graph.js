@@ -457,6 +457,12 @@ function addChart(id) {
         .on("mousemove", mousemove);
 
 
+    // set the all circles as invisible
+    var focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus");
+    focuses.style("display", "none");
+
+
 }
 
 
