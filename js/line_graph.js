@@ -52,6 +52,7 @@ function drawLineGraph(){
         .attr("height", height)
 
     // assign clipPath to each line area.
+    // & draw path line
     svg.append("path")
         .attr("class", "line")
         .attr("d", function(d) { return line.get(this)(d.values); })
@@ -137,7 +138,7 @@ function drawLineGraph(){
         .attr("height", height)
         .attr("fill", "transparent")
         .on("mouseover", function() { focus.style("display", null); })
-        .on("mouseout", function() { focus.style("display", "none"); })
+        // .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
 
 
@@ -383,10 +384,26 @@ function addChart(id) {
 
         });
 
+    // clipPath init. ref-http://visualize.tistory.com/331
+    d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
+        .attr("id",  function (d) {
+            return "clip_" + d.id.split(" ")[0];
+        })
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
 
+    // assign clipPath to each line area.
+    // & draw path line
     svg.append("path")
         .attr("class", "line")
-        .attr("d", function(d) { return line.get(this)(d.values); });
+        .attr("d", function(d) { return line.get(this)(d.values); })
+        .attr("clip-path", function (d) {
+            return "url(#clip_" + d.id.split(" ")[0] + ")";
+        });
+
+    // end of init. clipPath
+
 
 
     svg.append("text")
@@ -415,7 +432,6 @@ function addChart(id) {
         .call(xAxis)
         .attr("id", "x-axis")
         .attr("transform", "translate(" + 0 + "," + height + ")");
-//                    .attr("transform", "translate(" + 0 + "," + (height +margin.bottom)+ ")");
 
 
     var focus = svg.append("g")
@@ -437,7 +453,7 @@ function addChart(id) {
 
     d3.select("#canvas").selectAll(".overlay")
         .on("mouseover", function() { focus.style("display", null); })
-        .on("mouseout", function() { focus.style("display", "none"); })
+        // .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
 
 

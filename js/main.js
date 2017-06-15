@@ -162,8 +162,14 @@ function type(d, _, columns) {
 function brush(){
     var s = d3.event.selection || zoom_x.range();
     x.domain(s.map(zoom_x.invert, zoom_x));
-    svg.selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
-    svg.selectAll(".axis--x").call(xAxis);
+    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+
+    var focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus");
+
+    // set all focus elements' style to un-display
+    focuses.style("display", "none");
 
 }
 
