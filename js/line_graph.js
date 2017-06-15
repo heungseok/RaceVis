@@ -36,19 +36,35 @@ function drawLineGraph(){
                 .x(function(d){ return x(d.x);})
                 .y(function(d){ return ty(d.feature_val); }));
 
+            zoom_line.set(this, d3.line().curve(d3.curveBasis)
+                .x(function(d){ return x(d.x);})
+                .y(function(d){ return ty(d.feature_val); }));
+
         });
 
+    // clipPath init. ref-http://visualize.tistory.com/331
+    d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
+        .attr("id",  function (d) {
+            return "clip_" + d.id.split(" ")[0];
+        })
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
 
+    // assign clipPath to each line area.
     svg.append("path")
         .attr("class", "line")
-        .attr("d", function(d) { return line.get(this)(d.values); });
+        .attr("d", function(d) { return line.get(this)(d.values); })
+        .attr("clip-path", function (d) {
+            return "url(#clip_" + d.id.split(" ")[0] + ")";
+        });
+
+    // end of init. clipPath
 
 
     svg.append("text")
-    //                    .attr("x", width - 6)
         .attr("y", height - 50)
         .attr("x", 10)
-        //                    .attr("y", 10)
         .text(function(d) { return d.id; });
 
     // define y axis
@@ -65,14 +81,17 @@ function drawLineGraph(){
 
         d3.select(id).append("g")
             .call(d3.axisLeft(y_range))
-//                        .attr("transform", "translate(" + margin.left + "," + 0 + ")")
+
 
         // 마지막 인덱스인 그래프에만 x axis
         if( i == selected_features.length -1){
             d3.select(id).append("g")
                 .call(xAxis)
                 .attr("id", "x-axis")
+                .attr("class", "axis axis--x")
                 .attr("transform", "translate(" + 0 + "," + height + ")");
+
+
         }
     }
 
@@ -87,6 +106,31 @@ function drawLineGraph(){
         .attr("dy", ".35em")
         .text("nothing");
 
+
+    zoom_svg = d3.select("#zoom_canvas")
+        .append("svg")
+        .attr("width", zoom_width + zoom_margin.left + zoom_margin.right)
+        .attr("height", zoom_height + zoom_margin.top + zoom_margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+
+    context = zoom_svg.append("g")
+        .attr("class", "context")
+
+    context.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(" + 0+ "," + zoom_height + ")")
+        .call(zoom_xAxis);
+    //
+    context.append("g")
+        .attr("class", "brush")
+        .call(brush)
+        .call(brush.move, x.range());
+
+
+
+    // for mouse hovering event
     svg.append("rect")
         .attr("class", "overlay")
         .attr("width", width)
@@ -95,6 +139,7 @@ function drawLineGraph(){
         .on("mouseover", function() { focus.style("display", null); })
         .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
+
 
 
     // gloabl x-axis 달기

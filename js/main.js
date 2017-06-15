@@ -7,6 +7,10 @@ var margin = {top: 20, right: 20, bottom: 20, left: 70},
     width = document.getElementById("canvas").offsetWidth - margin.left - margin.right,
     height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
 
+var zoom_margin = {top: 20, right: 20, bottom: 20, left: 70},
+    zoom_width = width,
+    zoom_height = document.getElementById("canvas").offsetHeight/5 - zoom_margin.bottom - zoom_margin.top;
+
 var track_margin = {top: 20, right: 20, bottom: 20, left: 20},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top;
@@ -17,12 +21,19 @@ var sub_margin = {top: 20, right: 20, bottom: 20, left: 20},
 
 
 var x = d3.scaleLinear().range([0, width]);
+var zoom_x = d3.scaleLinear().range([0, zoom_width]);
 var y = d3.local();
+
+
 var line = d3.local();
+var zoom_line = d3.local();
 var bisect = d3.bisector(function (d) { return d.x; }).left;
 
 var xAxis = d3.axisBottom(x);
-var svg, track_svg, sub_svg;
+var zoom_xAxis = d3.axisBottom(zoom_x)
+
+var svg, zoom_svg,
+    track_svg, sub_svg;
 
 var all_features;
 var selected_features = [];
@@ -51,6 +62,13 @@ var animation_index =0,
     animation_delay = 50; // default as 50 milliseconds.
 
 
+// variable for brush
+var brush = d3.brushX()
+    .extent([[0,0], [zoom_width, zoom_height]])
+    .on("brush end", brush);
+
+var context;
+
 
 $(document).ready(function () {
     init();
@@ -60,9 +78,11 @@ $(document).ready(function () {
 function init(){
 
     d3.csv("./data/2nd_std_file.csv", type, function(error, data) {
+    // d3.csv("./data/2nd_std_file_origin.csv", type, function(error, data) {
         if (error) throw error;
-
+        // console.log(data)
         all_features = data.columns.slice(1).map(function(id) {
+            // console.log(id)
 
             return {
                 id: id,
@@ -113,7 +133,10 @@ function init(){
         animation_length = track_data.length;
 
         // x domain은 TimeStamp 또는 Distance로 ... default로는 TimeStamp
-        x.domain(d3.extent(data, function(d) { return d.x; }));
+        x0 = d3.extent(data, function(d) {return d.x;})
+        x.domain(x0);
+        zoom_x.domain(x0);
+
 
         drawLineGraph();
         drawTrack();
@@ -127,8 +150,20 @@ function init(){
 // This function supports parsing the column from input data.
 function type(d, _, columns) {
     d.x = d["TimeStamp (sec)"]
+    // d.x = d["TimeStamp"]
     for (var i = 1, n = columns.length, c; i < n; ++i) {
         d[c = columns[i]]  =  +d[c];
+        // console.log(d)
         return d;
     }
 }
+
+
+function brush(){
+    var s = d3.event.selection || zoom_x.range();
+    x.domain(s.map(zoom_x.invert, zoom_x));
+    svg.selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    svg.selectAll(".axis--x").call(xAxis);
+
+}
+
