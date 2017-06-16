@@ -70,6 +70,12 @@ nav {
     stroke-width: 1px;
 }
 
+.zoom{
+    cursor: move;
+    fill: none;
+    /*pointer-events: all;*/
+}
+
 
 /* select track, sesssion box */
 .sel_box{

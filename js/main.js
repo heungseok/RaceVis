@@ -67,6 +67,12 @@ var brush = d3.brushX()
     .extent([[0,0], [zoom_width, zoom_height]])
     .on("brush end", brushed);
 
+var zoom = d3.zoom()
+    .scaleExtent([1, Infinity])
+    .translateExtent([[0, 0], [width, height]])
+    .extent([[0, 0], [width, height]])
+    .on("zoom", zoomed);
+
 var context;
 
 
@@ -159,16 +165,33 @@ function type(d, _, columns) {
 
 
 function brushed(){
+    if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
     var s = d3.event.selection || zoom_x.range();
     x.domain(s.map(zoom_x.invert, zoom_x));
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
 
-    var focuses = d3.select("#canvas").selectAll("svg")
-        .selectAll(".focus");
+    d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
+        .scale(width / (s[1] - s[0]))
+        .translate(-s[0], 0));
+
 
     // set all focus elements' style to un-display
+    var focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus");
     focuses.style("display", "none");
+
+}
+
+function zoomed(){
+    if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
+    var t = d3.event.transform;
+    // console.log(t);
+    x.domain(t.rescaleX(zoom_x).domain());
+    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+    // context select
+    d3.select("#zoom_canvas").select("g.brush").call(brush.move, x.range().map(t.invertX, t));
 
 }
 
