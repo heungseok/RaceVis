@@ -58,7 +58,8 @@ function drawLineGraph(){
         .attr("d", function(d) { return line.get(this)(d.values); })
         .attr("clip-path", function (d) {
             return "url(#clip_" + d.id.split(" ")[0] + ")";
-        });
+        })
+
 
     // end of init. clipPath
 
@@ -117,7 +118,7 @@ function drawLineGraph(){
 
 
     context = zoom_svg.append("g")
-        .attr("class", "context")
+        .attr("class", "context");
 
     context.append("g")
         .attr("class", "axis axis--x")
@@ -139,7 +140,21 @@ function drawLineGraph(){
         .attr("fill", "transparent")
         .on("mouseover", function() { focus.style("display", null); })
         // .on("mouseout", function() { focus.style("display", "none"); })
-        .on("mousemove", mousemove);
+        .on("mousemove", mousemove)
+
+
+    // Zooming effect
+    /* need to fix to be synced
+    svg.append("rect")
+        .attr("class", "zoom")
+        .attr("width", width)
+        .attr("height", height)
+        .call(zoom)
+        .on("wheel.zoom", null);
+    */
+
+
+
 
 
 
@@ -455,6 +470,16 @@ function addChart(id) {
         .on("mouseover", function() { focus.style("display", null); })
         // .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
+
+
+/*  need to fix to be synced
+    svg.append("rect")
+        .attr("class", "zoom")
+        .attr("width", width)
+        .attr("height", height)
+        .call(zoom)
+        .on("wheel.zoom", null);
+*/
 
 
     // set the all circles as invisible
