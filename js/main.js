@@ -101,7 +101,6 @@ function init(){
         selected_features = [];
         var temp_lat = [];
         var temp_long = [];
-        var temp_steer = [];
 
         all_features.forEach(function(d){
 
@@ -124,6 +123,8 @@ function init(){
                 brake_data = _.pluck(d.values, 'feature_val')
             }else if(d.id == "Gear (NA)"){
                 gear_data = _.pluck(d.values, 'feature_val')
+            }else if(d.id == "Pedal_throttle (percent)"){
+                gas_data = _.pluck(d.values, 'feature_val')
             }
 
         });
@@ -137,10 +138,13 @@ function init(){
         });
         animation_length = track_data.length;
 
-        // x domain은 TimeStamp 또는 Distance로 ... default로는 TimeStamp
-        x0 = d3.extent(data, function(d) {return d.x;})
+        // x domain은 TimeStamp 또는 Distance로 ... default로는 TimeStamp => Distance
+        // x0 = d3.extent(data, function(d) {return d.x;}) => 가 string array ['1', '2', '33', ...] 에서 동작하려면
+        // x0 = d3.extent(data, function(d) {return +d.x;}) 와같이 coerce를 거쳐야함.
+        x0 = d3.extent(data, function(d) {return +d.x;});
         x.domain(x0);
         zoom_x.domain(x0);
+        console.log(x0);
 
 
         drawLineGraph();
@@ -154,8 +158,8 @@ function init(){
 
 // This function supports parsing the column from input data.
 function type(d, _, columns) {
-    d.x = d["TimeStamp (sec)"]
-    // d.x = d["TimeStamp"]
+    // d.x = d["TimeStamp (sec)"]
+    d.x = d["Distance (m)"]
     for (var i = 1, n = columns.length, c; i < n; ++i) {
         d[c = columns[i]]  =  +d[c];
         // console.log(d)

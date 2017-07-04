@@ -318,6 +318,10 @@ function mousemove(){
     gear_focus.select("text")
         .text("Gear: " + gear_data[index]);
 
+    var gas_focus = d3.select("#gas_focus1");
+    gas_focus.select("text")
+        .text("Gas: " + gas_data[index]);
+
     // this is for get array data by id
     // console.log(_.where(all_features), function(item) { console.log(item); return item.id=="Steer_angle (deg)"});
 }
