@@ -209,6 +209,8 @@ function zoomReset() {
 
 
     x.domain(t.rescaleX(zoom_x).domain()); // 차트 추가되었을때도 동작하기 위함.
+    
+    // zoom reset => 이 중에 없애도 되는게 있을 듯 
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     d3.select("#canvas").selectAll(".axis--x").call(zoom.transform, t);
     d3.select("#canvas").selectAll(".zoom").call(zoom.transform, t);
