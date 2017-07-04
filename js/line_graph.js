@@ -500,7 +500,6 @@ function addChart(id) {
         .on("wheel.zoom", null);
 */
 
-
     // set the all circles as invisible
     var focuses = d3.select("#canvas").selectAll("svg")
         .selectAll(".focus");
@@ -508,8 +507,6 @@ function addChart(id) {
 
 
 }
-
-
 
 function removeChart(id, index) {
 
@@ -529,10 +526,6 @@ function removeChart(id, index) {
     }
 
 }
-
-
-
-
 
 
 function addChart_old_ver(id) {

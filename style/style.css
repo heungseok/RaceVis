@@ -60,6 +60,10 @@ path.domain{
     margin-right: 20px;
 
 }
+button#zoom_out{
+    margin-left: 100px;
+}
+
 rect.selection{
     stroke:none;
 }

@@ -67,6 +67,8 @@ var brush = d3.brushX()
     .extent([[0,0], [zoom_width, zoom_height]])
     .on("brush end", brushed);
 
+/*   ZOOM var  */
+// init zoom listener
 var zoom = d3.zoom()
     .scaleExtent([1, Infinity])
     .translateExtent([[0, 0], [width, height]])
@@ -74,6 +76,7 @@ var zoom = d3.zoom()
     .on("zoom", zoomed);
 
 var context;
+/***************/
 
 
 $(document).ready(function () {
@@ -199,3 +202,18 @@ function zoomed(){
 
 }
 
+function zoomReset() {
+    console.log("zoom reset!");
+
+    var t = d3.zoomIdentity.translate(0, 0).scale(1);
+
+
+    x.domain(t.rescaleX(zoom_x).domain()); // 차트 추가되었을때도 동작하기 위함.
+    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    d3.select("#canvas").selectAll(".axis--x").call(zoom.transform, t);
+    d3.select("#canvas").selectAll(".zoom").call(zoom.transform, t);
+
+    // brush reset
+    d3.select("#zoom_canvas").select("g.brush").call(brush.move, null);
+
+}
