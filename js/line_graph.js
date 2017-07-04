@@ -250,6 +250,16 @@ function drawSubInfo() {
     var gas_focus = sub_svg.append("g")
         .attr("id", "gas_focus1")
         .attr("transform", "translate(240, 0)");
+
+    gas_focus.append("rect")
+        .attr("x", -25)
+        .attr("y", -110)
+        .attr("transform", "rotate(180)")
+        .attr("width", 20)
+        .attr("height", 1)
+        .style("fill", "steelblue");
+
+
     gas_focus.append("text")
         .text("Gas: ");
 
@@ -314,13 +324,17 @@ function mousemove(){
     brake_focus.select("text")
         .text("Brake: " + brake_data[index]);
 
+    var gas_focus = d3.select("#gas_focus1");
+    gas_focus.select("rect")
+        .attr("height", 1+gas_data[index]);
+    gas_focus.select("text")
+        .text("Gas: " + gas_data[index]);
+
     var gear_focus = d3.select("#gear_focus1");
     gear_focus.select("text")
         .text("Gear: " + gear_data[index]);
 
-    var gas_focus = d3.select("#gas_focus1");
-    gas_focus.select("text")
-        .text("Gas: " + gas_data[index]);
+
 
     // this is for get array data by id
     // console.log(_.where(all_features), function(item) { console.log(item); return item.id=="Steer_angle (deg)"});

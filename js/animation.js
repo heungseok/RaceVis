@@ -62,9 +62,19 @@ function trackAnimation(){
         brake_focus.select("text")
             .text("Brake: " + brake_data[animation_index]);
 
+        var gas_focus = d3.select("#gas_focus1");
+        gas_focus.select("rect")
+            .attr("height", 1+gas_data[animation_index]);
+        gas_focus.select("text")
+            .text("Gas: " + gas_data[animation_index]);
+
         var gear_focus = d3.select("#gear_focus1");
         gear_focus.select("text")
             .text("Gear: " + gear_data[animation_index]);
+
+        var gas_focus = d3.select("#gas_focus1");
+        gas_focus.select("text")
+            .text("Gas: " + gas_data[animation_index]);
 
         // animation for line chart
         var focuses = d3.select("#canvas").selectAll("svg")
