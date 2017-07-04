@@ -260,7 +260,6 @@ function drawSubInfo() {
         .attr("height", 1)
         .style("fill", "steelblue");
 
-
     gas_focus.append("text")
         .text("Gas: ");
 
@@ -302,7 +301,7 @@ function mousemove(){
     });
 
     focuses.selectAll("text")
-        .text( function (d) { return + d.values[index].feature_val; });
+        .text( function (d) { return +d.values[index].feature_val.toFixed(3); });
 
 
 
