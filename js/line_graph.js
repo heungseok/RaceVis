@@ -82,7 +82,7 @@ function drawLineGraph(){
             ]);
 
         d3.select(id).append("g")
-            .call(d3.axisLeft(y_range))
+            .call(d3.axisLeft(y_range).ticks(3))
 
 
         // 마지막 인덱스인 그래프에만 x axis
@@ -223,6 +223,7 @@ function drawSubInfo() {
         .attr("id", "steer_focus1")
 
     steering_focus.append("image")
+        .attr("height", 80).attr("width", 80)
         .attr("xlink:href", "./img/steer.PNG")
         .attr("transform", "translate(0, 25)");
     steering_focus.append("text")
@@ -332,7 +333,8 @@ function mousemove(){
 
     var gear_focus = d3.select("#gear_focus1");
     gear_focus.select("text")
-        .text("Gear: " + gear_data[index]);
+        .text("Gear: " + gear_data[index])
+        .style("color", "#9d9d9d");
 
 
 
@@ -457,7 +459,7 @@ function addChart(id) {
         .text(id);
 
     svg.append("g")
-        .call(d3.axisLeft(y_range));
+        .call(d3.axisLeft(y_range).ticks(3));
 
 
     // x axis
@@ -575,7 +577,7 @@ function addChart_old_ver(id) {
         .text(id);
 
     svg.append("g")
-        .call(d3.axisLeft(y_range));
+        .call(d3.axisLeft(y_range).ticks(3));
 
     // x axis
     svg.append("g")

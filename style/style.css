@@ -5,6 +5,8 @@ body{
     overflow: hidden;
     padding: 0;
     margin: 0;
+    background-color:#101010;
+    color: #9d9d9d;
 
 }
 
@@ -18,7 +20,8 @@ nav {
     top: 10vh;
     z-index: 1;
     width: 100%;
-    overflow-y: scroll;;
+    overflow-y: scroll;
+    background-color:#101010;
 
 
 }
@@ -35,6 +38,18 @@ nav {
 
 }
 
+g.tick {
+    stroke: #9d9d9d;
+    stroke-width: 1;
+}
+g.tick>line {
+    stroke: #9d9d9d;
+}
+
+path.domain{
+    stroke: #9d9d9d;
+}
+
 #zoom_canvas{
     /*position: absolute;*/
     /*right: 30vh*/
@@ -45,12 +60,17 @@ nav {
     margin-right: 20px;
 
 }
+rect.selection{
+    stroke:none;
+}
 
 #canvas>svg, #zoom_canvas>svg{
     margin-bottom: 0px;
     margin-top: 10px;
     margin-left: 50px;
+    fill: #9d9d9d;
 }
+
 
 .area {
     fill: steelblue;
@@ -107,6 +127,10 @@ nav {
     position:absolute;
 
 }
+g.focus, g#track_focus1{
+    fill: #9d9d9d;
+
+}
 
 #sub_canvas{
     width: 25%;
@@ -116,6 +140,12 @@ nav {
     position:absolute;
 
 }
+#sub_canvas text{
+    fill: #9d9d9d;
+}
+
+
+
 
 #sel_speed{
     width: 50%;
