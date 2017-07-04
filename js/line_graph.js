@@ -224,7 +224,7 @@ function drawSubInfo() {
 
     steering_focus.append("image")
         .attr("height", 80).attr("width", 80)
-        .attr("xlink:href", "./img/steer.PNG")
+        .attr("xlink:href", "./img/steer.png")
         .attr("transform", "translate(0, 25)");
     steering_focus.append("text")
         .text("Steering degree: ");
