@@ -198,6 +198,8 @@ function brushed(){
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
 
+
+
     console.log("brushed!")
 
     setAnimationRange_fromZoom(s.map(zoom_x.invert, zoom_x));

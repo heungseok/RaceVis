@@ -462,11 +462,12 @@ function addChart(id) {
     svg.append("g")
         .call(d3.axisLeft(y_range).ticks(3));
 
-
+    
     // x axis
     svg.append("g")
         .call(xAxis)
         .attr("id", "x-axis")
+        .attr("class", "axis axis--x")
         .attr("transform", "translate(" + 0 + "," + height + ")");
 
 
@@ -573,7 +574,7 @@ function addChart_old_ver(id) {
     svg.append("g")
         .call(d3.axisLeft(y_range).ticks(3));
 
-    // x axis
+    // new x axis generate
     svg.append("g")
         .call(xAxis)
         .attr("id", "x-axis")
