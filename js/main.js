@@ -83,7 +83,25 @@ var context;
 
 $(document).ready(function () {
     init();
+
 });
+
+function init_zoom_and_brush() {
+    // variable for brush
+    brush = d3.brushX()
+        .extent([[0,0], [zoom_width, zoom_height]])
+        .on("brush end", brushed);
+
+    /*   ZOOM var  */
+    // init zoom listener
+    zoom = d3.zoom()
+        .scaleExtent([1, Infinity])
+        .translateExtent([[0, 0], [width, height]])
+        .extent([[0, 0], [width, height]])
+        .on("zoom", zoomed);
+
+    /***************/
+}
 
 function init(){
 
@@ -222,6 +240,30 @@ function setAnimationRange_fromZoom(s){
             return;
         }
     });
+    if (typeof track_svg != 'undefined')
+        drawing_animationPath()
+
+}
+
+function drawing_animationPath() {
+    // clean previous animation path
+    track_svg.select("path.animation_path").remove();
+
+    // if animation is playing, force to stop
+    resume_flag = true;
+    resume();
+
+    animation_track_data = [];
+    for(var i=animation_range[0]; i<animation_range[1]; i++){
+        animation_track_data.push(track_data[i]);
+    }
+
+    // append path (drawing track)
+    track_svg.append("path")
+        .data([animation_track_data])
+        .attr("class", "animation_path")
+        .attr("d", track_line)
+        .style("z-index", -1);
 
 }
 

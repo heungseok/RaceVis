@@ -101,11 +101,12 @@ function trackAnimation(){
 
         // ************** END of animation code *************** //
         animation_index++;
-        // if ( animation_index < animation_length){ => origin ver
+        // if ( animation_index < animation_length){ => origin ver.
         if ( animation_index < animation_range[1]){ // => coordinated by zoomed range
             trackAnimation();
         }else{
-            animation_index = 0;
+            // animation_index = 0; => origin ver.
+            animation_index = animation_range[0] // => coordinated by zoomed range
             resetPlay()
         }
     },animation_delay) // change this time (in milliseconds) to delay
@@ -132,3 +133,4 @@ function resume() {
     button.select("span").attr("class", "glyphicon glyphicon-play");
     window.clearTimeout();
 }
+

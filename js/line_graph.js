@@ -196,6 +196,8 @@ function drawTrack(){
         .attr("class", "line")
         .attr("d", track_line)
 
+
+    // append track focus element (circle)
     var track_focus = track_svg.append("g")
         .attr("id", "track_focus1");
 
