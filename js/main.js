@@ -3,7 +3,7 @@
  */
 /* global variable for drawing ling graph */
 
-var margin = {top: 20, right: 20, bottom: 20, left: 70},
+var margin = {top: 5, right: 20, bottom: 20, left: 70},
     width = document.getElementById("canvas").offsetWidth - margin.left - margin.right,
     height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
 

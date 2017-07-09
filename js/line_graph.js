@@ -101,12 +101,36 @@ function drawLineGraph(){
         .attr("class", "focus")
         .style("display", "none");
 
+    // append the circle at the interaction
     focus.append("circle")
+        .attr("class", "chart_tooltip")
         .attr("r", 4.5);
+    // place the value at the interaction
     focus.append("text")
+        .attr("class", "chart_tooltip")
         .attr("x", 9)
         .attr("dy", ".35em")
         .text("nothing");
+
+    // append x line.
+    focus.append("line")
+        .attr("class", "tooltip_line")
+        .style("stroke", "#fff")
+        .style("stroke-dasharray", "3,3")
+        .style("opacity", 0.9)
+        .attr("y1", -height)
+        .attr("y2", 0);
+
+
+    // append the rectangle to capture mouse
+    svg.append("rect")
+        .attr("class", "overlay")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "transparent")
+        .on("mouseover", function() { focus.style("display", null); })
+        // .on("mouseout", function() { focus.style("display", "none"); })
+        .on("mousemove", mousemove)
 
 
     zoom_svg = d3.select("#zoom_canvas")
@@ -129,34 +153,6 @@ function drawLineGraph(){
         .attr("class", "brush")
         .call(brush)
         .call(brush.move, x.range());
-
-
-
-    // for mouse hovering event
-    svg.append("rect")
-        .attr("class", "overlay")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", "transparent")
-        .on("mouseover", function() { focus.style("display", null); })
-        // .on("mouseout", function() { focus.style("display", "none"); })
-        .on("mousemove", mousemove)
-
-
-    // Zooming effect
-    /* need to fix to be synced
-    svg.append("rect")
-        .attr("class", "zoom")
-        .attr("width", width)
-        .attr("height", height)
-        .call(zoom)
-        .on("wheel.zoom", null);
-    */
-
-
-
-
-
 
     // gloabl x-axis 달기
 //                svg.append("g")
@@ -287,8 +283,7 @@ function mousemove(){
     // set all focus elements' style to display
     focuses.style("display", null);
 
-    focuses.attr("transform", function(d){
-//                    console.log(d);
+    focuses.selectAll(".chart_tooltip").attr("transform", function(d){
         index = bisect(d.values, x_value, 0, d.values.length -1);
 
         var y_range = d3.scaleLinear()
@@ -304,6 +299,12 @@ function mousemove(){
 
     focuses.selectAll("text")
         .text( function (d) { return +d.values[index].feature_val.toFixed(3); });
+
+    focuses.selectAll("line.tooltip_line").attr("transform", function(d){
+        index = bisect(d.values, x_value, 0, d.values.length -1);
+        return "translate(" + x(d.values[index].x) + "," + height +")";
+
+    });
 
 
 
@@ -475,9 +476,20 @@ function addChart(id) {
         .attr("class", "focus")
         .style("display", "none");
 
+    // append x line.
+    focus.append("line")
+        .attr("class", "tooltip_line")
+        .style("stroke", "#fff")
+        .style("stroke-dasharray", "3,3")
+        .style("opacity", 0.9)
+        .attr("y1", -height)
+        .attr("y2", 0);
+
     focus.append("circle")
+        .attr("class", "chart_tooltip")
         .attr("r", 4.5);
     focus.append("text")
+        .attr("class", "chart_tooltip")
         .attr("x", 9)
         .attr("dy", ".35em")
         .text("nothing");

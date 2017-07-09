@@ -83,7 +83,7 @@ function trackAnimation(){
         // set all focus elements' style to display
         focuses.style("display", null);
 
-        focuses.attr("transform", function(d){
+        focuses.selectAll(".chart_tooltip").attr("transform", function(d){
 
             var y_range = d3.scaleLinear()
                 .range([height, 0])
@@ -98,6 +98,12 @@ function trackAnimation(){
 
         focuses.selectAll("text")
             .text( function (d) { return + d.values[animation_index].feature_val.toFixed(3); });
+
+        focuses.selectAll("line.tooltip_line").attr("transform", function(d){
+            
+            return "translate(" + x(d.values[animation_index].x) + "," + height +")";
+
+        });
 
         // ************** END of animation code *************** //
         animation_index++;
