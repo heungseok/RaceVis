@@ -462,7 +462,7 @@ function addChart(id) {
     svg.append("g")
         .call(d3.axisLeft(y_range).ticks(3));
 
-    
+
     // x axis
     svg.append("g")
         .call(xAxis)
