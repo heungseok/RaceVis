@@ -100,7 +100,7 @@ function trackAnimation(){
             .text( function (d) { return + d.values[animation_index].feature_val.toFixed(3); });
 
         focuses.selectAll("line.tooltip_line").attr("transform", function(d){
-            
+
             return "translate(" + x(d.values[animation_index].x) + "," + height +")";
 
         });

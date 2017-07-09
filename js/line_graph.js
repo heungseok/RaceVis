@@ -119,7 +119,8 @@ function drawLineGraph(){
         .style("stroke-dasharray", "3,3")
         .style("opacity", 0.9)
         .attr("y1", -height)
-        .attr("y2", 0);
+        .attr("y2", height);
+
 
 
     // append the rectangle to capture mouse
@@ -280,6 +281,11 @@ function mousemove(){
     var focuses = d3.select("#canvas").selectAll("svg")
         .selectAll(".focus");
 
+    // 마지막 line x-axis에 맞추기.
+    var foc_lines = document.getElementsByClassName("tooltip_line");
+    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
+
+
     // set all focus elements' style to display
     focuses.style("display", null);
 
@@ -301,10 +307,13 @@ function mousemove(){
         .text( function (d) { return +d.values[index].feature_val.toFixed(3); });
 
     focuses.selectAll("line.tooltip_line").attr("transform", function(d){
+
         index = bisect(d.values, x_value, 0, d.values.length -1);
         return "translate(" + x(d.values[index].x) + "," + height +")";
 
     });
+
+
 
 
 
