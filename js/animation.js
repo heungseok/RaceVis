@@ -97,7 +97,7 @@ function trackAnimation(){
         });
 
         focuses.selectAll("text")
-            .text( function (d) { return + d.values[animation_index].feature_val; });
+            .text( function (d) { return + d.values[animation_index].feature_val.toFixed(3); });
 
         // ************** END of animation code *************** //
         animation_index++;
