@@ -38,6 +38,7 @@ var svg, zoom_svg,
 var all_features;
 var selected_features = [];
 var selected_feat_names = [];
+var root_x = "Distance (m)"
 
 var track_data = [];
 var track_x, track_y;
@@ -56,6 +57,7 @@ var steer_data =[],
 // variable for for animating
 var animation_index =0,
     animation_length,
+    animation_range = [],
     animation_flag = false,
     resume_flag = false,
     animation_state = "play",
@@ -162,7 +164,7 @@ function init(){
 // This function supports parsing the column from input data.
 function type(d, _, columns) {
     // d.x = d["TimeStamp (sec)"]
-    d.x = d["Distance (m)"]
+    d.x = d[root_x];
     for (var i = 1, n = columns.length, c; i < n; ++i) {
         d[c = columns[i]]  =  +d[c];
         // console.log(d)
@@ -178,6 +180,10 @@ function brushed(){
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
 
+    console.log("brushed!")
+
+    setAnimationRange_fromZoom(s.map(zoom_x.invert, zoom_x));
+
     d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
         .scale(width / (s[1] - s[0]))
         .translate(-s[0], 0));
@@ -190,11 +196,42 @@ function brushed(){
 
 }
 
+function setAnimationRange_fromZoom(s){
+
+    // clear the animation range (composed of index of data); animation_range는 index를 담고 있음.
+    animation_range = [];
+
+    var originX0 = s[0].toFixed(1),
+        originX1 = s[1].toFixed(1),
+        targetX0, targetX1;
+
+    all_features.forEach(function (data){
+        if (data.id == root_x){
+
+            for (var i=0; i<data.values.length-1; i++){
+                if (data.values[i].feature_val <= originX0 && data.values[i+1].feature_val >= originX0)
+                    targetX0 = i;
+                if (data.values[i].feature_val <= originX1 && data.values[i+1].feature_val >= originX1)
+                    targetX1 = i+1;
+            }
+            // setting animation range and initializing animation_index ( 애니메이션 인덱스 재조절)
+            animation_range.push(targetX0);
+            animation_range.push(targetX1);
+            animation_index = targetX0;
+
+            return;
+        }
+    });
+
+}
+
 function zoomed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     var t = d3.event.transform;
-    // console.log(t);
+    console.log("zooming!")
+    console.log(t.rescaleX(zoom_x).domain());
     x.domain(t.rescaleX(zoom_x).domain());
+
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
     // context select
@@ -207,8 +244,10 @@ function zoomReset() {
 
     var t = d3.zoomIdentity.translate(0, 0).scale(1);
 
-
     x.domain(t.rescaleX(zoom_x).domain()); // 차트 추가되었을때도 동작하기 위함.
+
+    // reset animation range also
+    setAnimationRange_fromZoom(t.rescaleX(zoom_x).domain());
     
     // zoom reset => 이 중에 없애도 되는게 있을 듯 
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});

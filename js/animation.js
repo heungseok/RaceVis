@@ -101,7 +101,8 @@ function trackAnimation(){
 
         // ************** END of animation code *************** //
         animation_index++;
-        if ( animation_index < animation_length){
+        // if ( animation_index < animation_length){ => origin ver
+        if ( animation_index < animation_range[1]){ // => coordinated by zoomed range
             trackAnimation();
         }else{
             animation_index = 0;
