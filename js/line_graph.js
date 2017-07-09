@@ -494,6 +494,13 @@ function addChart(id) {
         .attr("y1", -height)
         .attr("y2", 0);
 
+    // 마지막 line x-axis에 맞추기.
+    var foc_lines = document.getElementsByClassName("tooltip_line");
+    for (var i =0; i<foc_lines.length-1; i++){
+        foc_lines[i].setAttribute("y2", height);
+    }
+    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
+
     focus.append("circle")
         .attr("class", "chart_tooltip")
         .attr("r", 4.5);
@@ -548,6 +555,13 @@ function removeChart(id, index) {
             .attr("id", "x-axis")
             .attr("transform", "translate(" + 0 + "," + height + ")");
     }
+
+    // 마지막 line x-axis에 맞추기.
+    var foc_lines = document.getElementsByClassName("tooltip_line");
+    for (var i =0; i<foc_lines.length-1; i++){
+        foc_lines[i].setAttribute("y2", height);
+    }
+    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
 
 }
 
