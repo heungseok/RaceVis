@@ -77,6 +77,8 @@ var zoom = d3.zoom()
     .extent([[0, 0], [width, height]])
     .on("zoom", zoomed);
 
+var current_zoomRange;
+
 var context;
 /***************/
 
@@ -86,22 +88,6 @@ $(document).ready(function () {
 
 });
 
-function init_zoom_and_brush() {
-    // variable for brush
-    brush = d3.brushX()
-        .extent([[0,0], [zoom_width, zoom_height]])
-        .on("brush end", brushed);
-
-    /*   ZOOM var  */
-    // init zoom listener
-    zoom = d3.zoom()
-        .scaleExtent([1, Infinity])
-        .translateExtent([[0, 0], [width, height]])
-        .extent([[0, 0], [width, height]])
-        .on("zoom", zoomed);
-
-    /***************/
-}
 
 function init(){
 
@@ -194,13 +180,17 @@ function type(d, _, columns) {
 function brushed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
     var s = d3.event.selection || zoom_x.range();
+
+    current_zoomRange = s;
+    // current_zoomRange = s.map(zoom_x.invert, zoom_x);
     x.domain(s.map(zoom_x.invert, zoom_x));
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
 
     console.log("brushed!")
 
-    setAnimationRange_fromZoom(s.map(zoom_x.invert, zoom_x));
+    setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
+    // setAnimationRange_fromZoom(current_zoomRange);
 
     d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
         .scale(width / (s[1] - s[0]))
@@ -211,6 +201,69 @@ function brushed(){
     var focuses = d3.select("#canvas").selectAll("svg")
         .selectAll(".focus");
     focuses.style("display", "none");
+
+}
+
+
+function zoomIn() {
+    console.log("zoom in!");
+
+    // zoom in시 우측, 좌측의 값 차이가 매우 적을 경우 (threshold as 1) 함수 종료
+    if (current_zoomRange[1]-current_zoomRange[0] < 2) return;
+
+    // 나중에는 형재 레인지의 10%씩 뺴고 더해야할듯.
+    current_zoomRange[0] += 1;
+    current_zoomRange[1] -= 1;
+
+    x.domain(current_zoomRange.map(zoom_x.invert, zoom_x));
+    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+
+    setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
+
+    d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
+        .scale(width / (current_zoomRange[1] - current_zoomRange[0]))
+        .translate(-current_zoomRange[0], 0));
+
+    // set all focus elements' style to un-display
+    var focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus");
+    focuses.style("display", "none");
+
+    // brush move
+    // brush.extent(current_zoomRange[0], current_zoomRange[1])
+    d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
+
+}
+
+function zoomOut() {
+    console.log("zoom out!");
+
+    // zoom out 시 우측, 좌측의 값이 zoom_range를 벗어날 경우 return.
+    if (current_zoomRange[0]-1 < zoom_x.range()[0] || current_zoomRange[1]+1 > zoom_x.range()[1]) return;
+
+    // 나중에는 형재 레인지의 10%씩 뺴고 더해야할듯.
+    current_zoomRange[0] -= 1;
+    current_zoomRange[1] += 1;
+
+    x.domain(current_zoomRange.map(zoom_x.invert, zoom_x));
+    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+
+    setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
+
+    d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
+        .scale(width / (current_zoomRange[1] - current_zoomRange[0]))
+        .translate(-current_zoomRange[0], 0));
+
+    // set all focus elements' style to un-display
+    var focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus");
+    focuses.style("display", "none");
+
+    // brush move
+    // brush.extent(current_zoomRange[0], current_zoomRange[1])
+    d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
 
 }
 
@@ -271,8 +324,8 @@ function zoomed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     var t = d3.event.transform;
     console.log("zooming!")
-    console.log(t.rescaleX(zoom_x).domain());
     x.domain(t.rescaleX(zoom_x).domain());
+    console.log(t.rescaleX(zoom_x).domain())
 
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
@@ -285,11 +338,14 @@ function zoomReset() {
     console.log("zoom reset!");
 
     var t = d3.zoomIdentity.translate(0, 0).scale(1);
+    current_zoomRange = t;
 
     x.domain(t.rescaleX(zoom_x).domain()); // 차트 추가되었을때도 동작하기 위함.
+    // console.log(t)
+    // console.log(t.rescaleX(zoom_x).domain()); // 이게 x range로 변환된값
 
     // reset animation range also
-    setAnimationRange_fromZoom(t.rescaleX(zoom_x).domain());
+    setAnimationRange_fromZoom(current_zoomRange.rescaleX(zoom_x).domain());
     
     // zoom reset => 이 중에 없애도 되는게 있을 듯 
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
@@ -300,3 +356,4 @@ function zoomReset() {
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, null);
 
 }
+
