@@ -64,6 +64,12 @@ var animation_index =0,
     animation_delay = 50; // default as 50 milliseconds.
 
 
+// variable for brush ON CHART
+// var brush_onChart = d3.brushX().on("end", brushedOnChart),
+//     idleTimeout,
+//     idleDelay = 100;
+
+
 // variable for brush
 var brush = d3.brushX()
     .extent([[0,0], [zoom_width, zoom_height]])
@@ -175,7 +181,31 @@ function type(d, _, columns) {
         return d;
     }
 }
+/*
 
+function brushedOnChart(){
+    var s = d3.event.selection;
+    if (!s){
+        if(!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+        x.domain(x0);
+
+    }else{
+        x.domain([s[0][0], s[1][0]].map(x.invert, x));
+        d3.select("#canvas").selectAll(".chartBrush").call(brush_onChart.move, null);
+
+    }
+    zoom_byBrush_onChart();
+}
+function idled() {
+    idleTimeout = null;
+}
+function zoom_byBrush_onChart(){
+    var t = svg.transition().duration(750);
+    d3.select("#canvas").selectAll(".axis--x").transition(t).call(xAxis);
+
+}
+
+*/
 
 function brushed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
@@ -187,7 +217,7 @@ function brushed(){
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
 
-    console.log("brushed!")
+    console.log("brushed!");
 
     setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
     // setAnimationRange_fromZoom(current_zoomRange);

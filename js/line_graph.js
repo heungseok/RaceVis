@@ -132,6 +132,11 @@ function drawLineGraph(){
         .on("mouseover", function() { focus.style("display", null); })
         // .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove)
+    //
+    // svg.append("g")
+    //     .attr("class", "chartBrush")
+    //     .call(brush_onChart);
+
 
 
     zoom_svg = d3.select("#zoom_canvas")
