@@ -131,14 +131,16 @@ function drawLineGraph(){
         .attr("fill", "transparent")
         .on("mouseover", function() { focus.style("display", null); })
         // .on("mouseout", function() { focus.style("display", "none"); })
-        .on("mousemove", mousemove)
+        // .on("mousemove", mousemove)
     //
-    // svg.append("g")
-    //     .attr("class", "chartBrush")
-    //     .call(brush_onChart);
+
+    // ############################### BRUSH on CHART ##############################
+    svg.append("g")
+        .attr("class", "chartBrush")
+        .call(brush_onChart);
 
 
-
+    // ################################ ZOOM BRUSH PART ###############################
     zoom_svg = d3.select("#zoom_canvas")
         .append("svg")
         .attr("width", zoom_width + zoom_margin.left + zoom_margin.right)
@@ -150,6 +152,7 @@ function drawLineGraph(){
     context = zoom_svg.append("g")
         .attr("class", "context");
 
+
     context.append("g")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(" + 0+ "," + zoom_height + ")")
@@ -158,7 +161,7 @@ function drawLineGraph(){
     context.append("g")
         .attr("class", "brush")
         .call(brush)
-        .call(brush.move, x.range());
+        .call(brush.move, x.range()); // 이걸로 초기 zoom range를 x.range()로 setting함. 없애면 brush 안보임.
 
     // gloabl x-axis 달기
 //                svg.append("g")
@@ -526,15 +529,6 @@ function addChart(id) {
         // .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
 
-
-/*  need to fix to be synced
-    svg.append("rect")
-        .attr("class", "zoom")
-        .attr("width", width)
-        .attr("height", height)
-        .call(zoom)
-        .on("wheel.zoom", null);
-*/
 
     // set the all circles as invisible
     var focuses = d3.select("#canvas").selectAll("svg")

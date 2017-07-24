@@ -64,18 +64,20 @@ var animation_index =0,
     animation_delay = 50; // default as 50 milliseconds.
 
 
-// variable for brush ON CHART
-// var brush_onChart = d3.brushX().on("end", brushedOnChart),
-//     idleTimeout,
-//     idleDelay = 100;
 
+/*   BRUSH on CHART variable  */
+var brush_onChart = d3.brushX().on("end", brushedOnChart),
+    idleTimeout,
+    idleDelay = 350;
+
+
+/*   ZOOM with BRUSH variable  */
 
 // variable for brush
 var brush = d3.brushX()
     .extent([[0,0], [zoom_width, zoom_height]])
     .on("brush end", brushed);
 
-/*   ZOOM var  */
 // init zoom listener
 var zoom = d3.zoom()
     .scaleExtent([1, Infinity])
@@ -180,35 +182,55 @@ function type(d, _, columns) {
         return d;
     }
 }
-/*
+
 
 function brushedOnChart(){
     var s = d3.event.selection;
-    if (!s){
-        if(!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
-        x.domain(x0);
+
+    if (!s) {
+        if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+        // zoomReset();
 
     }else{
-        x.domain([s[0][0], s[1][0]].map(x.invert, x));
-        d3.select("#canvas").selectAll(".chartBrush").call(brush_onChart.move, null);
+        // 이미 정의한 brush함수를 호출하는 것은 적절치 않음. 그래서 재구현함.
+
+        console.log("zoom_map: " + s.map(zoom_x.invert, zoom_x));
+        console.log("x_map: " + s.map(x.invert, x));
+        console.log("selected range: " + s);
+
+        x.domain(s.map(x.invert, x));
+        d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+        d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+
+        console.log("brushed on chart!");
+        console.log("current x domain is: " + x.domain());
+
+        console.log(current_zoomRange)
+        console.log(current_zoomRange.map(x.invert, x))
+        console.log(s.map(x.invert, x))
+        setAnimationRange_fromZoom(current_zoomRange.map(x.invert, x));
+
+        // brush on chart에 zoom의 range 변환이 필요함.
+        var t0 = zoom_x(x.domain()[0]);
+        var t1 = zoom_x(x.domain()[1]);
+        d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
+            .scale(width / (t1 - t0))
+            .translate(-t1, 0));
 
     }
-    zoom_byBrush_onChart();
+
+
+
 }
 function idled() {
     idleTimeout = null;
 }
-function zoom_byBrush_onChart(){
-    var t = svg.transition().duration(750);
-    d3.select("#canvas").selectAll(".axis--x").transition(t).call(xAxis);
 
-}
-
-*/
 
 function brushed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
     var s = d3.event.selection || zoom_x.range();
+
 
     current_zoomRange = s;
     // current_zoomRange = s.map(zoom_x.invert, zoom_x);
@@ -217,6 +239,8 @@ function brushed(){
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
 
     console.log("brushed!");
+    console.log("current x domain is: " + x.domain());
+    // console.log(s.map(zoom_x.invert, zoom_x));
 
     setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
     // setAnimationRange_fromZoom(current_zoomRange);
@@ -288,7 +312,7 @@ function zoomOut() {
 
 function setAnimationRange_fromZoom(s){
 
-    // clear the animation range (composed of index of data); animation_range는 index를 담고 있음.
+    // clear the animation range (composed of index of data); animation_range는 data의 index를 담고 있음.
     animation_range = [];
 
     var originX0 = s[0].toFixed(1),
