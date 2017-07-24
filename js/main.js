@@ -88,7 +88,7 @@ var current_zoomRange;
 var context;
 /***************/
 
-
+// document가 ready 되었을 때 chart initialization
 $(document).ready(function () {
     init();
 
@@ -160,7 +160,6 @@ function init(){
         x.domain(x0);
         zoom_x.domain(x0);
         console.log(x0);
-
 
         drawLineGraph();
         drawTrack();
@@ -245,15 +244,15 @@ function zoomIn() {
     current_zoomRange[0] += 1;
     current_zoomRange[1] -= 1;
 
-    x.domain(current_zoomRange.map(zoom_x.invert, zoom_x));
-    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
-    d3.select("#canvas").selectAll(".axis--x").call(xAxis);
-
-    setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
-
-    d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
-        .scale(width / (current_zoomRange[1] - current_zoomRange[0]))
-        .translate(-current_zoomRange[0], 0));
+    // x.domain(current_zoomRange.map(zoom_x.invert, zoom_x));
+    // d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    // d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+    //
+    // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
+    //
+    // d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
+    //     .scale(width / (current_zoomRange[1] - current_zoomRange[0]))
+    //     .translate(-current_zoomRange[0], 0));
 
     // set all focus elements' style to un-display
     var focuses = d3.select("#canvas").selectAll("svg")
@@ -275,16 +274,6 @@ function zoomOut() {
     // 나중에는 형재 레인지의 10%씩 뺴고 더해야할듯.
     current_zoomRange[0] -= 1;
     current_zoomRange[1] += 1;
-
-    x.domain(current_zoomRange.map(zoom_x.invert, zoom_x));
-    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
-    d3.select("#canvas").selectAll(".axis--x").call(xAxis);
-
-    setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
-
-    d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
-        .scale(width / (current_zoomRange[1] - current_zoomRange[0]))
-        .translate(-current_zoomRange[0], 0));
 
     // set all focus elements' style to un-display
     var focuses = d3.select("#canvas").selectAll("svg")
@@ -370,20 +359,22 @@ function zoomReset() {
     var t = d3.zoomIdentity.translate(0, 0).scale(1);
     current_zoomRange = t;
 
-    x.domain(t.rescaleX(zoom_x).domain()); // 차트 추가되었을때도 동작하기 위함.
-    // console.log(t)
-    // console.log(t.rescaleX(zoom_x).domain()); // 이게 x range로 변환된값
-
-    // reset animation range also
-    setAnimationRange_fromZoom(current_zoomRange.rescaleX(zoom_x).domain());
-    
-    // zoom reset => 이 중에 없애도 되는게 있을 듯 
-    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
-    d3.select("#canvas").selectAll(".axis--x").call(zoom.transform, t);
-    d3.select("#canvas").selectAll(".zoom").call(zoom.transform, t);
-
     // brush reset
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, null);
 
 }
 
+
+function setBrushRange(btn){
+    // 1. btn value를 split해서 brush 조정할 range값을 parsing
+    var range = btn.value.split("-").map(Number);
+
+    // define our brush extent to be begin and end
+    // zoom_x(value) => 실제 값을 zoom_x의 scale값에 대응한 값으로 return해줌.
+    current_zoomRange[0] = zoom_x(range[0]);
+    current_zoomRange[1] = zoom_x(range[1]);
+
+    d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
+
+
+}
