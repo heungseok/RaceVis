@@ -190,41 +190,29 @@ function brushedOnChart(){
     if (!s) {
         // if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
         // zoomReset();
-
+        // 지금은 !s일 경우 do nothing
     }else{
+        console.log("brushed on chart!");
+        console.log("current x domain is (before change from brush): " + x.domain());
         // 이미 정의한 brush함수를 호출하는 것은 적절치 않음. 그래서 재구현함.
 
-        console.log("zoom_map: " + s.map(zoom_x.invert, zoom_x));
-        console.log("x_map: " + s.map(x.invert, x));
-        console.log("selected range: " + s);
-
-
-        // 1. 지정된 brush 영역을, 현재 화면에 표시된 x range에 따라 x domain 변경, line, x axis변경.
-        // using brush()
-        // x.domain([s[0][0], s[1][0]].map(x.invert, x));
+        // 1. 지정된 brush 영역을 현재 화면에 표시된 x range에 따라 x domain 변경
         // using burshX()
-        x.domain(s.map(x.invert, x));
-        d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
-        d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+        x.domain(s.map(x.invert, x)); // brushX()말고 그냥 brush()일 경우 x.domain([s[0][0], s[1][0]].map(x.invert, x));
 
-
-        // 2. 범위에 따라 brush move, 이 코드가 있어야 brush가 chart에 남지않음.
+        // 2. 범위에 따라 brush on chart move. 이 코드가 있어야 brush가 chart에 남지않음.
         d3.select("#canvas").selectAll(".chartBrush").call(brush_onChart.move, null);
 
-        console.log("brushed on chart!");
-        console.log("current x domain is: " + x.domain());
+        // 3. brush로 바꾼 x domain에 따라 상위 zoom brush의 x range 변환, 적용.
+        // => brush call을 통해 animation path 변경, x-axis, chart 변경
+        console.log("바뀐 x.domain에 따른 zoom-x: "+ zoom_x(x.domain()[0]));
+        console.log("바뀐 x.domain에 따른 zoom-x: "+ zoom_x(x.domain()[1]));
+        current_zoomRange[0] = zoom_x(x.domain()[0]);
+        current_zoomRange[1] = zoom_x(x.domain()[1]);
+        d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange); // current zoom_range 변경 후 brush move call.
 
-        console.log(current_zoomRange)
-        // console.log(current_zoomRange.map(x.invert, x))
-        // console.log(s.map(x.invert, x))
-        setAnimationRange_fromZoom(current_zoomRange.map(x.invert, x));
-
-        // brush on chart에 zoom의 range 변환이 필요함.
-        // var t0 = zoom_x(x.domain()[0]);
-        // var t1 = zoom_x(x.domain()[1]);
-        // d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
-        //     .scale(width / (t1 - t0))
-        //     .translate(-t1, 0));
+        // 4. End of brush on chart
+        console.log("current x domain is (after change from brush): " + x.domain());
 
     }
 
