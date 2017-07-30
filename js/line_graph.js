@@ -62,8 +62,6 @@ function drawLineGraph(){
 
 
     // end of init. clipPath
-
-
     svg.append("text")
         .attr("y", height - 50)
         .attr("x", 10)
@@ -122,15 +120,13 @@ function drawLineGraph(){
         .attr("y2", height);
 
 
-
     // append the rectangle to capture mouse
     svg.append("rect")
         .attr("class", "overlay")
         .attr("width", width)
         .attr("height", height)
         .attr("fill", "transparent")
-        .on("mouseover", function() { focus.style("display", null); })
-        // .on("mouseout", function() { focus.style("display", "none"); })
+        // .on("mouseover", function() { focus.style("display", null); }) => 마지막에 따로 선언해야 brush와 충돌일어나지 않음.
         // .on("mousemove", mousemove)
     //
 
@@ -138,7 +134,6 @@ function drawLineGraph(){
     svg.append("g")
         .attr("class", "chartBrush")
         .call(brush_onChart);
-
 
     // ################################ ZOOM BRUSH PART ###############################
     zoom_svg = d3.select("#zoom_canvas")
@@ -163,10 +158,11 @@ function drawLineGraph(){
         .call(brush)
         .call(brush.move, x.range()); // 이걸로 초기 zoom range를 x.range()로 setting함. 없애면 brush 안보임.
 
-    // gloabl x-axis 달기
-//                svg.append("g")
-//                    .call(xAxis)
-//                    .attr("transform", "translate(" + 0 + "," + height + ")");
+
+    // 마지막으로 mouse over effect 활성, 마지막에 선언함으로서 chart위에 brush와 겹치면서 잘 동작될 수 있음.
+    d3.select("#canvas").selectAll(".overlay")
+        .on("mouseover", function() { focus.style("display", null); })
+        .on("mousemove", mousemove);
 
 
 }
@@ -524,9 +520,14 @@ function addChart(id) {
         .attr("height", height)
         .attr("fill", "transparent")
 
+    // ************ brush on chart 추가 ***************
+    svg.append("g")
+        .attr("class", "chartBrush")
+        .call(brush_onChart);
+
+    // ************ Enable to work mouse hovering ***************
     d3.select("#canvas").selectAll(".overlay")
         .on("mouseover", function() { focus.style("display", null); })
-        // .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
 
 
