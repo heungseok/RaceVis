@@ -579,6 +579,7 @@ function axisSwitch(axis_type){
     if(root_x == axis_type.value){
         console.log("type is same, do nothing");
     }else{
+        document.getElementById("loading").style.display = "block";
         console.log("type is different, change the axis");
         root_x = axis_type.value;
         clearAllSVG();

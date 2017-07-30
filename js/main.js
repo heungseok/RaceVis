@@ -167,9 +167,10 @@ function init(){
         drawTrack();
         drawSubInfo();
         setBtnState();
-
+        document.getElementById("loading").style.display = "none";
 
     });
+
 
 }
 
