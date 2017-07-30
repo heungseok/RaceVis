@@ -318,9 +318,6 @@ function mousemove(){
     });
 
 
-
-
-
     // moving Track
     var track_focus = d3.select("#track_focus1");
     track_focus.attr("transform", "translate(" + track_x(track_data[index].long) + "," + track_y(track_data[index].lat) + ")");
@@ -566,77 +563,34 @@ function removeChart(id, index) {
 }
 
 
-function addChart_old_ver(id) {
-
-    // 이전 x-axis 삭제
-    d3.select("#x-axis")
-        .remove();
-
-    // extract target data which is stored in last index of selected_features
-    var target_data = selected_features[selected_features.length-1];
-//                console.log(target_data);
-
-    ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
-    var update_svg = d3.select("#canvas").append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.bottom + margin.top)
-        .append("g")
-        .attr("id", id.split(" ")[0] )
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-    var y_range = d3.scaleLinear()
-        .range([height, 0])
-        .domain([
-            d3.min(target_data.values, function(d) { return d.feature_val; }),
-            d3.max(target_data.values, function(d) { return d.feature_val; })
-        ]);
-
-    var drawline = d3.line()
-        .curve(d3.curveBasis)
-        .x( function(d) { return x(d.x); })
-        .y( function(d) { return y_range(d.feature_val); });
-
-
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", drawline(target_data.values) );
-
-    svg.append("text")
-        .attr("y", height - 50)
-        .attr("x", 10)
-        .text(id);
-
-    svg.append("g")
-        .call(d3.axisLeft(y_range).ticks(3));
-
-    // new x axis generate
-    svg.append("g")
-        .call(xAxis)
-        .attr("id", "x-axis")
-        .attr("transform", "translate(" + 0 + "," + height + ")");
-//                    .attr("transform", "translate(" + 0 + "," + (height +margin.bottom)+ ")");
-
-
-    var focus = svg.append("g")
-        .attr("class", "focus")
-        .style("display", "none");
-
-    focus.append("circle")
-        .attr("r", 4.5);
-    focus.append("text")
-        .attr("x", 9)
-        .attr("dy", ".35em")
-        .text("nothing");
-
-    svg.append("rect")
-        .attr("class", "overlay")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", "transparent")
-        .on("mouseover", function() { focus.style("display", null); })
-        .on("mouseout", function() { focus.style("display", "none"); })
-        .on("mousemove", mousemove);
-
-
+function setBtnState() {
+    if(root_x == "Distance (m)"){
+        // document.getElementById("btn-type-dist").
+        d3.select("#btn-type-dist").classed("btn-success", true);
+        d3.select("#btn-type-time").classed("btn-success", false);
+    }else{
+        d3.select("#btn-type-time").classed("btn-success", true);
+        d3.select("#btn-type-dist").classed("btn-success", false);
+    }
 }
 
+function axisSwitch(axis_type){
+    console.log(axis_type.value);
+    if(root_x == axis_type.value){
+        console.log("type is same, do nothing");
+    }else{
+        console.log("type is different, change the axis");
+        root_x = axis_type.value;
+        clearAllSVG();
+        init();
+
+    }
+}
+
+function clearAllSVG() {
+
+    d3.select("#zoom_canvas").select("svg").remove();
+    d3.select("#canvas").selectAll("svg").remove();
+    d3.select("#track_canvas").selectAll("svg").remove();
+    d3.select("#sub_canvas").selectAll("svg").remove();
+}

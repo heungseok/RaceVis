@@ -102,7 +102,7 @@ function init(){
     d3.csv("./data/2nd_std_file.csv", type, function(error, data) {
     // d3.csv("./data/2nd_std_file_origin.csv", type, function(error, data) {
         if (error) throw error;
-        // console.log(data)
+
         all_features = data.columns.slice(1).map(function(id) {
             // console.log(id)
 
@@ -166,6 +166,7 @@ function init(){
         drawLineGraph();
         drawTrack();
         drawSubInfo();
+        setBtnState();
 
 
     });
