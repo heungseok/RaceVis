@@ -106,11 +106,19 @@ rect.selection{
     /*pointer-events: all;*/
 }
 
+/* axis type button */
+.axisSwitchBtn{
+    margin-left: 2px;
+    float: left;
+}
+
 
 /* select track, sesssion box */
 .sel_box{
     margin-top: 10px;
-    margin-right: 10px;
+    margin-right: 5px;
+    /*width: 80%;*/
+    /*float: right;*/
 }
 
 .track_nav {

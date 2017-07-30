@@ -106,6 +106,16 @@
                         summary statistic
                     </span>
                 </div>
+                <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
+                    s1 (2000-3000)
+                </button>
+                <button type="button" class="btn brush_control" value="3000-3500" onclick="setBrushRange(this)">
+                    s2 (3000-3500)
+                </button>
+                <button type="button" class="btn brush_control" value="5000-5500" onclick="setBrushRange(this)">
+                    s3 (5000-5500)
+                </button>
+
 
             </div>
 
@@ -122,11 +132,6 @@
                 <button type="button" class="btn" id="zoom_out" onclick="zoomOut()">
                     <span class="glyphicon glyphicon-zoom-out"></span> Zoom-Out
                 </button>
-
-                <button type="button" class="btn" value="2000-3000" id="brush_control" onclick="setBrushRange(this)">
-                    s1 (2000-3000)
-                </button>
-
             </div>
             <div id="canvas"></div>
 
@@ -204,12 +209,18 @@
             <div id="sub_canvas">
 
                 <div class="animation_wrapper">
+
                     <div class="playBtn">
                         <button type="button" class="btn" id="button_play" onclick="playInput()">
                             <span class="glyphicon glyphicon-play"></span>
 
                         </button>
                     </div>
+                    <div class="axisSwitchBtn">
+                        <button type="button" class="btn axis-switch" onclick="playInput()">Position</button>
+                        <button type="button" class="btn axis-switch" onclick="playInput()">Time</button>
+                    </div>
+
                     <div class="sel_box">
                         <label for="sel_speed"></label>
                         <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
