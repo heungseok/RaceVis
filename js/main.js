@@ -155,7 +155,7 @@ function init(){
         });
         animation_length = track_data.length;
 
-        // x domain은 TimeStamp 또는 Distance로 ... default로는 TimeStamp => Distance
+        // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
         // x0 = d3.extent(data, function(d) {return d.x;}) => 가 string array ['1', '2', '33', ...] 에서 동작하려면
         // x0 = d3.extent(data, function(d) {return +d.x;}) 와같이 coerce를 거쳐야함.
         x0 = d3.extent(data, function(d) {return +d.x;});
@@ -188,7 +188,7 @@ function brushedOnChart(){
     var s = d3.event.selection;
 
     if (!s) {
-        if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
+        // if (!idleTimeout) return idleTimeout = setTimeout(idled, idleDelay);
         // zoomReset();
 
     }else{
@@ -198,24 +198,33 @@ function brushedOnChart(){
         console.log("x_map: " + s.map(x.invert, x));
         console.log("selected range: " + s);
 
+
+        // 1. 지정된 brush 영역을, 현재 화면에 표시된 x range에 따라 x domain 변경, line, x axis변경.
+        // using brush()
+        // x.domain([s[0][0], s[1][0]].map(x.invert, x));
+        // using burshX()
         x.domain(s.map(x.invert, x));
         d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
         d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+
+
+        // 2. 범위에 따라 brush move, 이 코드가 있어야 brush가 chart에 남지않음.
+        d3.select("#canvas").selectAll(".chartBrush").call(brush_onChart.move, null);
 
         console.log("brushed on chart!");
         console.log("current x domain is: " + x.domain());
 
         console.log(current_zoomRange)
-        console.log(current_zoomRange.map(x.invert, x))
-        console.log(s.map(x.invert, x))
+        // console.log(current_zoomRange.map(x.invert, x))
+        // console.log(s.map(x.invert, x))
         setAnimationRange_fromZoom(current_zoomRange.map(x.invert, x));
 
         // brush on chart에 zoom의 range 변환이 필요함.
-        var t0 = zoom_x(x.domain()[0]);
-        var t1 = zoom_x(x.domain()[1]);
-        d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
-            .scale(width / (t1 - t0))
-            .translate(-t1, 0));
+        // var t0 = zoom_x(x.domain()[0]);
+        // var t1 = zoom_x(x.domain()[1]);
+        // d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
+        //     .scale(width / (t1 - t0))
+        //     .translate(-t1, 0));
 
     }
 
@@ -233,6 +242,7 @@ function brushed(){
 
 
     current_zoomRange = s;
+    console.log(s);
     // current_zoomRange = s.map(zoom_x.invert, zoom_x);
     x.domain(s.map(zoom_x.invert, zoom_x));
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
