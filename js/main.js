@@ -103,7 +103,7 @@ function init(){
     // d3.csv("./data/2nd_std_file_origin.csv", type, function(error, data) {
         if (error) throw error;
 
-        all_features = data.columns.slice(1).map(function(id) {
+        all_features = data.columns.slice(0).map(function(id) {
             // console.log(id)
 
             return {
@@ -176,7 +176,7 @@ function init(){
 
 // This function supports parsing the column from input data.
 function type(d, _, columns) {
-    // d.x = d["TimeStamp (sec)"]
+
     d.x = d[root_x];
     for (var i = 1, n = columns.length, c; i < n; ++i) {
         d[c = columns[i]]  =  +d[c];
@@ -320,6 +320,7 @@ function setAnimationRange_fromZoom(s){
         targetX0, targetX1;
 
     all_features.forEach(function (data){
+
         if (data.id == root_x){
 
             for (var i=0; i<data.values.length-1; i++){

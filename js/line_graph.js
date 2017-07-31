@@ -594,4 +594,6 @@ function clearAllSVG() {
     d3.select("#canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
+    animation_range = [];
+    animation_index = 0;
 }
