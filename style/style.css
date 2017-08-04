@@ -98,6 +98,16 @@ rect.selection{
     stroke: grey;
     stroke-width: 10px;
     stroke-opacity: 0.5;
+
+    /* 점선 및 animation */
+    stroke-dasharray: 3; /* 값이 클수록 간격이 넒어짐 */
+    animation: dash 30s linear;
+}
+@keyframes dash {
+
+    to {
+        stroke-dashoffset: -200;
+    }
 }
 
 .zoom{
@@ -360,8 +370,10 @@ g.focus, g#track_focus1{
     -o-animation: spinner 1500ms infinite linear;
     animation: spinner 1500ms infinite linear;
     border-radius: 0.5em;
-    -webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
-    box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;
+    -webkit-box-shadow: rgba(150, 150, 150, 0.75) 1.5em 0 0 0, rgba(150, 150, 150, 0.75) 1.1em 1.1em 0 0, rgba(150, 150, 150, 0.75) 0 1.5em 0 0, rgba(150, 150, 150, 0.75) -1.1em 1.1em 0 0, rgba(150, 150, 150, 0.75) -1.5em 0 0 0, rgba(150, 150, 150, 0.75) -1.1em -1.1em 0 0, rgba(150, 150, 150, 0.75) 0 -1.5em 0 0, rgba(150, 150, 150, 0.75) 1.1em -1.1em 0 0;
+    box-shadow: rgba(150, 150, 150, 0.75) 1.5em 0 0 0, rgba(150, 150, 150, 0.75) 1.1em 1.1em 0 0, rgba(150, 150, 150, 0.75) 0 1.5em 0 0, rgba(150, 150, 150, 0.75) -1.1em 1.1em 0 0, rgba(150, 150, 150, 0.75) -1.5em 0 0 0, rgba(150, 150, 150, 0.75) -1.1em -1.1em 0 0, rgba(150, 150, 150, 0.75) 0 -1.5em 0 0, rgba(150, 150, 150, 0.75) 1.1em -1.1em 0 0;
+    /*-webkit-box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.5) -1.5em 0 0 0, rgba(0, 0, 0, 0.5) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;*/
+    /*box-shadow: rgba(0, 0, 0, 0.75) 1.5em 0 0 0, rgba(0, 0, 0, 0.75) 1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) 0 1.5em 0 0, rgba(0, 0, 0, 0.75) -1.1em 1.1em 0 0, rgba(0, 0, 0, 0.75) -1.5em 0 0 0, rgba(0, 0, 0, 0.75) -1.1em -1.1em 0 0, rgba(0, 0, 0, 0.75) 0 -1.5em 0 0, rgba(0, 0, 0, 0.75) 1.1em -1.1em 0 0;*/
 }
 
 /* Animation */

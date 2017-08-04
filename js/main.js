@@ -114,6 +114,7 @@ function init(){
             };
         });
 
+
         // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
         selected_features = [];
         var temp_lat = [];
