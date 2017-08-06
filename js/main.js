@@ -168,6 +168,7 @@ function init(){
         drawTrack();
         drawSubInfo();
         setBtnState();
+        setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
         document.getElementById("loading").style.display = "none";
 
     });
