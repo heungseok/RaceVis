@@ -239,10 +239,20 @@ function drawSubInfo() {
         .attr("transform", "translate(120, 0)");
 
     brake_focus.append("rect")
+        .attr("class", "background")
+        .attr("x", -30)
+        .attr("y", -111)
+        .attr("transform", "rotate(180)")
+        .attr("width", 20)
+        .attr("height", 105)
+        .style("fill", "grey");
+
+    brake_focus.append("rect")
+        .attr("class", "value")
         .attr("x", -25)
         .attr("y", -110)
         .attr("transform", "rotate(180)")
-        .attr("width", 20)
+        .attr("width", 10)
         .attr("height", 1)
         .style("fill", "steelblue");
 
@@ -256,10 +266,20 @@ function drawSubInfo() {
         .attr("transform", "translate(240, 0)");
 
     gas_focus.append("rect")
+        .attr("class", "background")
+        .attr("x", -30)
+        .attr("y", -111)
+        .attr("transform", "rotate(180)")
+        .attr("width", 20)
+        .attr("height", 105)
+        .style("fill", "grey");
+
+    gas_focus.append("rect")
+        .attr("class", "value")
         .attr("x", -25)
         .attr("y", -110)
         .attr("transform", "rotate(180)")
-        .attr("width", 20)
+        .attr("width", 10)
         .attr("height", 1)
         .style("fill", "steelblue");
 
@@ -270,8 +290,26 @@ function drawSubInfo() {
     var gear_focus = sub_svg.append("g")
         .attr("id", "gear_focus1")
         .attr("transform", "translate(360, 0)");
+
+    // gear_focus.append("rect")
+    //     .attr("class", "background")
+    //     .attr("x", 0)
+    //     .attr("y", 50)
+    //     .attr("width", 30)
+    //     .attr("height", 30)
+    //     // .style("fill", "steelblue")
+
     gear_focus.append("text")
-        .text("Gear: ");
+        .attr("class", "value")
+        .attr("x", 0)
+        .attr("y", 65)
+        .style("font-size", "25px")
+        .style("fill", "steelblue")
+        .text("0");
+
+    gear_focus.append("text")
+        .text("Gear");
+
 
 }
 
@@ -332,20 +370,20 @@ function mousemove(){
         .text("Steering degree: " + steer_data[index]);
 
     var brake_focus = d3.select("#brake_focus1");
-    brake_focus.select("rect")
+    brake_focus.select("rect.value")
         .attr("height", 1+ brake_data[index]);
     brake_focus.select("text")
         .text("Brake: " + brake_data[index]);
 
     var gas_focus = d3.select("#gas_focus1");
-    gas_focus.select("rect")
+    gas_focus.select("rect.value")
         .attr("height", 1+gas_data[index]);
     gas_focus.select("text")
         .text("Gas: " + gas_data[index]);
 
     var gear_focus = d3.select("#gear_focus1");
-    gear_focus.select("text")
-        .text("Gear: " + gear_data[index])
+    gear_focus.select("text.value")
+        .text(gear_data[index])
         .style("color", "#9d9d9d");
 
 
