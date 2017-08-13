@@ -413,7 +413,7 @@ function updateChart(value, checked){
             // remove target chart (해당 value값을 가진 chart 삭제)
             removeChart(value, index);
 
-            selected_features.splice(index, 1);
+
         }
     }
 }
@@ -563,14 +563,18 @@ function addChart(id) {
 }
 
 function removeChart(id, index) {
+    console.log(selected_features);
 
     var target_id = "g#" + id.split(" ")[0];
-
+    
+    // svg 제거 (g+id)의 parent => SVG
     d3.select(target_id)
         .select(function() { return this.parentNode; })
         .remove();
 
-    // 만약 제거하려는 차트가 마지막 svg일 경우 차트 없앤 뒤에 새로운 x axis생성
+
+
+    // 만약 제거하려는 차트가 마지막 index의 svg일 경우 차트 없앤 뒤에 새로운 x axis생성
     if(index == selected_features.length-1 && (selected_features.length-1) != 0){
         d3.select("g#" + selected_features[index-1].id.split(" ")[0])
             .append("g")
@@ -580,12 +584,18 @@ function removeChart(id, index) {
 
     }
 
-    // 마지막 line x-axis에 맞추기.
-    var foc_lines = document.getElementsByClassName("tooltip_line");
-    for (var i =0; i<foc_lines.length-1; i++){
-        foc_lines[i].setAttribute("y2", height);
+    // selected_features의 길이가 1보다 클 경우(마지막 남은 svg를 지웠다면 이부분은 의미없음) -> 마지막 line x-axis에 맞추기.
+    if (selected_features.length > 1){
+        var foc_lines = document.getElementsByClassName("tooltip_line");
+        for (var i =0; i<foc_lines.length-1; i++){
+            foc_lines[i].setAttribute("y2", height);
+        }
+        foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
     }
-    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
+
+    // 해당 index의 element 삭제.
+    selected_features.splice(index, 1);
+    console.log(selected_features);
 
 }
 
