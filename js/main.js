@@ -11,7 +11,7 @@ var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
     zoom_width = width,
     zoom_height = document.getElementById("canvas").offsetHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
-var track_margin = {top: 10, right: 20, bottom: 20, left: 20},
+var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
@@ -221,6 +221,7 @@ function init() {
         drawSubInfo();
         setBtnState();
         setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
+        zoomReset();
         document.getElementById("loading").style.display = "none";
 
     });
@@ -428,15 +429,18 @@ function brushed(){
 }
 
 
-function zoomIn() {
+function zoomIn(value) {
+    value = value || 1; // value가 지정됬을 때에는 받은 parameter 값으로, 아니면 1로 default
+
+    console.log(value)
     console.log("zoom in!");
 
     // zoom in시 우측, 좌측의 값 차이가 매우 적을 경우 (threshold as 1) 함수 종료
     if (current_zoomRange[1]-current_zoomRange[0] < 2) return;
 
     // 나중에는 형재 레인지의 10%씩 뺴고 더해야할듯.
-    current_zoomRange[0] += 1;
-    current_zoomRange[1] -= 1;
+    current_zoomRange[0] += value;
+    current_zoomRange[1] -= value;
 
     // x.domain(current_zoomRange.map(zoom_x.invert, zoom_x));
     // d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
@@ -556,6 +560,9 @@ function zoomReset() {
 
     // brush reset
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, null);
+
+    // call zoomIn function for adjusting each end of range
+    zoomIn(0.5)
 
 }
 

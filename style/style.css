@@ -191,7 +191,9 @@ g.focus, g#track_focus1{
 }
 
 path.line.boundary{
-    stroke: red;
+    stroke: grey;
+    stroke-width: 0.5;
+    z-index: -10;
 }
 
 

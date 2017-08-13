@@ -563,7 +563,6 @@ function addChart(id) {
 }
 
 function removeChart(id, index) {
-    console.log(selected_features);
 
     var target_id = "g#" + id.split(" ")[0];
     
@@ -571,8 +570,6 @@ function removeChart(id, index) {
     d3.select(target_id)
         .select(function() { return this.parentNode; })
         .remove();
-
-
 
     // 만약 제거하려는 차트가 마지막 index의 svg일 경우 차트 없앤 뒤에 새로운 x axis생성
     if(index == selected_features.length-1 && (selected_features.length-1) != 0){
@@ -595,8 +592,6 @@ function removeChart(id, index) {
 
     // 해당 index의 element 삭제.
     selected_features.splice(index, 1);
-    console.log(selected_features);
-
 }
 
 
