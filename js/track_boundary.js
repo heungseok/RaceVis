@@ -2,13 +2,12 @@
  * Created by totor on 2017-08-13.
  */
 
-var inline_track=[], outline_track=[];
+
 
 function draw_trackBoundary(){
 
     // file load
     d3.csv("./data/track_boundary/kic_short_boundary_sampled.csv", function(error, data) {
-        console.log(data);
 
         data.forEach(function(d){
 
@@ -36,6 +35,8 @@ function draw_trackBoundary(){
                 d3.max(inline_track, function(d) {return d.lat;})
             ]);
 
+
+        // ****************  draw boundary *********************** //
         // append path (drawing inline track line )
         track_svg.append("path")
             .data([inline_track])
@@ -65,41 +66,6 @@ function draw_trackBoundary(){
     });
 
 
-    // draw inline
 
-    /*************************** DRAWING TRACK ******************************/
-    /*
-    // range of track x, y (Longitude, Latitude) setting
-    track_x = d3.scaleLinear().range([0, track_width])
-        .domain([
-            d3.min(track_data, function(d) { return d.long;}),
-            d3.max(track_data, function(d) {return d.long;})
-        ]);
-    track_y = d3.scaleLinear().range([track_height, 0])
-        .domain([
-            d3.min(track_data, function(d) {return d.lat;}),
-            d3.max(track_data, function(d) {return d.lat;})
-        ]);
-
-    // setting svg for drawing track
-    track_svg = d3.select("#track_canvas").append("svg")
-        .attr("width", track_width + track_margin.left + track_margin.right)
-        .attr("height", track_height + track_margin.top + track_margin.bottom)
-        .append("g")
-        .attr("transform",
-            "translate(" + track_margin.left + "," + track_margin.top + ")");
-
-    // append path (drawing track)
-    track_svg.append("path")
-        .data([track_data])
-        .attr("class", "line")
-        .attr("d", track_line)
-
-
-
-    */
-
-
-    // draw outline
 
 }

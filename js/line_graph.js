@@ -291,14 +291,6 @@ function drawSubInfo() {
         .attr("id", "gear_focus1")
         .attr("transform", "translate(360, 0)");
 
-    // gear_focus.append("rect")
-    //     .attr("class", "background")
-    //     .attr("x", 0)
-    //     .attr("y", 50)
-    //     .attr("width", 30)
-    //     .attr("height", 30)
-    //     // .style("fill", "steelblue")
-
     gear_focus.append("text")
         .attr("class", "value")
         .attr("x", 0)
@@ -384,12 +376,7 @@ function mousemove(){
     var gear_focus = d3.select("#gear_focus1");
     gear_focus.select("text.value")
         .text(gear_data[index])
-        .style("color", "#9d9d9d");
 
-
-
-    // this is for get array data by id
-    // console.log(_.where(all_features), function(item) { console.log(item); return item.id=="Steer_angle (deg)"});
 }
 
 
@@ -404,6 +391,7 @@ function updateChart(value, checked){
         // if the value is NOT contained in array, then add to the array
         if(! (_.contains(feat_names, value)) ){
             // selected features array update
+
             all_features.forEach(function (d) {
                 if(d.id == value){
                     selected_features.push(d);
@@ -589,6 +577,7 @@ function removeChart(id, index) {
             .call(xAxis)
             .attr("id", "x-axis")
             .attr("transform", "translate(" + 0 + "," + height + ")");
+
     }
 
     // 마지막 line x-axis에 맞추기.
@@ -602,7 +591,7 @@ function removeChart(id, index) {
 
 
 function setBtnState() {
-    if(root_x == "Distance (m)"){
+    if(root_x == "PositionIndex"){
         // document.getElementById("btn-type-dist").
         d3.select("#btn-type-dist").classed("btn-success", true);
         d3.select("#btn-type-time").classed("btn-success", false);
@@ -620,10 +609,20 @@ function axisSwitch(axis_type){
         document.getElementById("loading").style.display = "block";
         console.log("type is different, change the axis");
         root_x = axis_type.value;
-        clearAllSVG();
+        clearAllSVG_for_xAxis_switch();
         init();
 
     }
+}
+
+function clearAllSVG_for_xAxis_switch() {
+
+    d3.select("#zoom_canvas").select("svg").remove();
+    d3.select("#canvas").selectAll("svg").remove();
+    d3.select("#track_canvas").selectAll("svg").remove();
+    d3.select("#sub_canvas").selectAll("svg").remove();
+    animation_range = [];
+    animation_index = 0;
 }
 
 function clearAllSVG() {
@@ -632,6 +631,11 @@ function clearAllSVG() {
     d3.select("#canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
+
+    // data clean
     animation_range = [];
     animation_index = 0;
+    steer_data = [], brake_data = [], gas_data = [], gear_data = [];
+    track_data = [], inline_track = [], outline_track = [];
+    all_features= [], selected_features = [];
 }

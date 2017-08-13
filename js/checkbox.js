@@ -10,11 +10,12 @@ function handleCBclick(cb){
 
     var checked_values = []
     $("input[type=checkbox]:checked").each(function () {
-//                    console.log($(this).val())
+        console.log($(this).val())
         checked_values.push($(this).val())
     });
+    console.log(checked_values);
 
-    if(checked_values.length == 15){
+    if(checked_values.length == 5){
         // 4개 이상 일때 클릭할 경우 check value 원상태로..
         $("input[value='" + cb.value +"']").prop("checked", false);
         return;

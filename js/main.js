@@ -20,17 +20,14 @@ var sub_margin = {top: 20, right: 50, bottom: 20, left: 20},
     sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
 // ************** selected lap, reference lap variable **************** //
-var selected_lap=1, selected_ref_lap;
+var selected_lap=0, selected_ref_lap;
 
 
 
 // ************** line-graph variable and line function **************** //
-
-
 var x = d3.scaleLinear().range([0, width]);
 var zoom_x = d3.scaleLinear().range([0, zoom_width]);
 var y = d3.local();
-
 
 var line = d3.local();
 var zoom_line = d3.local();
@@ -54,6 +51,8 @@ var root_x = "PositionIndex"
 var track_data = [];
 var track_x, track_y,
     track_boundary_x, track_boundary_y;
+
+var inline_track=[], outline_track=[];
 
 var track_line = d3.line().curve(d3.curveBasis)
     .x(function(d) { return track_x(d.long); })
@@ -113,12 +112,25 @@ var context;
 
 // document가 ready 되었을 때 chart initialization
 $(document).ready(function () {
-    // init();
-    init_test();
+
+    init();
 
 });
 
-function init_test() {
+function init() {
+
+    // variable for brush
+    brush = d3.brushX()
+        .extent([[0,0], [zoom_width, zoom_height]])
+        .on("brush end", brushed);
+
+    // init zoom listener
+    zoom = d3.zoom()
+        .scaleExtent([1, Infinity])
+        .translateExtent([[0, 0], [width, height]])
+        .extent([[0, 0], [width, height]])
+        .on("zoom", zoomed);
+
 
     d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
 
@@ -152,20 +164,20 @@ function init_test() {
 
             // default feature로 GPS_Speed, RPM 을 plotting.
             if(d.id == "GPS_Speed" || d.id == "RPM"){
-             selected_features.push(d)
-             selected_feat_names.push(d.id);
+                 selected_features.push(d)
+                 selected_feat_names.push(d.id);
              }else if(d.id == "RefinedPosLat"){
-             temp_lat = _.pluck(d.values, 'feature_val');
+                temp_lat = _.pluck(d.values, 'feature_val');
              }else if(d.id == "RefinedPosLon"){
-             temp_long = _.pluck(d.values, 'feature_val');
+                temp_long = _.pluck(d.values, 'feature_val');
              }else if(d.id == "Steer_angle"){
-             steer_data = _.pluck(d.values, 'feature_val')
+                steer_data = _.pluck(d.values, 'feature_val')
              }else if(d.id == "Pedal_brake"){
-             brake_data = _.pluck(d.values, 'feature_val')
+                brake_data = _.pluck(d.values, 'feature_val')
              }else if(d.id == "Gear"){
-             gear_data = _.pluck(d.values, 'feature_val')
-             }else if(d.id == "Pedal_throttle"){
-             gas_data = _.pluck(d.values, 'feature_val')
+                gear_data = _.pluck(d.values, 'feature_val')
+             }else if(d.id == "ECU_THROTTLE"){
+                gas_data = _.pluck(d.values, 'feature_val')
              }
 
 
@@ -188,6 +200,7 @@ function init_test() {
         zoom_x.domain(x0);
         console.log(x0);
 
+
         drawLineGraph();
         drawTrack();
         draw_trackBoundary();
@@ -196,14 +209,11 @@ function init_test() {
         setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
         document.getElementById("loading").style.display = "none";
 
-        // all feature 데이터 비우기
-        all_features = [];
-
-
     });
 
 }
 
+/*
 
 function init(){
 
@@ -236,7 +246,7 @@ function init(){
             }
 
             // default feature로 GPS_Speed, RPM 을 plotting.
-            /*if(d.id == "GPS_Speed" || d.id == "RPM"){
+            /!*if(d.id == "GPS_Speed" || d.id == "RPM"){
                 selected_features.push(d)
                 selected_feat_names.push(d.id);
             }else if(d.id == "PosLat"){
@@ -251,7 +261,7 @@ function init(){
                 gear_data = _.pluck(d.values, 'feature_val')
             }else if(d.id == "Pedal_throttle"){
                 gas_data = _.pluck(d.values, 'feature_val')
-            }*/
+            }*!/
             // default feature로 GPS_Speed, RPM 을 plotting.
             if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)"){
                 selected_features.push(d)
@@ -304,6 +314,7 @@ function init(){
     });
 
 }
+*/
 
 // This function supports parsing the column from input data.
 // function type(d, _, columns) {
