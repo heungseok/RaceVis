@@ -155,8 +155,10 @@ rect.selection{
 }
 
 #track_canvas{
-    width: 25%;
+
+    width: 30vw;
     height: 30vh;
+
     right: 1vw;
     top: 35vh;
     position:absolute;

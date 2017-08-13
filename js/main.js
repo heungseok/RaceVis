@@ -50,17 +50,23 @@ var root_x = "PositionIndex"
 // ************** track boundary variable and line function **************** //
 var track_data = [];
 var track_x, track_y,
-    track_boundary_x, track_boundary_y;
+    track_boundary_x_in, track_boundary_y_in,
+    track_boundary_x_out, track_boundary_y_out;
 
 var inline_track=[], outline_track=[];
 
-var track_line = d3.line().curve(d3.curveBasis)
+// var track_line = d3.line().curve(d3.curveBasis)
+var track_line = d3.line()
     .x(function(d) { return track_x(d.long); })
     .y(function(d) { return track_y(d.lat); });
 
-var track_boundary_line = d3.line().curve(d3.curveBasis)
-    .x(function (d) { return track_boundary_x(d.long); })
-    .y(function (d) { return track_boundary_y(d.lat); });
+var track_boundary_inline = d3.line()
+    .x(function (d) { return track_boundary_x_in(d.long); })
+    .y(function (d) { return track_boundary_y_in(d.lat); });
+
+var track_boundary_outline = d3.line()
+    .x(function (d) { return track_boundary_x_out(d.long); })
+    .y(function (d) { return track_boundary_y_out(d.lat); });
 
 // ************** track animation variable **************** //
 var animation_index =0,
@@ -164,22 +170,30 @@ function init() {
 
             // default feature로 GPS_Speed, RPM 을 plotting.
             if(d.id == "GPS_Speed" || d.id == "RPM"){
-                 selected_features.push(d)
-                 selected_feat_names.push(d.id);
-             }else if(d.id == "RefinedPosLat"){
+                selected_features.push(d)
+                selected_feat_names.push(d.id);
+                $('.checkbox_wrapper').append("<div class ='checkbox'> " +
+                    "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>"+d.id+"</label></div>");
+             // }else if(d.id == "RefinedPosLat"){
+             //    temp_lat = _.pluck(d.values, 'feature_val');
+             // }else if(d.id == "RefinedPosLon"){
+             //    temp_long = _.pluck(d.values, 'feature_val');
+            }else if(d.id == "PosLocalY"){
                 temp_lat = _.pluck(d.values, 'feature_val');
-             }else if(d.id == "RefinedPosLon"){
+            }else if(d.id == "PosLocalX"){
                 temp_long = _.pluck(d.values, 'feature_val');
-             }else if(d.id == "Steer_angle"){
+            }else if(d.id == "Steer_angle"){
                 steer_data = _.pluck(d.values, 'feature_val')
-             }else if(d.id == "Pedal_brake"){
+            }else if(d.id == "Pedal_brake"){
                 brake_data = _.pluck(d.values, 'feature_val')
-             }else if(d.id == "Gear"){
+            }else if(d.id == "Gear"){
                 gear_data = _.pluck(d.values, 'feature_val')
-             }else if(d.id == "ECU_THROTTLE"){
+            }else if(d.id == "ECU_THROTTLE"){
                 gas_data = _.pluck(d.values, 'feature_val')
-             }
-
+            }else{
+                $('.checkbox_wrapper').append("<div class ='checkbox'> " +
+                        "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>"+d.id+"</label></div>");
+            }
 
         });
         /// ***** assign temp lat long data to global variable *****
