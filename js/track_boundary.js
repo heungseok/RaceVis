@@ -7,19 +7,29 @@
 function draw_trackBoundary(){
 
     // file load
-    d3.csv("./data/track_boundary/kic_short_boundary_sampled.csv", function(error, data) {
+    d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, data) {
+    // d3.csv("./data/track_boundary/kic_short_boundary_sampled.csv", function(error, data) {
 
         data.forEach(function(d){
 
             inline_track.push({
-                long: parseFloat(d["InLat"]),
-                lat: parseFloat(d["InLon"])
+                long: parseFloat(d["InX"]),
+                lat: parseFloat(d["InY"])
             });
 
             outline_track.push({
-                long: parseFloat(d["OutLat"]),
-                lat: parseFloat(d["OutLon"])
-            })
+                long: parseFloat(d["OutX"]),
+                lat: parseFloat(d["OutY"])
+            });
+            // inline_track.push({
+            //     long: parseFloat(d["InLat"]),
+            //     lat: parseFloat(d["InLon"])
+            // });
+            //
+            // outline_track.push({
+            //     long: parseFloat(d["OutLat"]),
+            //     lat: parseFloat(d["OutLon"])
+            // })
 
         });
 
