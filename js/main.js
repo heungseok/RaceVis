@@ -35,17 +35,23 @@ var zoom_xAxis = d3.axisBottom(zoom_x)
 var svg, zoom_svg,
     track_svg, sub_svg;
 
+
 var all_features;
 var selected_features = [];
 var selected_feat_names = [];
 var root_x = "Distance (m)"
 
 var track_data = [];
-var track_x, track_y;
+var track_x, track_y,
+    track_boundary_x, track_boundary_y;
 
 var track_line = d3.line().curve(d3.curveBasis)
     .x(function(d) { return track_x(d.long); })
     .y(function(d) { return track_y(d.lat); });
+
+var track_boundary_line = d3.line().curve(d3.curveBasis)
+    .x(function (d) { return track_boundary_x(d.long); })
+    .y(function (d) { return track_boundary_y(d.lat); })
 
 
 // var for sub global data
@@ -166,6 +172,7 @@ function init(){
 
         drawLineGraph();
         drawTrack();
+        draw_trackBoundary();
         drawSubInfo();
         setBtnState();
         setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))

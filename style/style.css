@@ -173,8 +173,6 @@ g.focus, g#track_focus1{
 }
 
 
-
-
 #sel_speed{
     width: 50%;
     float: right;
@@ -182,6 +180,20 @@ g.focus, g#track_focus1{
 .playBtn{
     float:left;
 }
+
+path.line.boundary{
+    stroke: red;
+}
+
+
+
+
+
+
+
+
+
+
 
 /******************** The Modal (background) ***************/
 .modal {
