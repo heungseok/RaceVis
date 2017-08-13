@@ -124,6 +124,13 @@ rect.selection{
 
 
 /* select track, sesssion box */
+.right-nav {
+    position: absolute;
+    right: 1vw;
+    width: 100%;
+    padding-right: 5px;
+}
+
 .sel_box{
     margin-top: 10px;
     margin-right: 5px;
@@ -134,7 +141,7 @@ rect.selection{
 .track_nav {
     /*position: absolute;*/
     left:2vw;
-    width: 25%;
+    width: 20%;
 
 }
 

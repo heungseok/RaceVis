@@ -3,21 +3,28 @@
  */
 /* global variable for drawing ling graph */
 
-var margin = {top: 5, right: 20, bottom: 20, left: 70},
+var margin = {top: 5, right: 20, bottom: 20, left: 50},
     width = document.getElementById("canvas").offsetWidth - margin.left - margin.right,
     height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
 
-var zoom_margin = {top: 20, right: 20, bottom: 20, left: 70},
+var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
     zoom_width = width,
     zoom_height = document.getElementById("canvas").offsetHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
-var track_margin = {top: 20, right: 20, bottom: 20, left: 20},
+var track_margin = {top: 10, right: 20, bottom: 20, left: 20},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
-var sub_margin = {top: 20, right: 20, bottom: 20, left: 20},
+var sub_margin = {top: 20, right: 50, bottom: 20, left: 20},
     sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
     sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+
+// ************** selected lap, reference lap variable **************** //
+var selected_lap=1, selected_ref_lap;
+
+
+
+// ************** line-graph variable and line function **************** //
 
 
 var x = d3.scaleLinear().range([0, width]);
@@ -39,8 +46,11 @@ var svg, zoom_svg,
 var all_features;
 var selected_features = [];
 var selected_feat_names = [];
-var root_x = "Distance (m)"
+// var root_x = "Distance (m)"
+var root_x = "PositionIndex"
 
+
+// ************** track boundary variable and line function **************** //
 var track_data = [];
 var track_x, track_y,
     track_boundary_x, track_boundary_y;
@@ -51,16 +61,9 @@ var track_line = d3.line().curve(d3.curveBasis)
 
 var track_boundary_line = d3.line().curve(d3.curveBasis)
     .x(function (d) { return track_boundary_x(d.long); })
-    .y(function (d) { return track_boundary_y(d.lat); })
+    .y(function (d) { return track_boundary_y(d.lat); });
 
-
-// var for sub global data
-var steer_data =[],
-    brake_data = [],
-    gas_data = [],
-    gear_data = [];
-
-// variable for for animating
+// ************** track animation variable **************** //
 var animation_index =0,
     animation_length,
     animation_range = [],
@@ -71,13 +74,22 @@ var animation_index =0,
 
 
 
-/*   BRUSH on CHART variable  */
+// ************** sub information variable **************** //
+var steer_data =[],
+    brake_data = [],
+    gas_data = [],
+    gear_data = [];
+
+
+
+
+/* *************  BRUSH ON CHART (차트위에서 드래그 줌인) variable  ******************/
 var brush_onChart = d3.brushX().on("end", brushedOnChart),
     idleTimeout,
     idleDelay = 350;
 
 
-/*   ZOOM with BRUSH variable  */
+/* *************   ZOOM with BRUSH (차트위 브러쉬 줌인,아웃) variable *************  */
 
 // variable for brush
 var brush = d3.brushX()
@@ -94,13 +106,103 @@ var zoom = d3.zoom()
 var current_zoomRange;
 
 var context;
-/***************/
+/**************************** END of initializing Global variable *******************************************/
+
+
+
 
 // document가 ready 되었을 때 chart initialization
 $(document).ready(function () {
-    init();
+    // init();
+    init_test();
 
 });
+
+function init_test() {
+
+    d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
+
+        if (error) throw error;
+
+        console.log(data)
+
+        all_features = data.columns.slice(0).map(function(id) {
+
+            return {
+                id: id,
+                values: data.map(function(d) {
+                    return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                })
+            };
+        });
+
+        // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
+        selected_features = [];
+        var temp_lat = [];
+        var temp_long = [];
+
+
+        all_features.forEach(function(d){
+
+
+            // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
+            if(isNaN(d.values[0].feature_val)){
+                $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
+            }
+
+            // default feature로 GPS_Speed, RPM 을 plotting.
+            if(d.id == "GPS_Speed" || d.id == "RPM"){
+             selected_features.push(d)
+             selected_feat_names.push(d.id);
+             }else if(d.id == "RefinedPosLat"){
+             temp_lat = _.pluck(d.values, 'feature_val');
+             }else if(d.id == "RefinedPosLon"){
+             temp_long = _.pluck(d.values, 'feature_val');
+             }else if(d.id == "Steer_angle"){
+             steer_data = _.pluck(d.values, 'feature_val')
+             }else if(d.id == "Pedal_brake"){
+             brake_data = _.pluck(d.values, 'feature_val')
+             }else if(d.id == "Gear"){
+             gear_data = _.pluck(d.values, 'feature_val')
+             }else if(d.id == "Pedal_throttle"){
+             gas_data = _.pluck(d.values, 'feature_val')
+             }
+
+
+        });
+        /// ***** assign temp lat long data to global variable *****
+        temp_lat.forEach(function(value, index){
+            track_data.push({
+                long: temp_long[index],
+                lat: value
+            });
+
+        });
+        animation_length = track_data.length;
+
+        // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
+        // x0 = d3.extent(data, function(d) {return d.x;}) => 가 string array ['1', '2', '33', ...] 에서 동작하려면
+        // x0 = d3.extent(data, function(d) {return +d.x;}) 와같이 coerce를 거쳐야함.
+        x0 = d3.extent(data, function(d) {return +d.x;});
+        x.domain(x0);
+        zoom_x.domain(x0);
+        console.log(x0);
+
+        drawLineGraph();
+        drawTrack();
+        draw_trackBoundary();
+        drawSubInfo();
+        setBtnState();
+        setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
+        document.getElementById("loading").style.display = "none";
+
+        // all feature 데이터 비우기
+        all_features = [];
+
+
+    });
+
+}
 
 
 function init(){
@@ -119,7 +221,7 @@ function init(){
                 })
             };
         });
-
+        console.log(all_features)
 
         // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
         selected_features = [];
@@ -133,6 +235,23 @@ function init(){
                 $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
             }
 
+            // default feature로 GPS_Speed, RPM 을 plotting.
+            /*if(d.id == "GPS_Speed" || d.id == "RPM"){
+                selected_features.push(d)
+                selected_feat_names.push(d.id);
+            }else if(d.id == "PosLat"){
+                temp_lat = _.pluck(d.values, 'feature_val');
+            }else if(d.id == "PosLon"){
+                temp_long = _.pluck(d.values, 'feature_val');
+            }else if(d.id == "Steer_angle"){
+                steer_data = _.pluck(d.values, 'feature_val')
+            }else if(d.id == "Pedal_brake"){
+                brake_data = _.pluck(d.values, 'feature_val')
+            }else if(d.id == "Gear"){
+                gear_data = _.pluck(d.values, 'feature_val')
+            }else if(d.id == "Pedal_throttle"){
+                gas_data = _.pluck(d.values, 'feature_val')
+            }*/
             // default feature로 GPS_Speed, RPM 을 plotting.
             if(d.id == "GPS_Speed (kmh)" || d.id == "RPM (NA)"){
                 selected_features.push(d)
@@ -178,19 +297,36 @@ function init(){
         setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
         document.getElementById("loading").style.display = "none";
 
-    });
+        // all feature 데이터 비우기
+        all_features = [];
 
+
+    });
 
 }
 
 // This function supports parsing the column from input data.
-function type(d, _, columns) {
+// function type(d, _, columns) {
+//
+//     d.x = d[root_x];
+//     for (var i = 1, n = columns.length, c; i < n; ++i) {
+//         d[c = columns[i]]  =  +d[c];
+//         // console.log(d)
+//         return d;
+//     }
+// }
 
+
+function type(d, _, columns) {
+// data를 칼럼으로 나누고, LapNo가 selected Lap과 같을 경우만 parsing
     d.x = d[root_x];
     for (var i = 1, n = columns.length, c; i < n; ++i) {
-        d[c = columns[i]]  =  +d[c];
-        // console.log(d)
-        return d;
+
+        if(parseInt(d["LapNo"]) == parseInt(selected_lap)) {
+            d[c = columns[i]] = +d[c];
+            return d;
+        }
+
     }
 }
 
