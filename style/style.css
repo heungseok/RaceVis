@@ -79,6 +79,7 @@ rect.selection{
 .area {
     fill: steelblue;
     clip-path: url(#clip);
+    z-index: 10000;
 }
 
 .zoom {
@@ -93,6 +94,14 @@ rect.selection{
     stroke: steelblue;
     stroke-width: 1px;
 }
+
+.line.ref{
+    stroke: red;
+    z-index: -10;
+    opacity: 0.7
+}
+
+
 .animation_path{
     fill: none;
     stroke: grey;

@@ -1,6 +1,60 @@
 /**
  * Created by totor on 2017-06-11.
  */
+// draw_ref_LineGraph();
+// draw_ref_Track();
+// draw_ref_SubInfo();
+function draw_ref_LineGraph(){
+    selected_feat_names.forEach(function (feature) {
+        console.log(feature);
+        // d3.select("g#"+feature)
+        //     .append("path")
+        //     .data([])
+        //     .attr("id", "ref-"+ feature)
+
+    });
+    ref_selected_features.forEach(function (ref_data){
+       console.log(ref_data);
+
+
+
+        var ref_graph_svg = d3.select("g#"+ref_data.id)
+
+        ref_graph_svg.select(function() {return this.parentNode; })
+            .append("defs").append("clipPath")
+            .attr("id",  function (d) {
+                return "clip_ref-" + d.id;
+            })
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
+
+
+        ref_graph_svg.append("path")
+            .data([ref_data])
+            .attr("class", "line ref")
+            .attr("id", "ref-" + ref_data.id)
+            .attr("d", function(d) {
+               // console.log(d)
+                 return line.get(this)(d.values);
+            })
+            .attr("clip-path", function (d) {
+                return "url(#clip_ref-" + ref_data.id + ")";
+            })
+
+    });
+
+    
+
+
+}
+
+function draw_ref_Track(){
+
+}
+function draw_ref_SubInfo(){
+
+}
 
 function drawLineGraph(){
 
@@ -59,9 +113,10 @@ function drawLineGraph(){
         .attr("clip-path", function (d) {
             return "url(#clip_" + d.id.split(" ")[0] + ")";
         })
-
-
     // end of init. clipPath
+
+
+    // append text label
     svg.append("text")
         .attr("y", height - 50)
         .attr("x", 10)
@@ -163,8 +218,6 @@ function drawLineGraph(){
     d3.select("#canvas").selectAll(".overlay")
         .on("mouseover", function() { focus.style("display", null); })
         .on("mousemove", mousemove);
-
-
 }
 
 function drawTrack(){

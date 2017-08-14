@@ -20,7 +20,7 @@ var sub_margin = {top: 20, right: 50, bottom: 20, left: 20},
     sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
 // ************** selected lap, reference lap variable **************** //
-var selected_lap=0, selected_ref_lap;
+var selected_lap=1, selected_ref_lap=0;
 
 
 
@@ -40,16 +40,18 @@ var svg, zoom_svg,
     track_svg, sub_svg;
 
 
-var all_features;
-var selected_features = [];
+var all_features, ref_all_features;
+var selected_features = [], ref_selected_features = [];
 var selected_feat_names = [];
 // var root_x = "Distance (m)"
 var root_x = "PositionIndex"
 
 
+
 // ************** track boundary variable and line function **************** //
-var track_data = [];
+var track_data = [], ref_track_data =[];
 var track_x, track_y,
+    ref_track_x, ref_track_y,
     track_boundary_x_in, track_boundary_y_in,
     track_boundary_x_out, track_boundary_y_out;
 
@@ -72,6 +74,9 @@ var track_boundary_outline = d3.line()
 var animation_index =0,
     animation_length,
     animation_range = [],
+    ref_animation_index = 0,
+    ref_animation_length,
+    ref_animation_range,
     animation_flag = false,
     resume_flag = false,
     animation_state = "play",
@@ -84,6 +89,11 @@ var steer_data =[],
     brake_data = [],
     gas_data = [],
     gear_data = [];
+
+var ref_steer_data = [],
+    ref_brake_data = [],
+    ref_gas_data = [],
+    ref_gear_data = [];
 
 
 
@@ -109,8 +119,10 @@ var zoom = d3.zoom()
     .on("zoom", zoomed);
 
 var current_zoomRange;
-
 var context;
+
+
+
 /**************************** END of initializing Global variable *******************************************/
 
 
@@ -119,11 +131,21 @@ var context;
 // document가 ready 되었을 때 chart initialization
 $(document).ready(function () {
 
-    init();
+    init(2);
+    // reference_init();
+
 
 });
 
-function init() {
+function reference_init() {
+    console.log("reference init!")
+
+}
+
+function init(init_type) {
+    init_type = init_type || 1;
+
+    document.getElementById("loading").style.display = "block";
 
     // variable for brush
     brush = d3.brushX()
@@ -137,7 +159,77 @@ function init() {
         .extent([[0, 0], [width, height]])
         .on("zoom", zoomed);
 
+    if(init_type == 1){
+        init_with_originLap()
 
+    }else{
+        // init type이 1이 아닌 경우: input이 2개.
+        init_with_originLap();
+        init_with_refLap();
+    }
+
+}
+function init_with_refLap() {
+    d3.csv("./data/moon_KIC_SHORT.csv", type, function(error, data) {
+        if (error) throw error;
+
+        console.log(data);
+
+        ref_all_features = data.columns.slice(0).map(function(id) {
+
+            return {
+                id: id,
+                values: data.map(function(d) {
+                    return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                })
+            };
+        });
+
+        // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
+        ref_selected_features = [];
+        var temp_lat = [];
+        var temp_long = [];
+
+
+        ref_all_features.forEach(function(d){
+
+            // default feature로 GPS_Speed, RPM 을 plotting.
+            if(d.id == "GPS_Speed" || d.id == "RPM"){
+                ref_selected_features.push(d)
+
+            }else if(d.id == "PosLocalY"){
+                temp_lat = _.pluck(d.values, 'feature_val');
+            }else if(d.id == "PosLocalX"){
+                temp_long = _.pluck(d.values, 'feature_val');
+            }else if(d.id == "Steer_angle"){
+                ref_steer_data = _.pluck(d.values, 'feature_val')
+            }else if(d.id == "Pedal_brake"){
+                ref_brake_data = _.pluck(d.values, 'feature_val')
+            }else if(d.id == "Gear"){
+                ref_gear_data = _.pluck(d.values, 'feature_val')
+            }else if(d.id == "ECU_THROTTLE"){
+                ref_gas_data = _.pluck(d.values, 'feature_val')
+            }
+        });
+        /// ***** assign temp lat long data to global variable *****
+        temp_lat.forEach(function(value, index){
+            ref_track_data.push({
+                long: temp_long[index],
+                lat: value
+            });
+
+        });
+        ref_animation_length = ref_track_data.length;
+
+        draw_ref_LineGraph();
+        // draw_ref_Track();
+        // draw_ref_SubInfo();
+        document.getElementById("loading").style.display = "none";
+
+    });
+}
+
+function init_with_originLap() {
     d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
 
         if (error) throw error;
@@ -162,11 +254,13 @@ function init() {
 
         all_features.forEach(function(d){
 
+/*
 
             // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
             if(isNaN(d.values[0].feature_val)){
                 $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
             }
+*/
 
             // default feature로 GPS_Speed, RPM 을 plotting.
             if(d.id == "GPS_Speed" || d.id == "RPM"){
@@ -174,10 +268,10 @@ function init() {
                 selected_feat_names.push(d.id);
                 $('.checkbox_wrapper').append("<div class ='checkbox'> " +
                     "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>"+d.id+"</label></div>");
-             // }else if(d.id == "RefinedPosLat"){
-             //    temp_lat = _.pluck(d.values, 'feature_val');
-             // }else if(d.id == "RefinedPosLon"){
-             //    temp_long = _.pluck(d.values, 'feature_val');
+                // }else if(d.id == "RefinedPosLat"){
+                //    temp_lat = _.pluck(d.values, 'feature_val');
+                // }else if(d.id == "RefinedPosLon"){
+                //    temp_long = _.pluck(d.values, 'feature_val');
             }else if(d.id == "PosLocalY"){
                 temp_lat = _.pluck(d.values, 'feature_val');
             }else if(d.id == "PosLocalX"){
@@ -192,7 +286,7 @@ function init() {
                 gas_data = _.pluck(d.values, 'feature_val')
             }else{
                 $('.checkbox_wrapper').append("<div class ='checkbox'> " +
-                        "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>"+d.id+"</label></div>");
+                    "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>"+d.id+"</label></div>");
             }
 
         });
@@ -214,7 +308,6 @@ function init() {
         zoom_x.domain(x0);
         console.log(x0);
 
-
         drawLineGraph();
         drawTrack();
         draw_trackBoundary();
@@ -225,8 +318,9 @@ function init() {
         document.getElementById("loading").style.display = "none";
 
     });
-
 }
+
+
 
 /*
 
