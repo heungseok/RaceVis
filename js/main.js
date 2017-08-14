@@ -20,7 +20,7 @@ var sub_margin = {top: 20, right: 50, bottom: 20, left: 20},
     sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
 // ************** selected lap, reference lap variable **************** //
-var selected_lap=1, selected_ref_lap=0;
+var selected_lap=1, selected_ref_lap=1;
 
 
 
@@ -171,6 +171,7 @@ function init(init_type) {
 }
 function init_with_refLap() {
     d3.csv("./data/moon_KIC_SHORT.csv", type, function(error, data) {
+    // d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
         if (error) throw error;
 
         console.log(data);

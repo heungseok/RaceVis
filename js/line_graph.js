@@ -4,23 +4,18 @@
 // draw_ref_LineGraph();
 // draw_ref_Track();
 // draw_ref_SubInfo();
+
+
 function draw_ref_LineGraph(){
-    selected_feat_names.forEach(function (feature) {
-        console.log(feature);
-        // d3.select("g#"+feature)
-        //     .append("path")
-        //     .data([])
-        //     .attr("id", "ref-"+ feature)
 
-    });
     ref_selected_features.forEach(function (ref_data){
-       console.log(ref_data);
+
+        // g select (origin data)
+        var ref_graph_svg = d3.select("g#"+ref_data.id).select( function() { return this.parentNode; });
 
 
-
-        var ref_graph_svg = d3.select("g#"+ref_data.id)
-
-        ref_graph_svg.select(function() {return this.parentNode; })
+        // parent node(svg) select, and add clipPath
+        ref_graph_svg
             .append("defs").append("clipPath")
             .attr("id",  function (d) {
                 return "clip_ref-" + d.id;
@@ -29,24 +24,54 @@ function draw_ref_LineGraph(){
             .attr("width", width)
             .attr("height", height);
 
-
-        ref_graph_svg.append("path")
+        ref_graph_svg
             .data([ref_data])
+            .append("g")
+            .attr("id", function (d) {
+                console.log(d);
+                return "ref-" + d.id;
+            })
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            // path append
+            .append("path")
             .attr("class", "line ref")
-            .attr("id", "ref-" + ref_data.id)
             .attr("d", function(d) {
-               // console.log(d)
-                 return line.get(this)(d.values);
+
+                var ty = y.set(this, d3.scaleLinear()
+                    .range([height, 0]))
+                // local feature에 대한 y range setting
+                    .domain([
+                        d3.min(d.values, function(c) { return c.feature_val; }),
+                        d3.max(d.values, function(c) { return c.feature_val; }) ]);
+
+                line.set(this, d3.line().curve(d3.curveBasis)
+                    .x(function(d){ return x(d.x); })
+                    .y(function(d){ return ty(d.feature_val); }));
+
+                return line.get(this)(d.values);
             })
             .attr("clip-path", function (d) {
                 return "url(#clip_ref-" + ref_data.id + ")";
             })
 
+        var focus = d3.select("g#ref-"+ref_data.id)
+            .append("g")
+            .attr("class", "focus-ref")
+            .style("display", "none");
+
+        // append the circle at the interaction
+        focus.append("circle")
+            .attr("class", "chart_tooltip-ref")
+            .attr("r", 4.5);
+        // place the value at the interaction
+        focus.append("text")
+            .attr("class", "chart_tooltip-ref")
+            .attr("x", 9)
+            .attr("dy", ".35em")
+            .text("nothing");
+
+
     });
-
-    
-
-
 }
 
 function draw_ref_Track(){
@@ -363,6 +388,7 @@ function drawSubInfo() {
 function mousemove(){
 
     var x_value = x.invert(d3.mouse(this)[0]);
+    var x_value_from_origin = 0;
     var index = 0;
 
     var focuses = d3.select("#canvas").selectAll("svg")
@@ -372,10 +398,8 @@ function mousemove(){
     var foc_lines = document.getElementsByClassName("tooltip_line");
     foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
 
-
     // set all focus elements' style to display
     focuses.style("display", null);
-
     focuses.selectAll(".chart_tooltip").attr("transform", function(d){
         index = bisect(d.values, x_value, 0, d.values.length -1);
 
@@ -385,7 +409,8 @@ function mousemove(){
                 d3.min(d.values, function(c) { return c.feature_val; }),
                 d3.max(d.values, function (c) { return c.feature_val })
             ]);
-
+        // x_value_from_origin = d.values[index].x;
+        x_value_from_origin = d.values[index].x;
         return "translate(" + x(d.values[index].x) + "," + y_range(d.values[index].feature_val) + ")";
 
     });
@@ -399,6 +424,48 @@ function mousemove(){
         return "translate(" + x(d.values[index].x) + "," + height +")";
 
     });
+
+    // x(d.values[index].x) => 기준이 되는 x값
+
+
+    // ********** reference lap focus **************
+    var ref_index = 0;
+    var ref_focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus-ref");
+    ref_focuses.style("display", null);
+
+
+    // find matched value by origin index
+    console.log(all_features);
+    var origin_x_axis_data = _.where(all_features, {id:root_x}).values;
+    // var ref_data_index =
+
+
+    ref_focuses.selectAll(".chart_tooltip-ref").attr("transform", function(d){
+
+        var y_range = d3.scaleLinear()
+            .range([height, 0])
+            .domain([
+                d3.min(d.values, function(c) { return c.feature_val; }),
+                d3.max(d.values, function (c) { return c.feature_val })
+            ]);
+
+
+
+        return "translate(" + x(d.values[index].x) + "," + y_range(d.values[index].feature_val) + ")";
+
+
+        // return "translate(" + x_value_from_origin + "," + pos.y +")";
+
+    });
+
+    ref_focuses.selectAll("text.chart_tooltip-ref")
+        .text( function (d) {
+            // console.log(d)
+            return +d.values[index].feature_val.toFixed(3);
+        });
+
+
 
 
     // moving Track
