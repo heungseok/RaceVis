@@ -30,7 +30,6 @@ var zoom_x = d3.scaleLinear().range([0, zoom_width]);
 var y = d3.local();
 
 var line = d3.local();
-var ref_line = d3.local();
 var zoom_line = d3.local();
 var bisect = d3.bisector(function (d) { return d.x; }).left;
 

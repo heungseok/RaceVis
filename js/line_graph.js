@@ -30,33 +30,15 @@ function drawLineGraph_withTwoLaps() {
             // local feature에 대한 y range setting
                 .domain(union_y0);
 
-            // var ty = y.set(this, d3.scaleLinear()
-            //     .range([height, 0]))
-            //     // local feature에 대한 y range setting
-            //     .domain([
-            //         d3.min(d.values, function(c) { return c.feature_val; }),
-            //         d3.max(d.values, function(c) { return c.feature_val; }) ]);
-            // Global feature에 대한 y range setting
-            //                            .domain([
-            //                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
-            //                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
-
-            // local feature range (0~ max(y))
-//                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
-
             line.set(this, d3.line().curve(d3.curveBasis)
                 .x(function(c){ return x(c.x);})
                 .y(function(c){ return ty(c.feature_val); }));
 
-            // ref_line.set(this, d3.line().curve(d3.curveBasis)
-            //     .x(function(d){ return x(d.x)}))
 
-            // zoom_line.set(this, d3.line().curve(d3.curveBasis)
-            //     .x(function(d){ return x(d.x);})
-            //     .y(function(d){ return ty(d.feature_val); }));
 
         });
 
+    // ************* Assign clipPath to each line area *********************//
     // clipPath init. ref-http://visualize.tistory.com/331
     d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
         .attr("id",  function (d) {
@@ -66,16 +48,9 @@ function drawLineGraph_withTwoLaps() {
         .attr("width", width)
         .attr("height", height)
 
-    // d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
-    //     .attr("id",  function (d) {
-    //         return "clip_ref-" + d.id.split(" ")[0];
-    //     })
-    //     .append("rect")
-    //     .attr("width", width)
-    //     .attr("height", height)
+    // end of init. clipPath
 
-    // assign clipPath to each line area.
-    // & draw path line
+    // ************* draw each path line (ref Lap 먼저, 다음 origin Lap) *********************//
     svg.append("path")
         .attr("class", "line ref")
         .attr("d", function(d) { return line.get(this)(d.ref_values); })
@@ -90,9 +65,9 @@ function drawLineGraph_withTwoLaps() {
             return "url(#clip_" + d.id.split(" ")[0] + ")";
         })
 
-    // end of init. clipPath
 
 
+    // ************* Append x-axis, y-axis *********************//
     // append text label
     svg.append("text")
         .attr("y", height - 50)
@@ -124,6 +99,9 @@ function drawLineGraph_withTwoLaps() {
         }
     }
 
+    // ************* Append each tooltip *********************//
+
+    // ******** origin tooltip ********** //
     var focus = svg.append("g")
         .attr("class", "focus")
         .style("display", "none");
@@ -149,7 +127,25 @@ function drawLineGraph_withTwoLaps() {
         .attr("y1", -height)
         .attr("y2", height);
 
+    // ******** reference tooltip ********** //
+    var ref_focus = svg.append("g")
+        .attr("class", "focus-ref")
+        .style("display", "none");
 
+    // append the circle at the interaction
+    ref_focus.append("circle")
+        .attr("class", "chart_tooltip-ref")
+        .attr("r", 4.5);
+    // place the value at the interaction
+    ref_focus.append("text")
+        .attr("class", "chart_tooltip-ref")
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .style("fill", "red")
+        .text("nothing");
+
+
+    // **************** Init mouse event, zoom brush, zoom brush on Chart ********** //
     // append the rectangle to capture mouse
     svg.append("rect")
         .attr("class", "overlay")
@@ -180,16 +176,16 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "axis axis--x")
         .attr("transform", "translate(" + 0+ "," + zoom_height + ")")
         .call(zoom_xAxis);
-    //
+
     context.append("g")
         .attr("class", "brush")
         .call(brush)
         .call(brush.move, x.range()); // 이걸로 초기 zoom range를 x.range()로 setting함. 없애면 brush 안보임.
-    
+
     // 마지막으로 mouse over effect 활성, 마지막에 선언함으로서 chart위에 brush와 겹치면서 잘 동작될 수 있음.
     d3.select("#canvas").selectAll(".overlay")
         .on("mouseover", function() { focus.style("display", null); })
-        .on("mousemove", mousemove);
+        .on("mousemove", mousemove_twoLaps);
 
 
 }
@@ -497,7 +493,88 @@ function drawSubInfo() {
 
 }
 
+function mousemove_twoLaps() {
 
+    var x_value = x.invert(d3.mouse(this)[0]);
+    var x_value_from_origin = 0;
+    var index = 0;
+
+    var focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus");
+
+    // 마지막 line x-axis에 맞추기.
+    var foc_lines = document.getElementsByClassName("tooltip_line");
+    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
+
+    // set all focus elements' style to display
+    focuses.style("display", null);
+    focuses.selectAll(".chart_tooltip").attr("transform", function(d){
+        index = bisect(d.values, x_value, 0, d.values.length -1);
+        var ty = y.get(this);
+        x_value_from_origin = d.values[index].x;
+        return "translate(" + x(d.values[index].x) + "," + ty(d.values[index].feature_val) + ")";
+
+    });
+
+    focuses.selectAll("text")
+        .text( function (d) { return +d.values[index].feature_val.toFixed(3); });
+
+    focuses.selectAll("line.tooltip_line").attr("transform", function(d){
+        index = bisect(d.values, x_value, 0, d.values.length -1);
+        return "translate(" + x(d.values[index].x) + "," + height +")";
+
+    });
+
+    // ********** reference lap focus **************
+    var ref_index = 0;
+    var ref_focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus-ref");
+    ref_focuses.style("display", null);
+
+    ref_focuses.selectAll(".chart_tooltip-ref").attr("transform", function(d){
+        ref_index = bisect(d.ref_values, x_value, 0, d.ref_values.length -1);
+        var ty = y.get(this);
+        return "translate(" + x(d.ref_values[ref_index].x) + "," + ty(d.ref_values[ref_index].feature_val) + ")";
+
+    });
+
+    ref_focuses.selectAll("text.chart_tooltip-ref")
+        .text( function (d) {
+            return +d.ref_values[ref_index].feature_val.toFixed(3);
+        });
+
+
+    // moving Track
+    // var track_focus = d3.select("#track_focus1");
+    // track_focus.attr("transform", "translate(" + track_x(track_data[index].long) + "," + track_y(track_data[index].lat) + ")");
+
+    // handle Steering, Brake, Gas, Gear
+
+    // rotate by steering value
+    var steer_focus = d3.select("#steer_focus1");
+    steer_focus.select("image")
+        .attr("transform", "translate(0, 25), rotate(" + steer_data[index] + ", 35, 35)");
+    steer_focus.select("text")
+        .text("Steering degree: " + steer_data[index]);
+
+    var brake_focus = d3.select("#brake_focus1");
+    brake_focus.select("rect.value")
+        .attr("height", 1+ brake_data[index]);
+    brake_focus.select("text")
+        .text("Brake: " + brake_data[index]);
+
+    var gas_focus = d3.select("#gas_focus1");
+    gas_focus.select("rect.value")
+        .attr("height", 1+gas_data[index]);
+    gas_focus.select("text")
+        .text("Gas: " + gas_data[index]);
+
+    var gear_focus = d3.select("#gear_focus1");
+    gear_focus.select("text.value")
+        .text(gear_data[index])
+
+
+}
 
 function mousemove(){
 
