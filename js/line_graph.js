@@ -7,7 +7,7 @@
 
 function drawLineGraph_withTwoLaps() {
     // console.log(merged_selected_features);
-    console.log(selected_features);
+    // console.log(selected_features);
     /*************************** DRAWING CHART ******************************/
     svg = d3.select("#canvas").selectAll("svg")
         .data(selected_features)
@@ -758,6 +758,184 @@ function addChart(id) {
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .each(function (d) {
 
+            var origin_y0 = d3.extent(d.values, function(c) { return +c.feature_val;});
+            var ref_y0 = d3.extent(d.ref_values, function(c) { return +c.feature_val;});
+
+            var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+            var ty = y.set(this, d3.scaleLinear()
+                .range([height, 0]))
+            // local feature에 대한 y range setting
+                .domain(union_y0);
+
+            line.set(this, d3.line().curve(d3.curveBasis)
+                .x(function(c){ return x(c.x);})
+                .y(function(c){ return ty(c.feature_val); }));
+
+        });
+
+    // clipPath init. ref-http://visualize.tistory.com/331
+    d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
+        .attr("id",  function (d) {
+            return "clip_" + d.id.split(" ")[0];
+        })
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
+
+    // assign clipPath to each line area.
+
+    // ************* draw each path line (ref Lap 먼저, 다음 origin Lap) *********************//
+    svg.append("path")
+        .attr("class", "line ref")
+        .attr("d", function(d) { return line.get(this)(d.ref_values); })
+        .attr("clip-path", function (d) {
+            return "url(#clip_" + d.id.split(" ")[0] + ")";
+        });
+
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", function(d) { return line.get(this)(d.values); })
+        .attr("clip-path", function (d) {
+            return "url(#clip_" + d.id.split(" ")[0] + ")";
+        });
+
+    svg.append("text")
+        .attr("y", height - 50)
+        .attr("x", 10)
+        .text(function(d) { return d.id; });
+
+    // ************** x axis, y axis 생성 ************************ //
+    var origin_y0 = d3.extent(target_data.values, function(c) { return +c.feature_val;});
+    var ref_y0 = d3.extent(target_data.ref_values, function(c) { return +c.feature_val;});
+
+    var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+    var y_range = d3.scaleLinear()
+        .range([height, 0])
+        .domain(union_y0);
+
+    svg.append("g")
+        .call(d3.axisLeft(y_range).ticks(3));
+
+    // *** x axis **** //
+    svg.append("g")
+        .call(xAxis)
+        .attr("id", "x-axis")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(" + 0 + "," + height + ")");
+
+    // 마지막 line x-axis에 맞추기.
+    var foc_lines = document.getElementsByClassName("tooltip_line");
+    for (var i =0; i<foc_lines.length-1; i++){
+        foc_lines[i].setAttribute("y2", height);
+    }
+    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
+
+    // ***  chart title ***
+    svg.append("text")
+        .attr("y", height - 50)
+        .attr("x", 10)
+        .text(id);
+
+    // ************** tooltip 생성 ************************ //
+    // ******** origin tooltip ********** //
+    var focus = svg.append("g")
+        .attr("class", "focus")
+        .style("display", "none");
+
+    // append the circle at the interaction
+    focus.append("circle")
+        .attr("class", "chart_tooltip")
+        .attr("r", 4.5);
+    // place the value at the interaction
+    focus.append("text")
+        .attr("class", "chart_tooltip")
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .style("fill", "steelblue")
+        .text("nothing");
+
+    // append x line.
+    focus.append("line")
+        .attr("class", "tooltip_line")
+        .style("stroke", "#fff")
+        .style("stroke-dasharray", "3,3")
+        .style("opacity", 0.9)
+        .attr("y1", -height)
+        .attr("y2", height);
+
+    // ******** reference tooltip ********** //
+    var ref_focus = svg.append("g")
+        .attr("class", "focus-ref")
+        .style("display", "none");
+
+    // append the circle at the interaction
+    ref_focus.append("circle")
+        .attr("class", "chart_tooltip-ref")
+        .attr("r", 4.5);
+    // place the value at the interaction
+    ref_focus.append("text")
+        .attr("class", "chart_tooltip-ref")
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .style("fill", "red")
+        .text("nothing");
+
+
+
+    // **************** Init mouse event, zoom brush, zoom brush on Chart ********** //
+    // append the rectangle to capture mouse
+    svg.append("rect")
+        .attr("class", "overlay")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "transparent");
+
+    // ************ brush on chart 추가 ***************
+    svg.append("g")
+        .attr("class", "chartBrush")
+        .call(brush_onChart);
+
+    // ************ Enable to work mouse hovering ***************
+    d3.select("#canvas").selectAll(".overlay")
+        .on("mouseover", function() { focus.style("display", null); })
+        .on("mousemove", mousemove_twoLaps);
+
+
+
+
+    // ************ set the all circles as invisible ************//
+    d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus")
+        .style("display", "none");
+    d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus-ref")
+        .style("display", "none");
+
+}
+function addChart_backup(id) {
+
+    // 이전 x-axis 삭제
+    d3.select("#x-axis")
+        .remove();
+
+    // extract target data which is stored in last index of selected_features
+    var target_data = selected_features[selected_features.length-1];
+
+    ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
+    console.log(target_data);
+    svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
+    //                var update_svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
+        .append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.bottom + margin.top)
+        .append("g")
+        .attr("id", function (d) {
+            return d.id.split(" ")[0];
+            // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
+        })
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .each(function (d) {
+
             var ty = y.set(this, d3.scaleLinear()
                 .range([height, 0]))
             // local feature에 대한 y range setting
@@ -857,14 +1035,9 @@ function addChart(id) {
         .attr("height", height)
         .attr("fill", "transparent")
 
-    // ************ brush on chart 추가 ***************
-    svg.append("g")
-        .attr("class", "chartBrush")
-        .call(brush_onChart);
-
-    // ************ Enable to work mouse hovering ***************
     d3.select("#canvas").selectAll(".overlay")
         .on("mouseover", function() { focus.style("display", null); })
+        // .on("mouseout", function() { focus.style("display", "none"); })
         .on("mousemove", mousemove);
 
 
@@ -875,6 +1048,7 @@ function addChart(id) {
 
 
 }
+
 
 function removeChart(id, index) {
 

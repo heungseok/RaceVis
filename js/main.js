@@ -184,9 +184,17 @@ function init_with_twoLaps() {
             });
             merged_all_features.push(all_features);
 
+            console.log(all_features);
             // 다음으로 ref data parsing 후 merged_all_features에 push
             ref_all_features = ref_data.columns.slice(0).map(function(id) {
+                console.log(id);
+                var temp_index = _.findIndex(all_features, function(item) { return item.id == id; })
 
+                if( temp_index != -1){
+                    all_features[temp_index].ref_values = ref_data.map(function(d) {
+                        return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                    });
+                }
                 return {
                     id: id,
                     values: ref_data.map(function(d) {
@@ -194,6 +202,18 @@ function init_with_twoLaps() {
                     })
                 };
             });
+            console.log(all_features);
+
+            ref_data.columns.slice(0).map(function(id) {
+
+                return {
+                    id: id,
+                    ref_values: ref_data.map(function(d) {
+                        return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                    })
+                };
+            });
+
             merged_all_features.push(ref_all_features)
             console.log("Finished merging all features")
             console.log(merged_all_features);
