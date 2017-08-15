@@ -21,7 +21,7 @@ var sub_margin = {top: 20, right: 50, bottom: 20, left: 20},
 
 // ************** selected lap, reference lap variable **************** //
 var selected_lap=1, selected_ref_lap=1;
-
+var vis_type = 2; // 1: one lap, 2: two laps
 
 
 // ************** line-graph variable and line function **************** //
@@ -131,7 +131,7 @@ var context;
 // document가 ready 되었을 때 chart initialization
 $(document).ready(function () {
 
-    init(2);
+    init(vis_type);
     // reference_init();
 
 });
@@ -182,48 +182,27 @@ function init_with_twoLaps() {
                     })
                 };
             });
-            merged_all_features.push(all_features);
 
-            console.log(all_features);
             // 다음으로 ref data parsing 후 merged_all_features에 push
-            ref_all_features = ref_data.columns.slice(0).map(function(id) {
-                console.log(id);
+            ref_data.columns.slice(0).map(function(id) {
                 var temp_index = _.findIndex(all_features, function(item) { return item.id == id; })
-
                 if( temp_index != -1){
                     all_features[temp_index].ref_values = ref_data.map(function(d) {
                         return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
                     });
                 }
-                return {
-                    id: id,
-                    values: ref_data.map(function(d) {
-                        return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
-                    })
-                };
+
             });
-            console.log(all_features);
+            console.log("Finished merging all features");
 
-            ref_data.columns.slice(0).map(function(id) {
-
-                return {
-                    id: id,
-                    ref_values: ref_data.map(function(d) {
-                        return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
-                    })
-                };
-            });
-
-            merged_all_features.push(ref_all_features)
-            console.log("Finished merging all features")
-            console.log(merged_all_features);
 
             // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
             selected_features = [];
             var temp_lat = [];
             var temp_long = [];
 
-            console.log("(origin data) generating check box by each features, and assign track_data, gas, and etc.");
+            console.log("generating check box by each features, and assign track_data, gas, and etc.");
+
             // 다음으로 origin data를 기준으로 check box 형성
             all_features.forEach(function(d){
                 /*
@@ -244,23 +223,29 @@ function init_with_twoLaps() {
                     //    temp_long = _.pluck(d.values, 'feature_val');
                 }else if(d.id == "PosLocalY"){
                     temp_lat = _.pluck(d.values, 'feature_val');
+                    temp_lat = _.pluck(d.ref_values, 'feature_val');
                 }else if(d.id == "PosLocalX"){
                     temp_long = _.pluck(d.values, 'feature_val');
+                    temp_long = _.pluck(d.ref_values, 'feature_val');
                 }else if(d.id == "Steer_angle"){
                     steer_data = _.pluck(d.values, 'feature_val')
+                    ref_steer_data = _.pluck(d.ref_values, 'feature_val')
                 }else if(d.id == "Pedal_brake"){
                     brake_data = _.pluck(d.values, 'feature_val')
+                    ref_brake_data = _.pluck(d.ref_values, 'feature_val')
                 }else if(d.id == "Gear"){
                     gear_data = _.pluck(d.values, 'feature_val')
+                    ref_gear_data = _.pluck(d.ref_values, 'feature_val')
                 }else if(d.id == "ECU_THROTTLE"){
                     gas_data = _.pluck(d.values, 'feature_val')
+                    ref_gas_data = _.pluck(d.ref_values, 'feature_val')
                 }else{
                     $('.checkbox_wrapper').append("<div class ='checkbox'> " +
                         "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>"+d.id+"</label></div>");
                 }
 
             });
-            console.log("(origin data) finished generating checkbox by each features, and assigning focus data");
+            console.log("finished generating checkbox by each features, and assigning focus data");
 
             /// ***** assign temp lat long data to global variable *****
             temp_lat.forEach(function(value, index){
@@ -271,47 +256,6 @@ function init_with_twoLaps() {
 
             });
             animation_length = track_data.length;
-            merged_selected_features.push(selected_features);
-
-
-            console.log("(ref. data) generating check box by each features, and assign track_data, gas, and etc.");
-            ref_selected_features = [];
-            var temp_lat = [];
-            var temp_long = [];
-
-            ref_all_features.forEach(function(d){
-                // default feature로 GPS_Speed, RPM 을 plotting.
-                if(d.id == "GPS_Speed" || d.id == "RPM"){
-                    ref_selected_features.push(d)
-                    var temp_index = _.findIndex(selected_features, function(item) { return item.id == d.id; })
-                    selected_features[temp_index].ref_values = d.values;
-
-                }else if(d.id == "PosLocalY"){
-                    temp_lat = _.pluck(d.values, 'feature_val');
-                }else if(d.id == "PosLocalX"){
-                    temp_long = _.pluck(d.values, 'feature_val');
-                }else if(d.id == "Steer_angle"){
-                    ref_steer_data = _.pluck(d.values, 'feature_val')
-                }else if(d.id == "Pedal_brake"){
-                    ref_brake_data = _.pluck(d.values, 'feature_val')
-                }else if(d.id == "Gear"){
-                    ref_gear_data = _.pluck(d.values, 'feature_val')
-                }else if(d.id == "ECU_THROTTLE"){
-                    ref_gas_data = _.pluck(d.values, 'feature_val')
-                }
-            });
-            /// ***** assign temp lat long data to global variable *****
-            temp_lat.forEach(function(value, index){
-                ref_track_data.push({
-                    long: temp_long[index],
-                    lat: value
-                });
-
-            });
-            ref_animation_length = ref_track_data.length;
-            merged_selected_features.push(ref_selected_features);
-
-            console.log("(ref. data) finished generating checkbox by each features, and assigning focus data");
 
             // ********  x domain setting, zoom_x domain setting ******** //
             // 두 데이터의 x 값중 min값과 max값을 골라서 x.domain에 setting
@@ -319,11 +263,7 @@ function init_with_twoLaps() {
 
             var origin_x0 = d3.extent(data, function(d) { return +d.x;});
             var ref_x0 = d3.extent(ref_data, function(d) { return +d.x;});
-            console.log(origin_x0);
-            console.log(ref_x0);
-
             var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
-            console.log(union_x0);
 
             x.domain(union_x0);
             zoom_x.domain(union_x0);

@@ -7,7 +7,7 @@
 
 function drawLineGraph_withTwoLaps() {
     // console.log(merged_selected_features);
-    // console.log(selected_features);
+    console.log(selected_features);
     /*************************** DRAWING CHART ******************************/
     svg = d3.select("#canvas").selectAll("svg")
         .data(selected_features)
@@ -660,8 +660,6 @@ function mousemove(){
         });
 
 
-
-
     // moving Track
     var track_focus = d3.select("#track_focus1");
     track_focus.attr("transform", "translate(" + track_x(track_data[index].long) + "," + track_y(track_data[index].lat) + ")");
@@ -711,8 +709,14 @@ function updateChart(value, checked){
                     selected_features.push(d);
                 }
             });
+
             // add target chart (해당 value값을 가진 chart 추가)
-            addChart(value);
+            if(vis_type == 2)
+                addChart_withTwoLaps(value);
+            else
+                addChart(value);
+
+
 
         }
 
@@ -726,15 +730,13 @@ function updateChart(value, checked){
 
             // remove target chart (해당 value값을 가진 chart 삭제)
             removeChart(value, index);
-
-
         }
     }
 }
 
 
 
-function addChart(id) {
+function addChart_withTwoLaps(id) {
 
     // 이전 x-axis 삭제
     d3.select("#x-axis")
@@ -912,8 +914,8 @@ function addChart(id) {
         .style("display", "none");
 
 }
-function addChart_backup(id) {
 
+function addChart(id) {
     // 이전 x-axis 삭제
     d3.select("#x-axis")
         .remove();
