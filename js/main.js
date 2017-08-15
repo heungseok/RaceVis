@@ -30,6 +30,7 @@ var zoom_x = d3.scaleLinear().range([0, zoom_width]);
 var y = d3.local();
 
 var line = d3.local();
+var ref_line = d3.local();
 var zoom_line = d3.local();
 var bisect = d3.bisector(function (d) { return d.x; }).left;
 
@@ -251,6 +252,7 @@ function init_with_twoLaps() {
 
             });
             animation_length = track_data.length;
+            merged_selected_features.push(selected_features);
 
 
             console.log("(ref. data) generating check box by each features, and assign track_data, gas, and etc.");
@@ -262,6 +264,8 @@ function init_with_twoLaps() {
                 // default feature로 GPS_Speed, RPM 을 plotting.
                 if(d.id == "GPS_Speed" || d.id == "RPM"){
                     ref_selected_features.push(d)
+                    var temp_index = _.findIndex(selected_features, function(item) { return item.id == d.id; })
+                    selected_features[temp_index].ref_values = d.values;
 
                 }else if(d.id == "PosLocalY"){
                     temp_lat = _.pluck(d.values, 'feature_val');
@@ -286,6 +290,7 @@ function init_with_twoLaps() {
 
             });
             ref_animation_length = ref_track_data.length;
+            merged_selected_features.push(ref_selected_features);
 
             console.log("(ref. data) finished generating checkbox by each features, and assigning focus data");
 
@@ -306,7 +311,6 @@ function init_with_twoLaps() {
 
             drawLineGraph_withTwoLaps();
 
-            // drawLineGraph();
             // drawTrack();
             // draw_trackBoundary();
             // drawSubInfo();
@@ -650,12 +654,12 @@ function brushed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "zoom") return; // ignore brush-by-zoom
     var s = d3.event.selection || zoom_x.range();
 
-
     current_zoomRange = s;
     console.log(s);
     // current_zoomRange = s.map(zoom_x.invert, zoom_x);
     x.domain(s.map(zoom_x.invert, zoom_x));
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    d3.select("#canvas").selectAll("path.line.ref").attr("d", function(d) { return line.get(this)(d.ref_values)});
     d3.select("#canvas").selectAll(".axis--x").call(xAxis);
 
     console.log("brushed!");

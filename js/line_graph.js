@@ -6,6 +6,190 @@
 // draw_ref_SubInfo();
 
 function drawLineGraph_withTwoLaps() {
+    // console.log(merged_selected_features);
+    console.log(selected_features);
+    /*************************** DRAWING CHART ******************************/
+    svg = d3.select("#canvas").selectAll("svg")
+        .data(selected_features)
+        .enter().append("svg")
+        .attr("width", width + margin.left + margin.right)
+        .attr("height", height + margin.bottom + margin.top)
+        .append("g")
+        .attr("id", function (d) {
+            return d.id.split(" ")[0];
+            // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
+        })
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .each(function (d) {
+            var origin_y0 = d3.extent(d.values, function(c) { return +c.feature_val;});
+            var ref_y0 = d3.extent(d.ref_values, function(c) { return +c.feature_val;});
+
+            var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+            var ty = y.set(this, d3.scaleLinear()
+                .range([height, 0]))
+            // local feature에 대한 y range setting
+                .domain(union_y0);
+
+            // var ty = y.set(this, d3.scaleLinear()
+            //     .range([height, 0]))
+            //     // local feature에 대한 y range setting
+            //     .domain([
+            //         d3.min(d.values, function(c) { return c.feature_val; }),
+            //         d3.max(d.values, function(c) { return c.feature_val; }) ]);
+            // Global feature에 대한 y range setting
+            //                            .domain([
+            //                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
+            //                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
+
+            // local feature range (0~ max(y))
+//                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
+
+            line.set(this, d3.line().curve(d3.curveBasis)
+                .x(function(c){ return x(c.x);})
+                .y(function(c){ return ty(c.feature_val); }));
+
+            // ref_line.set(this, d3.line().curve(d3.curveBasis)
+            //     .x(function(d){ return x(d.x)}))
+
+            // zoom_line.set(this, d3.line().curve(d3.curveBasis)
+            //     .x(function(d){ return x(d.x);})
+            //     .y(function(d){ return ty(d.feature_val); }));
+
+        });
+
+    // clipPath init. ref-http://visualize.tistory.com/331
+    d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
+        .attr("id",  function (d) {
+            return "clip_" + d.id.split(" ")[0];
+        })
+        .append("rect")
+        .attr("width", width)
+        .attr("height", height)
+
+    // d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
+    //     .attr("id",  function (d) {
+    //         return "clip_ref-" + d.id.split(" ")[0];
+    //     })
+    //     .append("rect")
+    //     .attr("width", width)
+    //     .attr("height", height)
+
+    // assign clipPath to each line area.
+    // & draw path line
+    svg.append("path")
+        .attr("class", "line ref")
+        .attr("d", function(d) { return line.get(this)(d.ref_values); })
+        .attr("clip-path", function (d) {
+            return "url(#clip_" + d.id.split(" ")[0] + ")";
+        })
+
+    svg.append("path")
+        .attr("class", "line")
+        .attr("d", function(d) { return line.get(this)(d.values); })
+        .attr("clip-path", function (d) {
+            return "url(#clip_" + d.id.split(" ")[0] + ")";
+        })
+
+    // end of init. clipPath
+
+
+    // append text label
+    svg.append("text")
+        .attr("y", height - 50)
+        .attr("x", 10)
+        .text(function(d) { return d.id; });
+
+    // define y axis
+    for (var i=0; i<selected_features.length; i++){
+        var id = "g#" + selected_features[i].id.split(" ")[0];
+
+        var origin_y0 = d3.extent(selected_features[i].values, function(c) { return +c.feature_val;});
+        var ref_y0 = d3.extent(selected_features[i].ref_values, function(c) { return +c.feature_val;});
+
+        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+        var y_range = d3.scaleLinear()
+            .range([height, 0])
+            .domain(union_y0);
+
+        d3.select(id).append("g")
+            .call(d3.axisLeft(y_range).ticks(3))
+
+        // 마지막 인덱스인 그래프에만 x axis
+        if( i == selected_features.length -1){
+            d3.select(id).append("g")
+                .call(xAxis)
+                .attr("id", "x-axis")
+                .attr("class", "axis axis--x")
+                .attr("transform", "translate(" + 0 + "," + height + ")");
+        }
+    }
+
+    var focus = svg.append("g")
+        .attr("class", "focus")
+        .style("display", "none");
+
+    // append the circle at the interaction
+    focus.append("circle")
+        .attr("class", "chart_tooltip")
+        .attr("r", 4.5);
+    // place the value at the interaction
+    focus.append("text")
+        .attr("class", "chart_tooltip")
+        .attr("x", 9)
+        .attr("dy", ".35em")
+        .style("fill", "steelblue")
+        .text("nothing");
+
+    // append x line.
+    focus.append("line")
+        .attr("class", "tooltip_line")
+        .style("stroke", "#fff")
+        .style("stroke-dasharray", "3,3")
+        .style("opacity", 0.9)
+        .attr("y1", -height)
+        .attr("y2", height);
+
+
+    // append the rectangle to capture mouse
+    svg.append("rect")
+        .attr("class", "overlay")
+        .attr("width", width)
+        .attr("height", height)
+        .attr("fill", "transparent")
+    // .on("mouseover", function() { focus.style("display", null); }) => 마지막에 따로 선언해야 brush와 충돌일어나지 않음.
+    // .on("mousemove", mousemove)
+    //
+
+    // ############################### BRUSH on CHART ##############################
+    svg.append("g")
+        .attr("class", "chartBrush")
+        .call(brush_onChart);
+
+    // ################################ ZOOM BRUSH PART (on ZOOM CANVAS) ###############################
+    zoom_svg = d3.select("#zoom_canvas")
+        .append("svg")
+        .attr("width", zoom_width + zoom_margin.left + zoom_margin.right)
+        .attr("height", zoom_height + zoom_margin.top + zoom_margin.bottom)
+        .append("g")
+        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+
+    context = zoom_svg.append("g")
+        .attr("class", "context");
+
+    context.append("g")
+        .attr("class", "axis axis--x")
+        .attr("transform", "translate(" + 0+ "," + zoom_height + ")")
+        .call(zoom_xAxis);
+    //
+    context.append("g")
+        .attr("class", "brush")
+        .call(brush)
+        .call(brush.move, x.range()); // 이걸로 초기 zoom range를 x.range()로 setting함. 없애면 brush 안보임.
+    
+    // 마지막으로 mouse over effect 활성, 마지막에 선언함으로서 chart위에 brush와 겹치면서 잘 동작될 수 있음.
+    d3.select("#canvas").selectAll(".overlay")
+        .on("mouseover", function() { focus.style("display", null); })
+        .on("mousemove", mousemove);
 
 
 }
