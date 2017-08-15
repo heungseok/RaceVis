@@ -40,8 +40,8 @@ var svg, zoom_svg,
     track_svg, sub_svg;
 
 
-var all_features, ref_all_features;
-var selected_features = [], ref_selected_features = [];
+var all_features, ref_all_features, merged_all_features =[];
+var selected_features = [], ref_selected_features = [], merged_selected_features =[];
 var selected_feat_names = [];
 // var root_x = "Distance (m)"
 var root_x = "PositionIndex"
@@ -134,7 +134,6 @@ $(document).ready(function () {
     init(2);
     // reference_init();
 
-
 });
 
 function reference_init() {
@@ -160,15 +159,173 @@ function init(init_type) {
         .on("zoom", zoomed);
 
     if(init_type == 1){
-        init_with_originLap()
+        init_with_originLap();
 
     }else{
         // init type이 1이 아닌 경우: input이 2개.
-        init_with_originLap();
-        init_with_refLap();
+        init_with_twoLaps();
+        // init_with_originLap();
+        // init_with_refLap();
     }
 
 }
+function init_with_twoLaps() {
+    d3.csv("./data/m4_KIC_SHORT.csv", type, function(data) {
+        d3.csv("./data/moon_KIC_SHORT.csv", type, function (ref_data) {
+
+            // 먼저 origin data parsing 한 뒤 merged_all_features에 push
+            all_features = data.columns.slice(0).map(function(id) {
+                return {
+                    id: id,
+                    values: data.map(function(d) {
+                        return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                    })
+                };
+            });
+            merged_all_features.push(all_features);
+
+            // 다음으로 ref data parsing 후 merged_all_features에 push
+            ref_all_features = ref_data.columns.slice(0).map(function(id) {
+
+                return {
+                    id: id,
+                    values: ref_data.map(function(d) {
+                        return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                    })
+                };
+            });
+            merged_all_features.push(ref_all_features)
+            console.log("Finished merging all features")
+            console.log(merged_all_features);
+
+            // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
+            selected_features = [];
+            var temp_lat = [];
+            var temp_long = [];
+
+            console.log("(origin data) generating check box by each features, and assign track_data, gas, and etc.");
+            // 다음으로 origin data를 기준으로 check box 형성
+            all_features.forEach(function(d){
+                /*
+                 // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
+                 if(isNaN(d.values[0].feature_val)){
+                 $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
+                 }
+                 */
+                // default feature로 GPS_Speed, RPM 을 plotting.
+                if(d.id == "GPS_Speed" || d.id == "RPM"){
+                    selected_features.push(d)
+                    selected_feat_names.push(d.id);
+                    $('.checkbox_wrapper').append("<div class ='checkbox'> " +
+                        "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>"+d.id+"</label></div>");
+                    // }else if(d.id == "RefinedPosLat"){
+                    //    temp_lat = _.pluck(d.values, 'feature_val');
+                    // }else if(d.id == "RefinedPosLon"){
+                    //    temp_long = _.pluck(d.values, 'feature_val');
+                }else if(d.id == "PosLocalY"){
+                    temp_lat = _.pluck(d.values, 'feature_val');
+                }else if(d.id == "PosLocalX"){
+                    temp_long = _.pluck(d.values, 'feature_val');
+                }else if(d.id == "Steer_angle"){
+                    steer_data = _.pluck(d.values, 'feature_val')
+                }else if(d.id == "Pedal_brake"){
+                    brake_data = _.pluck(d.values, 'feature_val')
+                }else if(d.id == "Gear"){
+                    gear_data = _.pluck(d.values, 'feature_val')
+                }else if(d.id == "ECU_THROTTLE"){
+                    gas_data = _.pluck(d.values, 'feature_val')
+                }else{
+                    $('.checkbox_wrapper').append("<div class ='checkbox'> " +
+                        "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>"+d.id+"</label></div>");
+                }
+
+            });
+            console.log("(origin data) finished generating checkbox by each features, and assigning focus data");
+
+            /// ***** assign temp lat long data to global variable *****
+            temp_lat.forEach(function(value, index){
+                track_data.push({
+                    long: temp_long[index],
+                    lat: value
+                });
+
+            });
+            animation_length = track_data.length;
+
+
+            console.log("(ref. data) generating check box by each features, and assign track_data, gas, and etc.");
+            ref_selected_features = [];
+            var temp_lat = [];
+            var temp_long = [];
+
+            ref_all_features.forEach(function(d){
+                // default feature로 GPS_Speed, RPM 을 plotting.
+                if(d.id == "GPS_Speed" || d.id == "RPM"){
+                    ref_selected_features.push(d)
+
+                }else if(d.id == "PosLocalY"){
+                    temp_lat = _.pluck(d.values, 'feature_val');
+                }else if(d.id == "PosLocalX"){
+                    temp_long = _.pluck(d.values, 'feature_val');
+                }else if(d.id == "Steer_angle"){
+                    ref_steer_data = _.pluck(d.values, 'feature_val')
+                }else if(d.id == "Pedal_brake"){
+                    ref_brake_data = _.pluck(d.values, 'feature_val')
+                }else if(d.id == "Gear"){
+                    ref_gear_data = _.pluck(d.values, 'feature_val')
+                }else if(d.id == "ECU_THROTTLE"){
+                    ref_gas_data = _.pluck(d.values, 'feature_val')
+                }
+            });
+            /// ***** assign temp lat long data to global variable *****
+            temp_lat.forEach(function(value, index){
+                ref_track_data.push({
+                    long: temp_long[index],
+                    lat: value
+                });
+
+            });
+            ref_animation_length = ref_track_data.length;
+
+            console.log("(ref. data) finished generating checkbox by each features, and assigning focus data");
+
+            // ********  x domain setting, zoom_x domain setting ******** //
+            // 두 데이터의 x 값중 min값과 max값을 골라서 x.domain에 setting
+            // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
+
+            var origin_x0 = d3.extent(data, function(d) { return +d.x;});
+            var ref_x0 = d3.extent(ref_data, function(d) { return +d.x;});
+            console.log(origin_x0);
+            console.log(ref_x0);
+
+            var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
+            console.log(union_x0);
+
+            x.domain(union_x0);
+            zoom_x.domain(union_x0);
+
+            drawLineGraph_withTwoLaps();
+
+            // drawLineGraph();
+            // drawTrack();
+            // draw_trackBoundary();
+            // drawSubInfo();
+            // setBtnState();
+            // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
+            // zoomReset();
+            document.getElementById("loading").style.display = "none";
+
+
+
+
+
+        })
+    });
+
+}
+
+
+
 function init_with_refLap() {
     d3.csv("./data/moon_KIC_SHORT.csv", type, function(error, data) {
     // d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
@@ -191,9 +348,7 @@ function init_with_refLap() {
         var temp_lat = [];
         var temp_long = [];
 
-
         ref_all_features.forEach(function(d){
-
             // default feature로 GPS_Speed, RPM 을 plotting.
             if(d.id == "GPS_Speed" || d.id == "RPM"){
                 ref_selected_features.push(d)
@@ -256,7 +411,6 @@ function init_with_originLap() {
         all_features.forEach(function(d){
 
 /*
-
             // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
             if(isNaN(d.values[0].feature_val)){
                 $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);

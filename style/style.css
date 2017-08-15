@@ -178,6 +178,10 @@ g.focus, g#track_focus1{
 
 }
 
+g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
+    display: None;
+}
+
 #sub_canvas{
     width: 25%;
     height: 20vh;

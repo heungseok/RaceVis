@@ -5,79 +5,8 @@
 // draw_ref_Track();
 // draw_ref_SubInfo();
 
+function drawLineGraph_withTwoLaps() {
 
-function draw_ref_LineGraph(){
-
-    ref_selected_features.forEach(function (ref_data){
-
-        // g select (origin data)
-        var ref_graph_svg = d3.select("g#"+ref_data.id).select( function() { return this.parentNode; });
-
-
-        // parent node(svg) select, and add clipPath
-        ref_graph_svg
-            .append("defs").append("clipPath")
-            .attr("id",  function (d) {
-                return "clip_ref-" + d.id;
-            })
-            .append("rect")
-            .attr("width", width)
-            .attr("height", height);
-
-        ref_graph_svg
-            .data([ref_data])
-            .append("g")
-            .attr("id", function (d) {
-                console.log(d);
-                return "ref-" + d.id;
-            })
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            // path append
-            .append("path")
-            .attr("class", "line ref")
-            .attr("d", function(d) {
-
-                var ty = y.set(this, d3.scaleLinear()
-                    .range([height, 0]))
-                // local feature에 대한 y range setting
-                    .domain([
-                        d3.min(d.values, function(c) { return c.feature_val; }),
-                        d3.max(d.values, function(c) { return c.feature_val; }) ]);
-
-                line.set(this, d3.line().curve(d3.curveBasis)
-                    .x(function(d){ return x(d.x); })
-                    .y(function(d){ return ty(d.feature_val); }));
-
-                return line.get(this)(d.values);
-            })
-            .attr("clip-path", function (d) {
-                return "url(#clip_ref-" + ref_data.id + ")";
-            })
-
-        var focus = d3.select("g#ref-"+ref_data.id)
-            .append("g")
-            .attr("class", "focus-ref")
-            .style("display", "none");
-
-        // append the circle at the interaction
-        focus.append("circle")
-            .attr("class", "chart_tooltip-ref")
-            .attr("r", 4.5);
-        // place the value at the interaction
-        focus.append("text")
-            .attr("class", "chart_tooltip-ref")
-            .attr("x", 9)
-            .attr("dy", ".35em")
-            .text("nothing");
-
-
-    });
-}
-
-function draw_ref_Track(){
-
-}
-function draw_ref_SubInfo(){
 
 }
 
@@ -188,6 +117,7 @@ function drawLineGraph(){
         .attr("class", "chart_tooltip")
         .attr("x", 9)
         .attr("dy", ".35em")
+        .style("fill", "steelblue")
         .text("nothing");
 
     // append x line.
@@ -434,14 +364,21 @@ function mousemove(){
         .selectAll(".focus-ref");
     ref_focuses.style("display", null);
 
-
-    // find matched value by origin index
+    // **************** find matched value by origin index ****************** //
+    /*
     console.log(all_features);
-    var origin_x_axis_data = _.where(all_features, {id:root_x}).values;
-    // var ref_data_index =
+    var origin_xAxis_data = _.where(all_features, {id:root_x})[0].values;
+    console.log(x_value_from_origin);
+    console.log(origin_xAxis_data[index])
 
+    var ref_xAxis_data = _.where(ref_all_features, {id:root_x})[0].values;
+    for (var i=0; i<ref_xAxis_data.length-1; i++){
+
+    }
+    */
 
     ref_focuses.selectAll(".chart_tooltip-ref").attr("transform", function(d){
+        ref_index = bisect(d.values, x_value, 0, d.values.length -1);
 
         var y_range = d3.scaleLinear()
             .range([height, 0])
@@ -450,19 +387,15 @@ function mousemove(){
                 d3.max(d.values, function (c) { return c.feature_val })
             ]);
 
-
-
-        return "translate(" + x(d.values[index].x) + "," + y_range(d.values[index].feature_val) + ")";
-
-
+        return "translate(" + x(d.values[ref_index].x) + "," + y_range(d.values[ref_index].feature_val) + ")";
         // return "translate(" + x_value_from_origin + "," + pos.y +")";
 
     });
 
     ref_focuses.selectAll("text.chart_tooltip-ref")
         .text( function (d) {
-            // console.log(d)
-            return +d.values[index].feature_val.toFixed(3);
+
+            return +d.values[ref_index].feature_val.toFixed(3);
         });
 
 
@@ -763,4 +696,99 @@ function clearAllSVG() {
     steer_data = [], brake_data = [], gas_data = [], gear_data = [];
     track_data = [], inline_track = [], outline_track = [];
     all_features= [], selected_features = [];
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+function draw_ref_LineGraph(){
+
+    ref_selected_features.forEach(function (ref_data){
+
+        // g select (origin data)
+        var ref_graph_svg = d3.select("g#"+ref_data.id).select( function() { return this.parentNode; });
+
+
+        // parent node(svg) select, and add clipPath
+        ref_graph_svg
+            .append("defs").append("clipPath")
+            .attr("id",  function (d) {
+                return "clip_ref-" + d.id;
+            })
+            .append("rect")
+            .attr("width", width)
+            .attr("height", height);
+
+        ref_graph_svg
+            .data([ref_data])
+            .append("g")
+            .attr("id", function (d) {
+                console.log(d);
+                return "ref-" + d.id;
+            })
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+            // path append
+            .append("path")
+            .attr("class", "line ref")
+            .attr("d", function(d) {
+
+                var ty = y.set(this, d3.scaleLinear()
+                    .range([height, 0]))
+                // local feature에 대한 y range setting
+                    .domain([
+                        d3.min(d.values, function(c) { return c.feature_val; }),
+                        d3.max(d.values, function(c) { return c.feature_val; }) ]);
+
+                line.set(this, d3.line().curve(d3.curveBasis)
+                    .x(function(d){ return x(d.x); })
+                    .y(function(d){ return ty(d.feature_val); }));
+
+                return line.get(this)(d.values);
+            })
+            .attr("clip-path", function (d) {
+                return "url(#clip_ref-" + ref_data.id + ")";
+            })
+
+        var focus = d3.select("g#ref-"+ref_data.id)
+            .append("g")
+            .attr("class", "focus-ref")
+            .style("display", "none");
+
+        // append the circle at the interaction
+        focus.append("circle")
+            .attr("class", "chart_tooltip-ref")
+            .attr("r", 4.5);
+        // place the value at the interaction
+        focus.append("text")
+            .attr("class", "chart_tooltip-ref")
+            .attr("x", 9)
+            .attr("dy", ".35em")
+            .style("fill", "red")
+            .text("nothing");
+
+
+    });
+}
+
+function draw_ref_Track(){
+
+}
+function draw_ref_SubInfo(){
+
 }

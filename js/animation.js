@@ -112,7 +112,6 @@ function trackAnimation(){
         if ( animation_index < animation_range[1]){ // => coordinated by zoomed range
             trackAnimation();
         }else{
-            // animation_index = 0; => origin ver.
             animation_index = animation_range[0] // => coordinated by zoomed range
             resetPlay()
         }
