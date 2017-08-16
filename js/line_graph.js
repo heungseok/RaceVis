@@ -355,10 +355,87 @@ function drawLineGraph(){
         .on("mousemove", mousemove);
 }
 
+function drawTrack_withTwoLaps(){
+
+    /*************************** DRAWING TRACK ******************************/
+    // range of track x, y (Longitude, Latitude) setting
+
+    console.log(merged_track_data);
+    var origin_x0 = d3.extent(merged_track_data.origin, function(d) { return d.long; });
+    var ref_x0 = d3.extent(merged_track_data.ref, function(d) { return d.long; });
+    var inline_x0 = d3.extent(merged_track_data.inline, function(d) { return d.long; });
+    var outline_x0 = d3.extent(merged_track_data.outline, function(d) { return d.long; });
+
+    var union_x0 = d3.extent(_.union(origin_x0, ref_x0, inline_x0, outline_x0));
+    // var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
+    console.log(union_x0);
+
+    var origin_y0 = d3.extent(merged_track_data.origin, function(d) { return d.lat; });
+    var ref_y0 = d3.extent(merged_track_data.ref, function(d) { return d.lat; });
+    var inline_y0 = d3.extent(merged_track_data.inline, function(d) { return d.lat; });
+    var outline_y0 = d3.extent(merged_track_data.outline, function(d) { return d.lat; });
+
+    var union_y0 = d3.extent(_.union(origin_y0, ref_y0, inline_y0, outline_y0));
+    // var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+    console.log(union_y0);
+
+    track_x = d3.scaleLinear().range([0, track_width])
+        .domain(union_x0);
+    track_y = d3.scaleLinear().range([track_height, 0])
+        .domain(union_y0);
+
+    // setting svg for drawing track
+    track_svg = d3.select("#track_canvas").append("svg")
+        .attr("width", track_width + track_margin.left + track_margin.right)
+        .attr("height", track_height + track_margin.top + track_margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + track_margin.left + "," + track_margin.top + ")");
+
+    // *************** Append track line path :***************//
+
+    // draw inline, outline track boundary first
+    track_svg.append("path")
+        .data([merged_track_data.inline])
+        .attr("class", "line boundary inline")
+        .attr("d", track_line)
+
+    track_svg.append("path")
+        .data([merged_track_data.outline])
+        .attr("class", "line boundary outline")
+        .attr("d", track_line)
+
+    // draw track line, ref line
+    track_svg.append("path")
+        .data([merged_track_data.ref])
+        .attr("class", "line ref")
+        .attr("d", track_line);
+
+    track_svg.append("path")
+        .data([merged_track_data.origin])
+        .attr("class", "line")
+        .attr("d", track_line)
+
+
+
+    // ********* Append track focus element (circle) *********** //
+    var track_focus = track_svg.append("g")
+        .attr("id", "track_focus1");
+
+    track_focus.append("circle")
+        .attr("r", 4.5);
+
+    var ref_track_focus = track_svg.append("g")
+        .attr("id", "track_focus1-ref");
+
+    ref_track_focus.append("circle")
+        .attr("r", 4.5);
+
+}
+
 function drawTrack(){
 
     /*************************** DRAWING TRACK ******************************/
-
     // range of track x, y (Longitude, Latitude) setting
     track_x = d3.scaleLinear().range([0, track_width])
         .domain([
@@ -389,6 +466,7 @@ function drawTrack(){
     // append track focus element (circle)
     var track_focus = track_svg.append("g")
         .attr("id", "track_focus1");
+
 
     track_focus.append("circle")
         .attr("r", 4.5);
@@ -545,8 +623,11 @@ function mousemove_twoLaps() {
 
 
     // moving Track
-    // var track_focus = d3.select("#track_focus1");
-    // track_focus.attr("transform", "translate(" + track_x(track_data[index].long) + "," + track_y(track_data[index].lat) + ")");
+    var track_focus = d3.select("#track_focus1");
+    track_focus.attr("transform", "translate(" + track_x(merged_track_data.origin[index].long) + "," + track_y(merged_track_data.origin[index].lat) + ")");
+
+    var ref_track_focus = d3.select("#track_focus1-ref");
+    ref_track_focus .attr("transform", "translate(" + track_x(merged_track_data.ref[ref_index].long) + "," + track_y(merged_track_data.ref[ref_index].lat) + ")");
 
     // handle Steering, Brake, Gas, Gear
 

@@ -98,7 +98,7 @@ rect.selection{
 .line.ref{
     stroke: red;
     z-index: -10;
-    opacity: 0.7
+    opacity: 0.3
 }
 
 
@@ -174,9 +174,15 @@ rect.selection{
 
 }
 g.focus, g#track_focus1{
-    fill: #9d9d9d;
-
+    /*fill: #9d9d9d;*/
+    fill: steelblue;
 }
+g.focus-ref, g#track_focus1-ref{
+    /*fill: #9d9d9d;*/
+    fill: red;
+    opacity:0.4;
+}
+
 
 g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
     display: None;
@@ -204,7 +210,8 @@ g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
 }
 
 path.line.boundary{
-    stroke: grey;
+    /*stroke: grey;*/
+    stroke: rgb(223, 235, 6);
     stroke-width: 0.5;
     z-index: -10;
 }
