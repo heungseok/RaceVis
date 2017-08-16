@@ -852,16 +852,9 @@ function mousemove(){
     focuses.style("display", null);
     focuses.selectAll(".chart_tooltip").attr("transform", function(d){
         index = bisect(d.values, x_value, 0, d.values.length -1);
+        var ty = y.get(this);
 
-        var y_range = d3.scaleLinear()
-            .range([height, 0])
-            .domain([
-                d3.min(d.values, function(c) { return c.feature_val; }),
-                d3.max(d.values, function (c) { return c.feature_val })
-            ]);
-        // x_value_from_origin = d.values[index].x;
-        x_value_from_origin = d.values[index].x;
-        return "translate(" + x(d.values[index].x) + "," + y_range(d.values[index].feature_val) + ")";
+        return "translate(" + x(d.values[index].x) + "," + ty(d.values[index].feature_val) + ")";
 
     });
 
@@ -870,48 +863,19 @@ function mousemove(){
 
     focuses.selectAll("line.tooltip_line").attr("transform", function(d){
 
-        index = bisect(d.values, x_value, 0, d.values.length -1);
         return "translate(" + x(d.values[index].x) + "," + height +")";
 
     });
 
-    // x(d.values[index].x) => 기준이 되는 x값
 
 
-    // ********** reference lap focus **************
-    var ref_index = 0;
-    var ref_focuses = d3.select("#canvas").selectAll("svg")
-        .selectAll(".focus-ref");
-    ref_focuses.style("display", null);
-
-    ref_focuses.selectAll(".chart_tooltip-ref").attr("transform", function(d){
-        ref_index = bisect(d.values, x_value, 0, d.values.length -1);
-
-        var y_range = d3.scaleLinear()
-            .range([height, 0])
-            .domain([
-                d3.min(d.values, function(c) { return c.feature_val; }),
-                d3.max(d.values, function (c) { return c.feature_val })
-            ]);
-
-        return "translate(" + x(d.values[ref_index].x) + "," + y_range(d.values[ref_index].feature_val) + ")";
-    });
-
-    ref_focuses.selectAll("text.chart_tooltip-ref")
-        .text( function (d) {
-            return +d.values[ref_index].feature_val.toFixed(3);
-        });
-
-
-
-
-    // moving Track
+    // ************* moving Track ************* //
     var track_focus = d3.select("#track_focus1");
     track_focus.attr("transform", "translate(" + track_x(track_data[index].long) + "," + track_y(track_data[index].lat) + ")");
 
 
 
-    // handle Steering, Brake, Gas, Gear
+    // ************* handle Steering, Brake, Gas, Gear ******************* //
 
     // rotate by steering value
     var steer_focus = d3.select("#steer_focus1");
@@ -962,8 +926,6 @@ function updateChart(value, checked){
                 addChart_withTwoLaps(value);
             else
                 addChart(value);
-
-
 
         }
 

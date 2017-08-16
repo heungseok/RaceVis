@@ -52,7 +52,6 @@ function trackAnimation_withTwoLaps(){
         // 우선 postion?일 경우일 때는 origin lap의 데이터에 맞는 reference data의 index를 먼저 구해야함.
 
         var origin_x_value = Number(selected_features[0].values[animation_index].x);
-        // console.log(selected_features[0].values[animation_index]);
         var ref_x_values =  _.pluck(selected_features[0].ref_values, 'x');
         ref_animation_index = bisect_for_animation(ref_x_values, origin_x_value, 0, ref_x_values.length-1);
 
@@ -92,8 +91,6 @@ function trackAnimation_withTwoLaps(){
             .text( function (d) {
                 return +d.ref_values[ref_animation_index].feature_val.toFixed(3);
             });
-
-
 
 
         // ************** block for animation things *************** //
@@ -139,10 +136,6 @@ function trackAnimation_withTwoLaps(){
             .text(ref_gear_data[ref_animation_index]);
 
 
-
-
-
-
         // ************** END of animation code *************** //
         animation_index++;
         // if ( animation_index < animation_length){ => origin ver.
@@ -154,6 +147,8 @@ function trackAnimation_withTwoLaps(){
         }
     },animation_delay) // change this time (in milliseconds) to delay
 }
+
+
 
 function trackAnimation(){
     setTimeout(function () {
@@ -201,15 +196,9 @@ function trackAnimation(){
         focuses.style("display", null);
 
         focuses.selectAll(".chart_tooltip").attr("transform", function(d){
+            var ty = y.get(this);
 
-            var y_range = d3.scaleLinear()
-                .range([height, 0])
-                .domain([
-                    d3.min(d.values, function(c) { return c.feature_val; }),
-                    d3.max(d.values, function (c) { return c.feature_val })
-                ]);
-
-            return "translate(" + x(d.values[animation_index].x) + "," + y_range(d.values[animation_index].feature_val) + ")";
+            return "translate(" + x(d.values[animation_index].x) + "," + ty(d.values[animation_index].feature_val) + ")";
 
         });
 

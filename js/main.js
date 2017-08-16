@@ -279,12 +279,8 @@ function init_with_twoLaps() {
                 // 두 데이터의 x 값중 min값과 max값을 골라서 x.domain에 setting
                 // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
 
-                var origin_x0 = d3.extent(data, function (d) {
-                    return +d.x;
-                });
-                var ref_x0 = d3.extent(ref_data, function (d) {
-                    return +d.x;
-                });
+                var origin_x0 = d3.extent(data, function (d) { return +d.x;});
+                var ref_x0 = d3.extent(ref_data, function (d) { return +d.x; });
                 var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
 
                 x.domain(union_x0);
@@ -420,68 +416,6 @@ function init_with_originLap() {
 }
 
 
-function init_with_refLap() {
-    d3.csv("./data/moon_KIC_SHORT.csv", type, function(error, data) {
-
-    // d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
-        if (error) throw error;
-
-        console.log(data);
-
-        ref_all_features = data.columns.slice(0).map(function(id) {
-
-            return {
-                id: id,
-                values: data.map(function(d) {
-                    return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
-                })
-            };
-        });
-
-        // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
-        ref_selected_features = [];
-        var temp_lat = [];
-        var temp_long = [];
-
-        ref_all_features.forEach(function(d){
-            // default feature로 GPS_Speed, RPM 을 plotting.
-            if(d.id == "GPS_Speed" || d.id == "RPM"){
-                ref_selected_features.push(d)
-
-            }else if(d.id == "PosLocalY"){
-                temp_lat = _.pluck(d.values, 'feature_val');
-            }else if(d.id == "PosLocalX"){
-                temp_long = _.pluck(d.values, 'feature_val');
-            }else if(d.id == "Steer_angle"){
-                ref_steer_data = _.pluck(d.values, 'feature_val')
-            }else if(d.id == "Pedal_brake"){
-                ref_brake_data = _.pluck(d.values, 'feature_val')
-            }else if(d.id == "Gear"){
-                ref_gear_data = _.pluck(d.values, 'feature_val')
-            }else if(d.id == "ECU_THROTTLE"){
-                ref_gas_data = _.pluck(d.values, 'feature_val')
-            }
-        });
-        /// ***** assign temp lat long data to global variable *****
-        temp_lat.forEach(function(value, index){
-            ref_track_data.push({
-                long: temp_long[index],
-                lat: value
-            });
-
-        });
-        ref_animation_length = ref_track_data.length;
-
-        draw_ref_LineGraph();
-        // draw_ref_Track();
-        // draw_ref_SubInfo();
-        document.getElementById("loading").style.display = "none";
-
-    });
-}
-
-
-
 /*
 
 function init(){
@@ -596,7 +530,7 @@ function init(){
 //     }
 // }
 
-
+// This function supports parsing the column from input data.
 function type(d, _, columns) {
 // data를 칼럼으로 나누고, LapNo가 selected Lap과 같을 경우만 parsing
     d.x = d[root_x];
@@ -680,6 +614,10 @@ function brushed(){
         .selectAll(".focus");
     focuses.style("display", "none");
 
+    var focuses_ref = d3.select("#canvas").selectAll("svg")
+        .selectAll(".focus-ref");
+    focuses_ref.style("display", "none");
+
 }
 
 
@@ -696,21 +634,6 @@ function zoomIn(value) {
     current_zoomRange[0] += value;
     current_zoomRange[1] -= value;
 
-    // x.domain(current_zoomRange.map(zoom_x.invert, zoom_x));
-    // d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
-    // d3.select("#canvas").selectAll(".axis--x").call(xAxis);
-    //
-    // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
-    //
-    // d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
-    //     .scale(width / (current_zoomRange[1] - current_zoomRange[0]))
-    //     .translate(-current_zoomRange[0], 0));
-
-    // set all focus elements' style to un-display
-    var focuses = d3.select("#canvas").selectAll("svg")
-        .selectAll(".focus");
-    focuses.style("display", "none");
-
     // brush move
     // brush.extent(current_zoomRange[0], current_zoomRange[1])
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
@@ -726,11 +649,6 @@ function zoomOut() {
     // 나중에는 형재 레인지의 10%씩 뺴고 더해야할듯.
     current_zoomRange[0] -= 1;
     current_zoomRange[1] += 1;
-
-    // set all focus elements' style to un-display
-    var focuses = d3.select("#canvas").selectAll("svg")
-        .selectAll(".focus");
-    focuses.style("display", "none");
 
     // brush move
     // brush.extent(current_zoomRange[0], current_zoomRange[1])
@@ -817,7 +735,6 @@ function zoomReset() {
 
     // call zoomIn function for adjusting each end of range
     zoomIn(0.5)
-
 }
 
 
