@@ -38,6 +38,9 @@ function playInput(){
     animation_flag = true;
 
 }
+function trackAnimation_withTwoLaps(){
+    
+}
 
 function trackAnimation(){
     setTimeout(function () {

@@ -156,8 +156,8 @@ rect.selection{
 
 /* right checkbox */
 .checkbox_wrapper{
-    width: 25%;
-    height: 25vh;
+    width: 27vw;
+    height: 20vh;
     overflow-y: scroll;
     position: absolute;
     right: 1vw;
@@ -167,9 +167,8 @@ rect.selection{
 
     width: 30vw;
     height: 30vh;
-
     right: 1vw;
-    top: 35vh;
+    top: 30vh;
     position:absolute;
 
 }
@@ -189,10 +188,10 @@ g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
 }
 
 #sub_canvas{
-    width: 25%;
-    height: 20vh;
+    width: 28vw;
+    height: 25vh;
     right: 1vw;
-    top: 65vh;
+    top: 60vh;
     position:absolute;
 
 }

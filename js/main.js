@@ -15,12 +15,13 @@ var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
-var sub_margin = {top: 20, right: 50, bottom: 20, left: 20},
+var sub_margin = {top: 30, right: 50, bottom: 20, left: 20},
     sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
     sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
 // ************** selected lap, reference lap variable **************** //
 var selected_lap=1, selected_ref_lap=1;
+
 var vis_type = 2; // 1: one lap, 2: two laps
 
 
@@ -52,23 +53,14 @@ var root_x = "PositionIndex"
 var track_data = [], ref_track_data =[], merged_track_data={ };
 var track_x, track_y,
     ref_track_x, ref_track_y,
-    track_boundary_x_in, track_boundary_y_in,
-    track_boundary_x_out, track_boundary_y_out;
+    inline_track = [], outline_track = [];
 
-var inline_track=[], outline_track=[];
 
 // var track_line = d3.line().curve(d3.curveBasis)
 var track_line = d3.line()
     .x(function(d) { return track_x(d.long); })
     .y(function(d) { return track_y(d.lat); });
 
-var track_boundary_inline = d3.line()
-    .x(function (d) { return track_boundary_x_in(d.long); })
-    .y(function (d) { return track_boundary_y_in(d.lat); });
-
-var track_boundary_outline = d3.line()
-    .x(function (d) { return track_boundary_x_out(d.long); })
-    .y(function (d) { return track_boundary_y_out(d.lat); });
 
 // ************** track animation variable **************** //
 var animation_index =0,
@@ -130,16 +122,8 @@ var context;
 
 // document가 ready 되었을 때 chart initialization
 $(document).ready(function () {
-
     init(vis_type);
-    // reference_init();
-
 });
-
-function reference_init() {
-    console.log("reference init!")
-
-}
 
 function init(init_type) {
     init_type = init_type || 1;
@@ -307,8 +291,7 @@ function init_with_twoLaps() {
 
                 drawLineGraph_withTwoLaps();
                 drawTrack_withTwoLaps();
-                // draw_trackBoundary();
-                // drawSubInfo();
+                drawSubInfo_withTwoLaps();
                 // setBtnState();
                 // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
                 // zoomReset();
@@ -322,9 +305,123 @@ function init_with_twoLaps() {
 }
 
 
+function init_with_originLap() {
+    d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
+        d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
+
+            if (error) throw error;
+
+            console.log(data)
+
+            all_features = data.columns.slice(0).map(function (id) {
+
+                return {
+                    id: id,
+                    values: data.map(function (d) {
+                        return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                    })
+                };
+            });
+
+            // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
+            selected_features = [];
+            var temp_lat = [];
+            var temp_long = [];
+
+
+            all_features.forEach(function (d) {
+
+                /*
+                 // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
+                 if(isNaN(d.values[0].feature_val)){
+                 $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
+                 }
+                 */
+
+                // default feature로 GPS_Speed, RPM 을 plotting.
+                if (d.id == "GPS_Speed" || d.id == "RPM") {
+                    selected_features.push(d)
+                    selected_feat_names.push(d.id);
+                    $('.checkbox_wrapper').append("<div class ='checkbox'> " +
+                        "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></div>");
+                    // }else if(d.id == "RefinedPosLat"){
+                    //    temp_lat = _.pluck(d.values, 'feature_val');
+                    // }else if(d.id == "RefinedPosLon"){
+                    //    temp_long = _.pluck(d.values, 'feature_val');
+                } else if (d.id == "PosLocalY") {
+                    temp_lat = _.pluck(d.values, 'feature_val');
+                } else if (d.id == "PosLocalX") {
+                    temp_long = _.pluck(d.values, 'feature_val');
+                } else if (d.id == "Steer_angle") {
+                    steer_data = _.pluck(d.values, 'feature_val')
+                } else if (d.id == "Pedal_brake") {
+                    brake_data = _.pluck(d.values, 'feature_val')
+                } else if (d.id == "Gear") {
+                    gear_data = _.pluck(d.values, 'feature_val')
+                } else if (d.id == "ECU_THROTTLE") {
+                    gas_data = _.pluck(d.values, 'feature_val')
+                } else {
+                    $('.checkbox_wrapper').append("<div class ='checkbox'> " +
+                        "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></div>");
+                }
+
+            });
+            /// ***** assign temp lat long data to global variable *****
+            temp_lat.forEach(function (value, index) {
+                track_data.push({
+                    long: temp_long[index],
+                    lat: value
+                });
+
+            });
+
+            merged_track_data.origin = track_data;
+
+            console.log("merge track boundary data with track data");
+            track_boundary_data.forEach(function (d) {
+
+                inline_track.push({
+                    long: parseFloat(d["InX"]),
+                    lat: parseFloat(d["InY"])
+                });
+
+                outline_track.push({
+                    long: parseFloat(d["OutX"]),
+                    lat: parseFloat(d["OutY"])
+                });
+            });
+            merged_track_data.inline = inline_track;
+            merged_track_data.outline = outline_track;
+
+            console.log("finished merging all track data");
+            animation_length = track_data.length;
+
+            // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
+            // x0 = d3.extent(data, function(d) {return d.x;}) => 가 string array ['1', '2', '33', ...] 에서 동작하려면
+            // x0 = d3.extent(data, function(d) {return +d.x;}) 와같이 coerce를 거쳐야함.
+            x0 = d3.extent(data, function (d) {
+                return +d.x;
+            });
+            x.domain(x0);
+            zoom_x.domain(x0);
+            console.log(x0);
+
+            drawLineGraph();
+            drawTrack();
+            drawSubInfo();
+            setBtnState();
+            setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
+            zoomReset();
+            document.getElementById("loading").style.display = "none";
+
+        });
+    });
+}
+
 
 function init_with_refLap() {
     d3.csv("./data/moon_KIC_SHORT.csv", type, function(error, data) {
+
     // d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
         if (error) throw error;
 
@@ -377,96 +474,6 @@ function init_with_refLap() {
         draw_ref_LineGraph();
         // draw_ref_Track();
         // draw_ref_SubInfo();
-        document.getElementById("loading").style.display = "none";
-
-    });
-}
-
-function init_with_originLap() {
-    d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
-
-        if (error) throw error;
-
-        console.log(data)
-
-        all_features = data.columns.slice(0).map(function(id) {
-
-            return {
-                id: id,
-                values: data.map(function(d) {
-                    return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
-                })
-            };
-        });
-
-        // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
-        selected_features = [];
-        var temp_lat = [];
-        var temp_long = [];
-
-
-        all_features.forEach(function(d){
-
-/*
-            // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
-            if(isNaN(d.values[0].feature_val)){
-                $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
-            }
-*/
-
-            // default feature로 GPS_Speed, RPM 을 plotting.
-            if(d.id == "GPS_Speed" || d.id == "RPM"){
-                selected_features.push(d)
-                selected_feat_names.push(d.id);
-                $('.checkbox_wrapper').append("<div class ='checkbox'> " +
-                    "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>"+d.id+"</label></div>");
-                // }else if(d.id == "RefinedPosLat"){
-                //    temp_lat = _.pluck(d.values, 'feature_val');
-                // }else if(d.id == "RefinedPosLon"){
-                //    temp_long = _.pluck(d.values, 'feature_val');
-            }else if(d.id == "PosLocalY"){
-                temp_lat = _.pluck(d.values, 'feature_val');
-            }else if(d.id == "PosLocalX"){
-                temp_long = _.pluck(d.values, 'feature_val');
-            }else if(d.id == "Steer_angle"){
-                steer_data = _.pluck(d.values, 'feature_val')
-            }else if(d.id == "Pedal_brake"){
-                brake_data = _.pluck(d.values, 'feature_val')
-            }else if(d.id == "Gear"){
-                gear_data = _.pluck(d.values, 'feature_val')
-            }else if(d.id == "ECU_THROTTLE"){
-                gas_data = _.pluck(d.values, 'feature_val')
-            }else{
-                $('.checkbox_wrapper').append("<div class ='checkbox'> " +
-                    "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>"+d.id+"</label></div>");
-            }
-
-        });
-        /// ***** assign temp lat long data to global variable *****
-        temp_lat.forEach(function(value, index){
-            track_data.push({
-                long: temp_long[index],
-                lat: value
-            });
-
-        });
-        animation_length = track_data.length;
-
-        // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
-        // x0 = d3.extent(data, function(d) {return d.x;}) => 가 string array ['1', '2', '33', ...] 에서 동작하려면
-        // x0 = d3.extent(data, function(d) {return +d.x;}) 와같이 coerce를 거쳐야함.
-        x0 = d3.extent(data, function(d) {return +d.x;});
-        x.domain(x0);
-        zoom_x.domain(x0);
-        console.log(x0);
-
-        drawLineGraph();
-        drawTrack();
-        draw_trackBoundary();
-        drawSubInfo();
-        setBtnState();
-        setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
-        zoomReset();
         document.getElementById("loading").style.display = "none";
 
     });

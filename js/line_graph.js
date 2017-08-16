@@ -359,8 +359,6 @@ function drawTrack_withTwoLaps(){
 
     /*************************** DRAWING TRACK ******************************/
     // range of track x, y (Longitude, Latitude) setting
-
-    console.log(merged_track_data);
     var origin_x0 = d3.extent(merged_track_data.origin, function(d) { return d.long; });
     var ref_x0 = d3.extent(merged_track_data.ref, function(d) { return d.long; });
     var inline_x0 = d3.extent(merged_track_data.inline, function(d) { return d.long; });
@@ -437,16 +435,22 @@ function drawTrack(){
 
     /*************************** DRAWING TRACK ******************************/
     // range of track x, y (Longitude, Latitude) setting
+    var origin_x0 = d3.extent(merged_track_data.origin, function(d) { return d.long; });
+    var inline_x0 = d3.extent(merged_track_data.inline, function(d) { return d.long; });
+    var outline_x0 = d3.extent(merged_track_data.outline, function(d) { return d.long; });
+
+    var union_x0 = d3.extent(_.union(origin_x0, inline_x0, outline_x0));
+
+    var origin_y0 = d3.extent(merged_track_data.origin, function(d) { return d.lat; });
+    var inline_y0 = d3.extent(merged_track_data.inline, function(d) { return d.lat; });
+    var outline_y0 = d3.extent(merged_track_data.outline, function(d) { return d.lat; });
+
+    var union_y0 = d3.extent(_.union(origin_y0, inline_y0, outline_y0));
+
     track_x = d3.scaleLinear().range([0, track_width])
-        .domain([
-            d3.min(track_data, function(d) { return d.long;}),
-            d3.max(track_data, function(d) {return d.long;})
-        ]);
+        .domain(union_x0);
     track_y = d3.scaleLinear().range([track_height, 0])
-        .domain([
-            d3.min(track_data, function(d) {return d.lat;}),
-            d3.max(track_data, function(d) {return d.lat;})
-        ]);
+        .domain(union_y0);
 
     // setting svg for drawing track
     track_svg = d3.select("#track_canvas").append("svg")
@@ -456,9 +460,22 @@ function drawTrack(){
         .attr("transform",
             "translate(" + track_margin.left + "," + track_margin.top + ")");
 
-    // append path (drawing track)
+    // *************** Append track line path :***************//
+
+    // draw inline, outline track boundary first
     track_svg.append("path")
-        .data([track_data])
+        .data([merged_track_data.inline])
+        .attr("class", "line boundary inline")
+        .attr("d", track_line)
+
+    track_svg.append("path")
+        .data([merged_track_data.outline])
+        .attr("class", "line boundary outline")
+        .attr("d", track_line)
+
+    // draw track line
+    track_svg.append("path")
+        .data([merged_track_data.origin])
         .attr("class", "line")
         .attr("d", track_line)
 
@@ -471,6 +488,154 @@ function drawTrack(){
     track_focus.append("circle")
         .attr("r", 4.5);
 
+
+}
+
+function drawSubInfo_withTwoLaps() {
+    /******************** Drawing Sub Info ****************************/
+
+    // setting svg for drawing track
+    sub_svg = d3.select("#sub_canvas").append("svg")
+        .attr("width", sub_width + sub_margin.left + sub_margin.right)
+        .attr("height", sub_height + sub_margin.top + sub_margin.bottom)
+        .append("g")
+        .attr("transform",
+            "translate(" + sub_margin.left + "," + sub_margin.top + ")");
+
+    // steering
+    var steering_focus = sub_svg.append("g")
+        .attr("id", "steer_focus1")
+
+    steering_focus.append("image")
+        .attr("class", "steer")
+        .attr("height", 80).attr("width", 80)
+        .attr("xlink:href", "./img/steer.png")
+        .attr("transform", "scale(0.5), translate(0, 50)")
+        // .attr("transform", "scale(0.5)");
+
+    steering_focus.append("image")
+        .attr("class", "steer-ref")
+        .attr("height", 80).attr("width", 80)
+        .attr("xlink:href", "./img/steer.png")
+        .attr("transform", "scale(0.5), translate(90, 50)")
+        // .attr("transform", "scale(0.5)");
+
+    steering_focus.append("text")
+        .text("STEERING: ");
+
+
+    // Brake
+    var brake_focus = sub_svg.append("g")
+        .attr("id", "brake_focus1")
+        .attr("transform", "translate(120, 0)");
+
+    brake_focus.append("rect")
+        .attr("class", "background")
+        .attr("x", -30)
+        .attr("y", -111)
+        .attr("transform", "rotate(180)")
+        .attr("width", 20)
+        .attr("height", 105)
+        .style("fill", "grey");
+
+    brake_focus.append("rect")
+        .attr("class", "value")
+        .attr("x", -25)
+        .attr("y", -110)
+        .attr("transform", "rotate(180)")
+        .attr("width", 10)
+        .attr("height", 1)
+        .style("fill", "steelblue");
+
+    brake_focus.append("rect")
+        .attr("class", "background")
+        .attr("x", -55)
+        .attr("y", -111)
+        .attr("transform", "rotate(180)")
+        .attr("width", 20)
+        .attr("height", 105)
+        .style("fill", "grey");
+
+    brake_focus.append("rect")
+        .attr("class", "value-ref")
+        .attr("x", -50)
+        .attr("y", -110)
+        .attr("transform", "rotate(180)")
+        .attr("width", 10)
+        .attr("height", 1)
+        .style("fill", "red");
+
+    brake_focus.append("text")
+        .text("BRAKE: ");
+
+
+    // Gas
+    var gas_focus = sub_svg.append("g")
+        .attr("id", "gas_focus1")
+        .attr("transform", "translate(240, 0)");
+
+    gas_focus.append("rect")
+        .attr("class", "background")
+        .attr("x", -30)
+        .attr("y", -111)
+        .attr("transform", "rotate(180)")
+        .attr("width", 20)
+        .attr("height", 105)
+        .style("fill", "grey");
+
+    gas_focus.append("rect")
+        .attr("class", "value")
+        .attr("x", -25)
+        .attr("y", -110)
+        .attr("transform", "rotate(180)")
+        .attr("width", 10)
+        .attr("height", 1)
+        .style("fill", "steelblue");
+
+    gas_focus.append("rect")
+        .attr("class", "background")
+        .attr("x", -60)
+        .attr("y", -111)
+        .attr("transform", "rotate(180)")
+        .attr("width", 20)
+        .attr("height", 105)
+        .style("fill", "grey");
+
+    gas_focus.append("rect")
+        .attr("class", "value-ref")
+        .attr("x", -55)
+        .attr("y", -110)
+        .attr("transform", "rotate(180)")
+        .attr("width", 10)
+        .attr("height", 1)
+        .style("fill", "red");
+
+    gas_focus.append("text")
+        .text("GAS: ");
+
+    // Gear
+    var gear_focus = sub_svg.append("g")
+        .attr("id", "gear_focus1")
+        .attr("transform", "translate(360, 0)");
+
+    gear_focus.append("text")
+        .attr("class", "value")
+        .attr("x", 0)
+        .attr("y", 65)
+        .style("font-size", "25px")
+        .style("fill", "steelblue")
+        .text("0");
+
+    gear_focus.append("text")
+        .attr("class", "value-ref")
+        .attr("x", 30)
+        .attr("y", 65)
+        .style("font-size", "25px")
+        .style("fill", "red")
+        .text("0");
+
+    gear_focus.append("text")
+        .text("GEAR");
 
 }
 
@@ -633,26 +798,39 @@ function mousemove_twoLaps() {
 
     // rotate by steering value
     var steer_focus = d3.select("#steer_focus1");
-    steer_focus.select("image")
-        .attr("transform", "translate(0, 25), rotate(" + steer_data[index] + ", 35, 35)");
+    steer_focus.select("image.steer")
+        .attr("transform", "scale(0.5), translate(0, 50), rotate(" + steer_data[index] + ", 35, 35)")
+        // .attr("transform", "translate(0, 25), rotate(" + steer_data[index] + ", 35, 35)")
+
+    steer_focus.select("image.steer-ref")
+        .attr("transform", "scale(0.5), translate(90, 50), rotate(" + ref_steer_data[ref_index] + ", 35, 35)")
+
     steer_focus.select("text")
-        .text("Steering degree: " + steer_data[index]);
+        .text("STEERING: " + steer_data[index]);
 
     var brake_focus = d3.select("#brake_focus1");
     brake_focus.select("rect.value")
         .attr("height", 1+ brake_data[index]);
+    brake_focus.select("rect.value-ref")
+        .attr("height", 1+ ref_brake_data[ref_index]);
+
     brake_focus.select("text")
         .text("Brake: " + brake_data[index]);
 
     var gas_focus = d3.select("#gas_focus1");
     gas_focus.select("rect.value")
         .attr("height", 1+gas_data[index]);
+
+    gas_focus.select("rect.value-ref")
+        .attr("height", 1+ref_gas_data[ref_index]);
     gas_focus.select("text")
         .text("Gas: " + gas_data[index]);
 
     var gear_focus = d3.select("#gear_focus1");
     gear_focus.select("text.value")
         .text(gear_data[index])
+    gear_focus.select("text.value-ref")
+        .text(ref_gear_data[ref_index])
 
 
 }
