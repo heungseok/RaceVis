@@ -15,7 +15,7 @@ function changeLap(input_lap) {
         document.getElementById("loading").style.display = "block";
         console.log("lap number is different, change the lap");
         clearAllSVG();
-        init();
+        init(vis_type);
 
     }
 
@@ -31,7 +31,11 @@ function changeRefLap(input_lap) {
 
     // 다를 경우 다시 그리기.
     }else{
-
+        selected_ref_lap = input_lap.value-1;
+        document.getElementById("loading").style.display = "block";
+        console.log("lap number is different, change the lap");
+        clearAllSVG();
+        init(vis_type);
     }
 
 }

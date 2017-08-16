@@ -289,7 +289,7 @@ function init_with_twoLaps() {
                 drawLineGraph_withTwoLaps();
                 drawTrack_withTwoLaps();
                 drawSubInfo_withTwoLaps();
-                // setBtnState();
+                setBtnState();
                 // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
                 zoomReset();
                 document.getElementById("loading").style.display = "none";

@@ -1314,7 +1314,7 @@ function axisSwitch(axis_type){
         console.log("type is different, change the axis");
         root_x = axis_type.value;
         clearAllSVG_for_xAxis_switch();
-        init();
+        init(vis_type);
 
     }
 }
