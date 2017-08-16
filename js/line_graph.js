@@ -787,14 +787,14 @@ function mousemove_twoLaps() {
         });
 
 
-    // moving Track
+    // ****************** moving Track *********************** //
     var track_focus = d3.select("#track_focus1");
     track_focus.attr("transform", "translate(" + track_x(merged_track_data.origin[index].long) + "," + track_y(merged_track_data.origin[index].lat) + ")");
 
     var ref_track_focus = d3.select("#track_focus1-ref");
     ref_track_focus .attr("transform", "translate(" + track_x(merged_track_data.ref[ref_index].long) + "," + track_y(merged_track_data.ref[ref_index].lat) + ")");
 
-    // handle Steering, Brake, Gas, Gear
+    // ****************** handle Steering, Brake, Gas, Gear ****************//
 
     // rotate by steering value
     var steer_focus = d3.select("#steer_focus1");
@@ -884,19 +884,6 @@ function mousemove(){
         .selectAll(".focus-ref");
     ref_focuses.style("display", null);
 
-    // **************** find matched value by origin index ****************** //
-    /*
-    console.log(all_features);
-    var origin_xAxis_data = _.where(all_features, {id:root_x})[0].values;
-    console.log(x_value_from_origin);
-    console.log(origin_xAxis_data[index])
-
-    var ref_xAxis_data = _.where(ref_all_features, {id:root_x})[0].values;
-    for (var i=0; i<ref_xAxis_data.length-1; i++){
-
-    }
-    */
-
     ref_focuses.selectAll(".chart_tooltip-ref").attr("transform", function(d){
         ref_index = bisect(d.values, x_value, 0, d.values.length -1);
 
@@ -908,20 +895,21 @@ function mousemove(){
             ]);
 
         return "translate(" + x(d.values[ref_index].x) + "," + y_range(d.values[ref_index].feature_val) + ")";
-        // return "translate(" + x_value_from_origin + "," + pos.y +")";
-
     });
 
     ref_focuses.selectAll("text.chart_tooltip-ref")
         .text( function (d) {
-
             return +d.values[ref_index].feature_val.toFixed(3);
         });
+
+
 
 
     // moving Track
     var track_focus = d3.select("#track_focus1");
     track_focus.attr("transform", "translate(" + track_x(track_data[index].long) + "," + track_y(track_data[index].lat) + ")");
+
+
 
     // handle Steering, Brake, Gas, Gear
 

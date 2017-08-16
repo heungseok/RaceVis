@@ -33,6 +33,7 @@ var y = d3.local();
 var line = d3.local();
 var zoom_line = d3.local();
 var bisect = d3.bisector(function (d) { return d.x; }).left;
+var bisect_for_animation = d3.bisector(function (d) { return d; }).left;
 
 var xAxis = d3.axisBottom(x);
 var zoom_xAxis = d3.axisBottom(zoom_x)
@@ -294,7 +295,7 @@ function init_with_twoLaps() {
                 drawSubInfo_withTwoLaps();
                 // setBtnState();
                 // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
-                // zoomReset();
+                zoomReset();
                 document.getElementById("loading").style.display = "none";
 
 

@@ -29,7 +29,9 @@ function playInput(){
     if(!animation_flag) {
         console.log("replay or play")
         animation_flag = true;
-        trackAnimation();
+        if(vis_type == 1) trackAnimation();
+        else if(vis_type ==2) trackAnimation_withTwoLaps();
+
     }else {
         return;
     }
@@ -38,8 +40,119 @@ function playInput(){
     animation_flag = true;
 
 }
+
+
 function trackAnimation_withTwoLaps(){
-    
+    setTimeout(function () {
+        // resume 버튼 클릭되었을 경우 애니메이션 정지
+        if(resume_flag) return;
+
+
+        // ref_animation_index = d.values[animation_index].x;
+        // 우선 postion?일 경우일 때는 origin lap의 데이터에 맞는 reference data의 index를 먼저 구해야함.
+
+        var origin_x_value = Number(selected_features[0].values[animation_index].x);
+        // console.log(selected_features[0].values[animation_index]);
+        var ref_x_values =  _.pluck(selected_features[0].ref_values, 'x');
+        ref_animation_index = bisect_for_animation(ref_x_values, origin_x_value, 0, ref_x_values.length-1);
+
+        // ****************** animation for line chart *************** //
+        // **** 1. for origin line chart **** //
+        var focuses = d3.select("#canvas").selectAll("svg")
+            .selectAll(".focus");
+
+        // set all focus elements' style to display
+        focuses.style("display", null);
+
+        focuses.selectAll(".chart_tooltip").attr("transform", function(d){
+            var ty = y.get(this);
+            origin_x_value = d.values[animation_index].x;
+
+            return "translate(" + x(d.values[animation_index].x) + "," + ty(d.values[animation_index].feature_val) + ")";
+        });
+
+        focuses.selectAll("text")
+            .text( function (d) { return + d.values[animation_index].feature_val.toFixed(3); });
+
+        focuses.selectAll("line.tooltip_line").attr("transform", function(d){
+            return "translate(" + x(d.values[animation_index].x) + "," + height +")";
+        });
+
+        // **** 2. for reference line chart **** //
+        var ref_focuses = d3.select("#canvas").selectAll("svg")
+            .selectAll(".focus-ref");
+        ref_focuses.style("display", null);
+
+        ref_focuses.selectAll(".chart_tooltip-ref").attr("transform", function(d){
+            var ty = y.get(this);
+            return "translate(" + x(d.ref_values[ref_animation_index].x) + "," + ty(d.ref_values[ref_animation_index].feature_val) + ")";
+
+        });
+        ref_focuses.selectAll("text.chart_tooltip-ref")
+            .text( function (d) {
+                return +d.ref_values[ref_animation_index].feature_val.toFixed(3);
+            });
+
+
+
+
+        // ************** block for animation things *************** //
+        var track_focus = d3.select("#track_focus1");
+        track_focus.attr("transform", "translate(" + track_x(merged_track_data.origin[animation_index].long) + "," + track_y(merged_track_data.origin[animation_index].lat) + ")");
+
+        var track_focus_ref = d3.select("#track_focus1-ref");
+        track_focus_ref.attr("transform", "translate(" + track_x(merged_track_data.ref[ref_animation_index].long) + "," + track_y(merged_track_data.ref[ref_animation_index].lat) + ")");
+
+        // rotate by steering value
+        var steer_focus = d3.select("#steer_focus1");
+        steer_focus.select("image.steer")
+            .attr("transform", "scale(0.5), translate(0, 50), rotate(" + steer_data[animation_index] + ", 35, 35)");
+        steer_focus.select("image.steer-ref")
+            .attr("transform", "scale(0.5), translate(90, 50), rotate(" + ref_steer_data[ref_animation_index] + ", 35, 35)");
+
+        steer_focus.select("text")
+            .text("STEERING: " + steer_data[animation_index]);
+
+
+        var brake_focus = d3.select("#brake_focus1");
+        brake_focus.select("rect.value")
+            .attr("height", 1+ brake_data[animation_index]);
+        brake_focus.select("rect.value-ref")
+            .attr("height", 1+ ref_brake_data[ref_animation_index]);
+        brake_focus.select("text")
+            .text("Brake: " + brake_data[animation_index]);
+
+
+        var gas_focus = d3.select("#gas_focus1");
+        gas_focus.select("rect.value")
+            .attr("height", 1+gas_data[animation_index]);
+        gas_focus.select("rect.value-ref")
+            .attr("height", 1+ref_gas_data[ref_animation_index]);
+        gas_focus.select("text")
+            .text("Gas: " + gas_data[animation_index]);
+
+
+        var gear_focus = d3.select("#gear_focus1");
+        gear_focus.select("text.value")
+            .text(gear_data[animation_index]);
+        gear_focus.select("text.value-ref")
+            .text(ref_gear_data[ref_animation_index]);
+
+
+
+
+
+
+        // ************** END of animation code *************** //
+        animation_index++;
+        // if ( animation_index < animation_length){ => origin ver.
+        if ( animation_index < animation_range[1]){ // => coordinated by zoomed range
+            trackAnimation_withTwoLaps();
+        }else{
+            animation_index = animation_range[0] // => coordinated by zoomed range
+            resetPlay();
+        }
+    },animation_delay) // change this time (in milliseconds) to delay
 }
 
 function trackAnimation(){
