@@ -111,6 +111,9 @@ var zoom = d3.zoom()
     .extent([[0, 0], [width, height]])
     .on("zoom", zoomed);
 
+var trackZoom = d3.zoom()
+    .on("zoom", track_zoomed);
+
 var current_zoomRange;
 var context;
 
@@ -750,4 +753,12 @@ function setBrushRange(btn){
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
 
 
+}
+function track_zoomed(){
+    if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
+    d3.select("#track_canvas").select("g").attr("transform", d3.event.transform);
+}
+
+function track_dragged(d){
+    d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
 }
