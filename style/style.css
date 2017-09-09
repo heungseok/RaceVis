@@ -20,22 +20,23 @@ nav {
     top: 10vh;
     z-index: 1;
     width: 100%;
-    overflow-y: scroll;
+    overflow-y: auto;
     background-color:#101010;
-
-
 }
 
-#canvas{
-    /*position: absolute;*/
-    /*right: 30vh*/
-    /*margin-bottom: 50px;*/
-    width:90%;
-    /*height: 700px;*/
-    height: 900px;
-    margin-left: 20px;
-    margin-right: 20px;
+/*
+.row, .col-sm-3, .col-sm-9, .col-sm-5, .col-sm-4{
+    border-style: solid;
+    border-width: 0.2px;
+}
+*/
 
+#canvas{
+    width:90%;
+    height: 700px;
+    overflow-y: scroll;
+
+    /*margin-right: 20px;*/
 }
 
 g.tick {
@@ -51,14 +52,8 @@ path.domain{
 }
 
 #zoom_canvas{
-    /*position: absolute;*/
-    /*right: 30vh*/
-    /*margin-bottom: 50px;*/
     width:90%;
     height: 10%;
-    margin-left: 20px;
-    margin-right: 20px;
-
 }
 button#zoom_reset{
     margin-left: 100px;
@@ -149,28 +144,22 @@ rect.selection{
 
 .track_nav {
     /*position: absolute;*/
-    left:2vw;
-    width: 20%;
-
+    /*left:2vw;*/
 }
 
 /* right checkbox */
 .checkbox_wrapper{
-    width: 27vw;
+    /*width: 27vw;*/
     height: 20vh;
     overflow-y: scroll;
-    position: absolute;
-    right: 1vw;
+    background-color: #101010;
+
 }
 
 #track_canvas{
-
     width: 30vw;
     height: 30vh;
-    right: 1vw;
-    top: 30vh;
-    position:absolute;
-
+    /*right: 1vw;*/
 }
 g.focus, g#track_focus1{
     /*fill: #9d9d9d;*/
@@ -190,16 +179,10 @@ g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
 #sub_canvas{
     width: 28vw;
     height: 25vh;
-    right: 1vw;
-    top: 60vh;
-    position:absolute;
-
 }
 #sub_canvas text{
     fill: #9d9d9d;
 }
-
-
 #sel_speed{
     width: 50%;
     float: right;

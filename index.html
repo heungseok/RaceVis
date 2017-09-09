@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
 
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet"   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./style/style.css">
@@ -27,7 +27,15 @@
 
 
             <div id="navbar" class="navbar-collapse collapse">
+                <ul class="nav navbar-nav navbar-left">
+                    <li id="select_laps" class="active"><a href="#">Laps</a></li>
 
+                    <li class="features dropdown">
+                        <a class="dropdown-toggle" data-toggle="dropdown" href="#"> Features selection
+                            <span class="caret"></span></a>
+                        <ul class="features checkbox_wrapper dropdown-menu"></ul>
+                    </li>
+                </ul>
 
                 <ul class="nav navbar-nav navbar-right">
                     <li id="about" class="active"><a href="#">About</a></li>
@@ -40,207 +48,167 @@
 
     <div id="container">
         <div id="loading"></div>
+        <div class="row">
 
-        <div class="track_nav col-xs-2">
+            <div class="track_nav col-sm-4">
 
-            <div class="sel_box">
-                <label for="sel1">Select a Track:</label>
-                <select class="form-control" id="sel1">
-                    <option>KIC Short-1</option>
-                    <option>KIC Short-2</option>
-                    <option>KIC Short-3</option>
-                    <option>KIC Short-4</option>
-                </select>
-            </div>
+                <div class="track_summary">
 
-            <div class="sel_box">
-            <label for="sel2">Select a Session:</label>
-            <select class="form-control" id="sel2">
-                <option>Session-1</option>
-                <option>Session-2</option>
-                <option>Session-3</option>
-                <option>Session-4</option>
+                    <img style="height: 250px;" class="img_summary" src="./img/track_summary.png">
 
-            </select>
-            </div>
-
-            <div class="sel_box">
-            <label for="sel_lab">Select a Lap from the Selected Session:</label>
-            <select class="form-control" id="sel_lab" onchange="changeLap(this)">
-                <option value=1>Lap-1</option>
-                <option value=2>Lap-2</option>
-                <option value=3>Lap-3</option>
-                <option value=4>Lap-4</option>
-            </select>
-            </div>
-
-
-
-            <h4 style="margin-top:30px"> Select a Reference Lap:</h4>
-
-            <div class="sel_box">
-            <label for="sel4">Select a Session:</label>
-            <select class="form-control" id="sel4">
-                <option>Session-1</option>
-                <option>Session-2</option>
-                <option>Session-3</option>
-                <option>Session-4</option>
-            </select>
-            </div>
-
-            <div class="sel_box">
-            <label for="sel_ref_lab">Select a Lap from the Selected Session:</label>
-            <select class="form-control" id="sel_ref_lab" onchange="changeRefLap(this)">
-                <option value=1>Lap-1</option>
-                <option value=2>Lap-2</option>
-                <option value=3>Lap-3</option>
-                <option value=4>Lap-4</option>
-            </select>
-            </div>
-
-            <div class="track_summary">
-
-                <img style="height: 250px;" class="img_summary" src="./img/track_summary.png">
-
-                <div class="table_summary">
+                    <div class="table_summary">
                     <span>
                         summary statistic
                     </span>
-                </div>
-                <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                    s1 (2000-3000)
-                </button>
-
-
-
-            </div>
-
-        </div>
-
-        <div id="main_canvas_wrapper" class = "col-xs-6">
-            <div id="zoom_canvas">
-                <button type="button" class="btn" id="zoom_reset" onclick="zoomReset()">
-                    <span class="glyphicon glyphicon-zoom-out"></span> Zoom-reset
-                </button>
-                <button type="button" class="btn" id="zoom_in" onclick="zoomIn()">
-                    <span class="glyphicon glyphicon-zoom-in"></span> Zoom-In
-                </button>
-                <button type="button" class="btn" id="zoom_out" onclick="zoomOut()">
-                    <span class="glyphicon glyphicon-zoom-out"></span> Zoom-Out
-                </button>
-            </div>
-            <div id="canvas"></div>
-
-        </div>
-
-
-        <div class="right-nav col-xs-3">
-
-            <div class="checkbox_wrapper">
-
-               <!-- <div class="checkbox">
-                    <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleCBclick(this); checked="checked">GPS_Speed (kmh)</label>
-                </div>
-
-                <div class="checkbox">
-                    <label><input type="checkbox" value="AccelForward (g)" onclick=handleCBclick(this);>AccelForward (g)</label>
-                </div>
-
-                <div class="checkbox">
-                    <label><input type="checkbox" value="AccelLateral (g)" onclick=handleCBclick(this);>AccelLateral (g)</label>
-                </div>
-
-                <div class="checkbox">
-                    <label><input type="checkbox" value="AccelCombi (g)" onclick=handleCBclick(this);>AccelCombi (g)</label>
-                </div>
-
-                <div class="checkbox">
-                    <label><input type="checkbox" value="YawRate (deg/s)" onclick=handleCBclick(this);>YawRate (deg/s)</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" value="GPS_Height (m)" onclick=handleCBclick(this);>GPS_Height (m)</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" value="GPS_NumSat (NA)" onclick=handleCBclick(this);>GPS_NumSat (NA)</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" value="RPM (NA)" onclick=handleCBclick(this); checked="checked">RPM (NA)</label>
-                </div>
-
-                <div class="checkbox">
-                    <label><input type="checkbox" value="CoolantT (c)"  onclick=handleCBclick(this);>CoolantT (c)</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" value="OilT (c)"  onclick=handleCBclick(this); >OilT (c)</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" value="Fuel (percent)"  onclick=handleCBclick(this); >Fuel (percent)</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" value="IntakeBoost (bar)"  onclick=handleCBclick(this); >IntakeBoost (bar)</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" value="IntakeTemp (c)"  onclick=handleCBclick(this); >IntakeTemp (c)</label>
-                </div>
-                <div class="checkbox">
-                    <label><input type="checkbox" value="AFR (NA)"  onclick=handleCBclick(this); >AFR (NA)</label>
-                </div>-->
-            </div>
-
-            <div id="track_canvas">
-
-            </div>
-
-            <div id="sub_canvas">
-
-                <div class="animation_wrapper">
-
-                    <div class="playBtn">
-                        <button type="button" class="btn" id="button_play" onclick="playInput()">
-                            <span class="glyphicon glyphicon-play"></span>
-
-                        </button>
                     </div>
-                    <div class="axisSwitchBtn">
-                        <button type="button" class="btn axis-switch" id="btn-type-dist" value="PositionIndex" onclick="axisSwitch(this)">Position</button>
-                        <button type="button" class="btn axis-switch" id="btn-type-time" value="TimeStamp" onclick="axisSwitch(this)">Time</button>
-                    </div>
+                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
+                        s1 (2000-3000)
+                    </button>
+                </div>
+            </div>
 
-                    <div class="sel_box">
-                        <label for="sel_speed"></label>
-                        <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
-                            <option value="50">1x</option>
-                            <option value="100">0.5x</option>
-                            <option value="200">0.25x</option>
-                            <!--<option value="1">4x</option>-->
-                        </select>
-                    </div>
+            <div class="col-sm-4">
+                <div id="track_canvas">
                     <div class="track_zoom">
                         <button type="button" class="btn" id="track_zoom_reset" onclick="track_zoomReset()">
                             <span class="glyphicon glyphicon-zoom-out"></span> Track Zoom-reset</button>
                     </div>
+                </div>
+                    <div class="animation_wrapper">
+                        <div class="playBtn">
+                            <button type="button" class="btn" id="button_play" onclick="playInput()">
+                                <span class="glyphicon glyphicon-play"></span>
+                            </button>
+                        </div>
+                        <div class="axisSwitchBtn">
+                            <button type="button" class="btn axis-switch" id="btn-type-dist" value="PositionIndex" onclick="axisSwitch(this)">Position</button>
+                            <button type="button" class="btn axis-switch" id="btn-type-time" value="TimeStamp" onclick="axisSwitch(this)">Time</button>
+                        </div>
+
+                        <div class="sel_box">
+                            <label for="sel_speed"></label>
+                            <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
+                                <option value="50">1x</option>
+                                <option value="100">0.5x</option>
+                                <option value="200">0.25x</option>
+                                <!--<option value="1">4x</option>-->
+                            </select>
+                        </div>
+
+
+
 
 
                 </div>
 
             </div>
 
-
+            <div class="col-sm-4">
+                <div id="sub_canvas"></div>
             </div>
 
 
         </div>
-        <script src="js/lap_select.js"></script>
-        <script src="js/main.js"></script>
-        <script src="js/line_graph.js"></script>
-        <script src="js/checkbox.js"></script>
-        <script src="js/animation.js"></script>
+
+        <div class="row">
+            <div class="comment col-sm-3">
+            </div>
+            <div id="main_canvas_wrapper" class = "col-sm-9">
+                <div id="zoom_canvas">
+                    <button type="button" class="btn" id="zoom_reset" onclick="zoomReset()">
+                        <span class="glyphicon glyphicon-zoom-out"></span> Zoom-reset
+                    </button>
+                    <button type="button" class="btn" id="zoom_in" onclick="zoomIn()">
+                        <span class="glyphicon glyphicon-zoom-in"></span> Zoom-In
+                    </button>
+                    <button type="button" class="btn" id="zoom_out" onclick="zoomOut()">
+                        <span class="glyphicon glyphicon-zoom-out"></span> Zoom-Out
+                    </button>
+                </div>
+                <div id="canvas"></div>
+
+            </div>
+
+        </div>
+
 
 
 
     </div>
 
     <!-- Modals -->
+    <div id="lapsModal" class="modal">
+        <!-- about Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="lap_select close">&times;</span>
+                <h3>Lap Selection</h3>
+            </div>
+            <div class="modal-body">
+                <div class="sel_box">
+                    <label for="sel1">Select a Track:</label>
+                    <select class="form-control" id="sel1">
+                        <option>KIC Short-1</option>
+                        <option>KIC Short-2</option>
+                        <option>KIC Short-3</option>
+                        <option>KIC Short-4</option>
+                    </select>
+                </div>
+
+                <div class="sel_box">
+                    <label for="sel2">Select a Session:</label>
+                    <select class="form-control" id="sel2">
+                        <option>Session-1</option>
+                        <option>Session-2</option>
+                        <option>Session-3</option>
+                        <option>Session-4</option>
+
+                    </select>
+                </div>
+
+                <div class="sel_box">
+                    <label for="sel_lab">Select a Lap from the Selected Session:</label>
+                    <select class="form-control" id="sel_lab" onchange="changeLap(this)">
+                        <option value=1>Lap-1</option>
+                        <option value=2>Lap-2</option>
+                        <option value=3>Lap-3</option>
+                        <option value=4>Lap-4</option>
+                    </select>
+                </div>
+
+
+
+                <h4 style="margin-top:30px"> Select a Reference Lap:</h4>
+
+                <div class="sel_box">
+                    <label for="sel4">Select a Session:</label>
+                    <select class="form-control" id="sel4">
+                        <option>Session-1</option>
+                        <option>Session-2</option>
+                        <option>Session-3</option>
+                        <option>Session-4</option>
+                    </select>
+                </div>
+
+                <div class="sel_box">
+                    <label for="sel_ref_lab">Select a Lap from the Selected Session:</label>
+                    <select class="form-control" id="sel_ref_lab" onchange="changeRefLap(this)">
+                        <option value=1>Lap-1</option>
+                        <option value=2>Lap-2</option>
+                        <option value=3>Lap-3</option>
+                        <option value=4>Lap-4</option>
+                    </select>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <!--<h5>Modal Footer</h5>-->
+                <!--<p>Developed and Designed by Heungseok Park. </p>-->
+                <!--<p>Copyright &copy; 2017. 3Secondz. All rights reserved. </p>-->
+            </div>
+        </div>
+    </div>
+
     <div id="aboutModal" class="modal">
         <!-- about Modal content -->
         <div class="modal-content">
@@ -279,52 +247,63 @@
                 <p>Copyright &copy; 2017. 3Secondz. All rights reserved. </p>
             </div>
         </div>
-
     </div>
 
 
-    <script>
-
-        // get the modal
-        var modal = document.getElementById("aboutModal");
-
-        // get the button that opens the modal
-        var btn = document.getElementById("about");
-
-        // get the <span> element that cloases the modal;
-        var span = document.getElementsByClassName("close")[0];
-
-        // When the user clicks the button, open the modal
-        btn.onclick = function () {
-            modal.style.display = "block";
-        }
-
-        // When the user clicks on <span> (x), close the modal
-        span.onclick = function () {
-            modal.style.display = "none";
-        }
-
-        // When the user clicks anywhere outside of the modal, close it
-        window.onclick = function (event) {
-            if(event.target == modal){
-                modal.style.display = "none";
-            }
-        }
-
-
-        function closeNavLeft() {
-            document.getElementById("sideNavLeft").style.width = "0";
-
-        }
-
-        function closeNavRight() {
-            document.getElementById("sideNavRight").style.width = "0";
-
-        }
-
-
-    </script>
-
+    <script src="js/lap_select.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/line_graph.js"></script>
+    <script src="js/checkbox.js"></script>
+    <script src="js/animation.js"></script>
+    <script src="js/nav.js"></script>
 
 </body>
 </html>
+
+<!-- <div class="checkbox">
+     <label><input type="checkbox" value="GPS_Speed (kmh)" onclick=handleCBclick(this); checked="checked">GPS_Speed (kmh)</label>
+ </div>
+
+ <div class="checkbox">
+     <label><input type="checkbox" value="AccelForward (g)" onclick=handleCBclick(this);>AccelForward (g)</label>
+ </div>
+
+ <div class="checkbox">
+     <label><input type="checkbox" value="AccelLateral (g)" onclick=handleCBclick(this);>AccelLateral (g)</label>
+ </div>
+
+ <div class="checkbox">
+     <label><input type="checkbox" value="AccelCombi (g)" onclick=handleCBclick(this);>AccelCombi (g)</label>
+ </div>
+
+ <div class="checkbox">
+     <label><input type="checkbox" value="YawRate (deg/s)" onclick=handleCBclick(this);>YawRate (deg/s)</label>
+ </div>
+ <div class="checkbox">
+     <label><input type="checkbox" value="GPS_Height (m)" onclick=handleCBclick(this);>GPS_Height (m)</label>
+ </div>
+ <div class="checkbox">
+     <label><input type="checkbox" value="GPS_NumSat (NA)" onclick=handleCBclick(this);>GPS_NumSat (NA)</label>
+ </div>
+ <div class="checkbox">
+     <label><input type="checkbox" value="RPM (NA)" onclick=handleCBclick(this); checked="checked">RPM (NA)</label>
+ </div>
+
+ <div class="checkbox">
+     <label><input type="checkbox" value="CoolantT (c)"  onclick=handleCBclick(this);>CoolantT (c)</label>
+ </div>
+ <div class="checkbox">
+     <label><input type="checkbox" value="OilT (c)"  onclick=handleCBclick(this); >OilT (c)</label>
+ </div>
+ <div class="checkbox">
+     <label><input type="checkbox" value="Fuel (percent)"  onclick=handleCBclick(this); >Fuel (percent)</label>
+ </div>
+ <div class="checkbox">
+     <label><input type="checkbox" value="IntakeBoost (bar)"  onclick=handleCBclick(this); >IntakeBoost (bar)</label>
+ </div>
+ <div class="checkbox">
+     <label><input type="checkbox" value="IntakeTemp (c)"  onclick=handleCBclick(this); >IntakeTemp (c)</label>
+ </div>
+ <div class="checkbox">
+     <label><input type="checkbox" value="AFR (NA)"  onclick=handleCBclick(this); >AFR (NA)</label>
+ </div>-->
