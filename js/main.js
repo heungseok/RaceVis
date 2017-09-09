@@ -112,6 +112,7 @@ var zoom = d3.zoom()
     .on("zoom", zoomed);
 
 var trackZoom = d3.zoom()
+    .scaleExtent([1, 10]) // 1~10배까지만 허용.
     .on("zoom", track_zoomed);
 
 var current_zoomRange;
@@ -729,7 +730,6 @@ function zoomed(){
 
 function zoomReset() {
     console.log("zoom reset!");
-
     var t = d3.zoomIdentity.translate(0, 0).scale(1);
     current_zoomRange = t;
 
@@ -739,7 +739,6 @@ function zoomReset() {
     // call zoomIn function for adjusting each end of range
     zoomIn(0.5)
 }
-
 
 function setBrushRange(btn){
     // 1. btn value를 split해서 brush 조정할 range값을 parsing
@@ -754,11 +753,15 @@ function setBrushRange(btn){
 
 
 }
+
+// ****************** Track zoom utils ********************* //
 function track_zoomed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     d3.select("#track_canvas").select("g").attr("transform", d3.event.transform);
 }
-
+function track_zoomReset(){
+    trackZoom.transform(d3.select("#track_canvas"), d3.zoomIdentity);
+}
 function track_dragged(d){
     d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
 }

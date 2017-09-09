@@ -431,7 +431,7 @@ function drawTrack_withTwoLaps(){
 
 
     // ********** Init track zoom ************ //
-    d3.select("#track_canvas").call(trackZoom)
+    d3.select("#track_canvas").call(trackZoom);
 
 
 }
