@@ -74,33 +74,27 @@
                             <span class="glyphicon glyphicon-zoom-out"></span> Track Zoom-reset</button>
                     </div>
                 </div>
-                    <div class="animation_wrapper">
-                        <div class="playBtn">
-                            <button type="button" class="btn" id="button_play" onclick="playInput()">
-                                <span class="glyphicon glyphicon-play"></span>
-                            </button>
-                        </div>
-                        <div class="axisSwitchBtn">
-                            <button type="button" class="btn axis-switch" id="btn-type-dist" value="PositionIndex" onclick="axisSwitch(this)">Position</button>
-                            <button type="button" class="btn axis-switch" id="btn-type-time" value="TimeStamp" onclick="axisSwitch(this)">Time</button>
-                        </div>
+                <div class="animation_wrapper">
+                    <div class="playBtn">
+                        <button type="button" class="btn" id="button_play" onclick="playInput()">
+                            <span class="glyphicon glyphicon-play"></span>
+                        </button>
+                    </div>
+                    <div class="axisSwitchBtn">
+                        <button type="button" class="btn axis-switch" id="btn-type-dist" value="PositionIndex" onclick="axisSwitch(this)">Position</button>
+                        <button type="button" class="btn axis-switch" id="btn-type-time" value="TimeStamp" onclick="axisSwitch(this)">Time</button>
+                    </div>
 
-                        <div class="sel_box">
-                            <label for="sel_speed"></label>
-                            <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
-                                <option value="50">1x</option>
-                                <option value="100">0.5x</option>
-                                <option value="200">0.25x</option>
-                                <!--<option value="1">4x</option>-->
-                            </select>
-                        </div>
-
-
-
-
-
+                    <div class="sel_box">
+                        <label for="sel_speed"></label>
+                        <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
+                            <option value="50">1x</option>
+                            <option value="100">0.5x</option>
+                            <option value="200">0.25x</option>
+                            <!--<option value="1">4x</option>-->
+                        </select>
+                    </div>
                 </div>
-
             </div>
 
             <div class="col-sm-4">

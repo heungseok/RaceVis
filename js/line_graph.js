@@ -279,8 +279,6 @@ function drawLineGraph(){
                 .attr("id", "x-axis")
                 .attr("class", "axis axis--x")
                 .attr("transform", "translate(" + 0 + "," + height + ")");
-
-
         }
     }
 

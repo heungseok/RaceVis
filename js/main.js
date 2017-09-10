@@ -5,11 +5,12 @@
 
 var margin = {top: 5, right: 20, bottom: 20, left: 50},
     width = document.getElementById("canvas").offsetWidth - margin.left - margin.right,
-    height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
+    // height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
+    height = window.innerHeight/8 - margin.bottom - margin.top;
 
 var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
     zoom_width = width,
-    zoom_height = document.getElementById("canvas").offsetHeight/10 - zoom_margin.bottom - zoom_margin.top;
+    zoom_height = window.innerHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
 var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
@@ -21,7 +22,6 @@ var sub_margin = {top: 30, right: 50, bottom: 20, left: 20},
 
 // ************** selected lap, reference lap variable **************** //
 var selected_lap=1, selected_ref_lap=1;
-
 var vis_type = 2; // 1: one lap, 2: two laps
 
 
