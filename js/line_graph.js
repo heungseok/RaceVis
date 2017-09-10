@@ -12,7 +12,7 @@ function drawLineGraph_withTwoLaps() {
     svg = d3.select("#canvas").selectAll("svg")
         .data(selected_features)
         .enter().append("svg")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.left + margin.right + margin_for_plot_info)
         .attr("height", height + margin.bottom + margin.top)
         .append("g")
         .attr("id", function (d) {
@@ -34,8 +34,6 @@ function drawLineGraph_withTwoLaps() {
                 .x(function(c){ return x(c.x);})
                 .y(function(c){ return ty(c.feature_val); }));
 
-
-
         });
 
     // ************* Assign clipPath to each line area *********************//
@@ -46,7 +44,7 @@ function drawLineGraph_withTwoLaps() {
         })
         .append("rect")
         .attr("width", width)
-        .attr("height", height)
+        .attr("height", height);
 
     // end of init. clipPath
 
@@ -56,15 +54,31 @@ function drawLineGraph_withTwoLaps() {
         .attr("d", function(d) { return line.get(this)(d.ref_values); })
         .attr("clip-path", function (d) {
             return "url(#clip_" + d.id.split(" ")[0] + ")";
-        })
+        });
 
     svg.append("path")
         .attr("class", "line")
         .attr("d", function(d) { return line.get(this)(d.values); })
         .attr("clip-path", function (d) {
             return "url(#clip_" + d.id.split(" ")[0] + ")";
-        })
+        });
 
+    // ************* Append plot detail info *********************//
+    svg.append("text")
+        .attr("class", "plot_info_focus")
+        .attr("y", height*0.1)
+        .attr("x", width + margin_for_plot_info*0.1 )
+        .style("fill", "steelblue")
+        .style("font-size", "15px")
+        .text("origin");
+
+    svg.append("text")
+        .attr("class", "plot_info_focus-ref")
+        .attr("y", height*0.1)
+        .attr("x", 10+width + margin_for_plot_info/2)
+        .style("fill", "red")
+        .style("font-size", "15px")
+        .text("ref");
 
 
     // ************* Append x-axis, y-axis *********************//
@@ -770,6 +784,9 @@ function mousemove_twoLaps() {
         return "translate(" + x(d.values[index].x) + "," + height +")";
 
     });
+    var plot_focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll("text.plot_info_focus");
+    plot_focuses.text(function (d){ return +d.values[index].feature_val.toFixed(3); });
 
     // ********** reference lap focus **************
     var ref_index = 0;
@@ -788,6 +805,9 @@ function mousemove_twoLaps() {
         .text( function (d) {
             return +d.ref_values[ref_index].feature_val.toFixed(3);
         });
+    var ref_plot_focuses = d3.select("#canvas").selectAll("svg")
+        .selectAll("text.plot_info_focus-ref");
+    ref_plot_focuses.text(function (d){ return +d.ref_values[ref_index].feature_val.toFixed(3); });
 
 
     // ****************** moving Track *********************** //
@@ -962,7 +982,7 @@ function addChart_withTwoLaps(id) {
     svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
     //                var update_svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
         .append("svg")
-        .attr("width", width + margin.left + margin.right)
+        .attr("width", width + margin.left + margin.right  + margin_for_plot_info)
         .attr("height", height + margin.bottom + margin.top)
         .append("g")
         .attr("id", function (d) {
@@ -1017,6 +1037,24 @@ function addChart_withTwoLaps(id) {
         .attr("y", height - 50)
         .attr("x", 10)
         .text(function(d) { return d.id; });
+
+    // ************* Append plot detail info *********************//
+    svg.append("text")
+        .attr("class", "plot_info_focus")
+        .attr("y", height*0.1)
+        .attr("x", width + margin_for_plot_info*0.1 )
+        .style("fill", "steelblue")
+        .style("font-size", "15px")
+        .text("origin");
+
+    svg.append("text")
+        .attr("class", "plot_info_focus-ref")
+        .attr("y", height*0.1)
+        .attr("x", 10+width + margin_for_plot_info/2)
+        .style("fill", "red")
+        .style("font-size", "15px")
+        .text("ref");
+
 
     // ************** x axis, y axis 생성 ************************ //
     var origin_y0 = d3.extent(target_data.values, function(c) { return +c.feature_val;});

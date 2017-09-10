@@ -30,9 +30,14 @@ nav {
     border-width: 0.2px;
 }
 */
+.row.bottom{
+    border-style: solid;
+    border-width: 0.1px;
+}
 
 #canvas{
-    width:90%;
+    /*width:100%; !* 이렇게 해야 안가려짐 *!*/
+    width:90%; /* 이렇게 해야 안가려짐 */
     height: 300px;
     min-height: 100% !important;
     margin-right: 20px;

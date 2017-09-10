@@ -77,6 +77,10 @@ function trackAnimation_withTwoLaps(){
             return "translate(" + x(d.values[animation_index].x) + "," + height +")";
         });
 
+        var plot_focuses = d3.select("#canvas").selectAll("svg")
+            .selectAll("text.plot_info_focus");
+        plot_focuses.text( function(d){ return +d.ref_values[ref_animation_index].feature_val.toFixed(3); });
+
         // **** 2. for reference line chart **** //
         var ref_focuses = d3.select("#canvas").selectAll("svg")
             .selectAll(".focus-ref");
@@ -92,6 +96,9 @@ function trackAnimation_withTwoLaps(){
                 return +d.ref_values[ref_animation_index].feature_val.toFixed(3);
             });
 
+        var ref_plot_focuses = d3.select("#canvas").selectAll("svg")
+            .selectAll("text.plot_info_focus-ref");
+        ref_plot_focuses.text( function(d){ return +d.ref_values[ref_animation_index].feature_val.toFixed(3); });
 
         // ************** block for animation things *************** //
         var track_focus = d3.select("#track_focus1");
