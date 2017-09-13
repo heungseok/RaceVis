@@ -17,9 +17,10 @@ var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top;
 
-var sub_margin = {top: 30, right: 50, bottom: 20, left: 20},
+var sub_margin = {top: 10, right: 20, bottom: 20, left: 20},
     sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
-    sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+    // sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+    sub_height = document.getElementById("row-top container").offsetHeight - sub_margin.bottom - sub_margin.top;
 
 // ************** selected lap, reference lap variable **************** //
 var selected_lap=1, selected_ref_lap=1;
@@ -47,7 +48,7 @@ var all_features, ref_all_features, merged_all_features =[];
 var selected_features = [], ref_selected_features = [], merged_selected_features =[];
 var selected_feat_names = [];
 // var root_x = "Distance (m)"
-var root_x = "PositionIndex"
+var root_x = "PositionIndex";
 
 
 
@@ -90,23 +91,14 @@ var ref_steer_data = [],
     ref_gear_data = [];
 
 
-
-
 /* *************  BRUSH ON CHART (차트위에서 드래그 줌인) variable  ******************/
-var brush_onChart = d3.brushX().on("end", brushedOnChart),
-    idleTimeout,
-    idleDelay = 350;
-
-
-/* *************   ZOOM with BRUSH (차트위 브러쉬 줌인,아웃) variable *************  */
-
-// variable for brush
+var brush_onChart = d3.brushX().on("end", brushedOnChart).extent([[0,0], [width, height]]),
+    idleTimeout;
+/* *************   ZOOM with BRUSH (차트 전체 브러쉬 줌인,아웃) variable *************  */
 var brush = d3.brushX()
     .extent([[0,0], [zoom_width, zoom_height]])
     .on("brush end", brushed);
-
-// init zoom listener
-var zoom = d3.zoom()
+var zoom =  d3.zoom()
     .scaleExtent([1, Infinity])
     .translateExtent([[0, 0], [width, height]])
     .extent([[0, 0], [width, height]])
@@ -150,7 +142,6 @@ function init(init_type) {
 
     if(init_type == 1){
         init_with_originLap();
-
     }else{
         // init type이 1이 아닌 경우: input이 2개.
         init_with_twoLaps();
@@ -260,7 +251,6 @@ function init_with_twoLaps() {
                 merged_track_data.ref = ref_track_data;
 
                 console.log("merge track boundary data with track data");
-
 
                 track_boundary_data.forEach(function (d) {
 

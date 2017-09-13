@@ -112,28 +112,36 @@ function trackAnimation_withTwoLaps(){
         steer_focus.select("image.steer")
             .attr("transform", "scale(0.5), translate(0, 50), rotate(" + steer_data[animation_index] + ", 35, 35)");
         steer_focus.select("image.steer-ref")
-            .attr("transform", "scale(0.5), translate(90, 50), rotate(" + ref_steer_data[ref_animation_index] + ", 35, 35)");
+            .attr("transform", "scale(0.5), translate(130, 50), rotate(" + ref_steer_data[ref_animation_index] + ", 35, 35)");
 
-        steer_focus.select("text")
-            .text("STEERING: " + steer_data[animation_index]);
+        steer_focus.select("text.steer_value")
+            .text(steer_data[animation_index].toFixed(3));
+        steer_focus.select("text.steer-ref_value")
+            .text(ref_steer_data[ref_animation_index].toFixed(3));
 
 
         var brake_focus = d3.select("#brake_focus1");
         brake_focus.select("rect.value")
-            .attr("height", 1+ brake_data[animation_index]);
+            .attr("width", 1+ brake_data[animation_index]);
         brake_focus.select("rect.value-ref")
-            .attr("height", 1+ ref_brake_data[ref_animation_index]);
-        brake_focus.select("text")
-            .text("Brake: " + brake_data[animation_index]);
+            .attr("width", 1+ ref_brake_data[ref_animation_index]);
+
+        brake_focus.select("text.brake_value")
+            .text(brake_data[animation_index].toFixed(3));
+        brake_focus.select("text.brake-ref_value")
+            .text(ref_brake_data[ref_animation_index].toFixed(3));
 
 
         var gas_focus = d3.select("#gas_focus1");
         gas_focus.select("rect.value")
-            .attr("height", 1+gas_data[animation_index]);
+            .attr("width", 1+gas_data[animation_index]);
         gas_focus.select("rect.value-ref")
-            .attr("height", 1+ref_gas_data[ref_animation_index]);
-        gas_focus.select("text")
-            .text("Gas: " + gas_data[animation_index]);
+            .attr("width", 1+ref_gas_data[ref_animation_index]);
+
+        gas_focus.select("text.gas_value")
+            .text(gas_data[animation_index]);
+        gas_focus.select("text.gas-ref_value")
+            .text(ref_gas_data[ref_animation_index]);
 
 
         var gear_focus = d3.select("#gear_focus1");

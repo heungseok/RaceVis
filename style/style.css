@@ -16,23 +16,19 @@ nav {
 #container{
     font: 12px Arial;
     stroke-width: 2;
-    position: absolute;
-    top: 10vh;
+    padding-top: 50px;
     z-index: 1;
     width: 100%;
-    /*overflow-y: auto;*/
     background-color:#101010;
 }
 
-/*
-.row, .col-sm-3, .col-sm-9, .col-sm-5, .col-sm-4{
-    border-style: solid;
-    border-width: 0.2px;
+.row.top{
+    padding-bottom: 10px;
 }
-*/
 .row.bottom{
-    border-style: solid;
-    border-width: 0.1px;
+    padding-top: 40px;
+    border-top-style: solid;
+    border-top-width: 0.1px;
 }
 
 #canvas{
@@ -129,11 +125,6 @@ rect.selection{
     /*pointer-events: all;*/
 }
 
-/* axis type button */
-.axisSwitchBtn{
-    margin-left: 2px;
-    float: left;
-}
 
 
 /* select track, sesssion box */
@@ -166,14 +157,12 @@ rect.selection{
 }
 
 #track_canvas{
-    width: 30vw;
-    height: 30vh;
+    width: 50vw;
+    height: 35vh;
     /*right: 1vw;*/
 }
 
-#track_zoom_reset{
-    font-size: 10px;
-}
+
 g.focus, g#track_focus1{
     /*fill: #9d9d9d;*/
     fill: steelblue;
@@ -191,18 +180,35 @@ g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
 
 #sub_canvas{
     width: 28vw;
-    height: 25vh;
+    height: auto;
 }
 #sub_canvas text{
     fill: #9d9d9d;
 }
+
+.track.col-sm-6{
+    padding-left:10px;
+    padding-right:30px;
+}
+/* axis type button */
+.axisSwitchBtn{
+    margin-left: 2px;
+    float: left;
+}
 #sel_speed{
-    width: 30%;
+    max-width: 20%;
     float: right;
+    font-size: 10px;
 }
-.playBtn{
+.playBtn, .track_zoom{
     float:left;
+    padding-left: 5px;
 }
+.btn{
+    font-size: 10px;
+
+}
+
 
 path.line.boundary{
     /*stroke: grey;*/
