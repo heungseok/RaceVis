@@ -169,8 +169,7 @@ function trackAnimation(){
     setTimeout(function () {
         // resume 버튼 클릭되었을 경우 애니메이션 정지
         if(resume_flag) return;
-        
-        
+
         // ************** block for animation things *************** //
         var track_focus = d3.select("#track_focus1");
         track_focus.attr("transform", "translate(" + track_x(track_data[animation_index].long) + "," + track_y(track_data[animation_index].lat) + ")");
@@ -240,7 +239,6 @@ function trackAnimation(){
 
 
 function resetPlay(){
-
     animation_flag = false;
     var button = d3.select("#button_play").classed("btn-success", false);
     button.select("span").attr("class", "glyphicon glyphicon-play");

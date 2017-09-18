@@ -73,12 +73,48 @@ function drawLineGraph_withTwoLaps() {
         .text("origin");
 
     svg.append("text")
+        .attr("class", "plot_info_focus_max")
+        .attr("y", height*0.1 + 25)
+        .attr("x", width + margin_for_plot_info*0.1 )
+        .style("fill", "steelblue")
+        .style("font-size", "12px")
+        .text("max");
+        // .text(function(d){ return d.origin_max.toFixed(3); });
+
+    svg.append("text")
+        .attr("class", "plot_info_focus_min")
+        .attr("y", height*0.1 + 50  )
+        .attr("x", width + margin_for_plot_info*0.1 )
+        .style("fill", "steelblue")
+        .style("font-size", "12px")
+        .text("min");
+        // .text(function(d){ return d.origin_min.toFixed(3); });
+
+    svg.append("text")
         .attr("class", "plot_info_focus-ref")
         .attr("y", height*0.1)
         .attr("x", 10+width + margin_for_plot_info/2)
         .style("fill", "red")
         .style("font-size", "15px")
         .text("ref");
+
+    svg.append("text")
+        .attr("class", "plot_info_focus_max-ref")
+        .attr("y", height*0.1 + 25)
+        .attr("x", 10+width + margin_for_plot_info/2)
+        .style("fill", "red")
+        .style("font-size", "12px")
+        .text("max");
+        // .text(functio?n(d){ return d.ref_max.toFixed(3); });
+
+    svg.append("text")
+        .attr("class", "plot_info_focus_min-ref")
+        .attr("y", height*0.1 + 50  )
+        .attr("x", 10+width + margin_for_plot_info/2)
+        .style("fill", "red")
+        .style("font-size", "12px")
+        .text("min");
+        // .text(function(d){ return d.ref_min.toFixed(3); });
 
 
     // ************* Append x-axis, y-axis *********************//
@@ -88,7 +124,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("x", 10)
         .text(function(d) { return d.id; });
 
-    // define y axis
+    // define y axis && set max/min value
     for (var i=0; i<selected_features.length; i++){
         var id = "g#" + selected_features[i].id.split(" ")[0];
 
@@ -111,6 +147,18 @@ function drawLineGraph_withTwoLaps() {
                 .attr("class", "axis axis--x")
                 .attr("transform", "translate(" + 0 + "," + height + ")");
         }
+
+        // init max/min value
+        // selected_features[i].origin_min = origin_y0[0];
+        // selected_features[i].origin_max = origin_y0[1];
+        // selected_features[i].ref_min = ref_y0[0];
+        // selected_features[i].ref_max = ref_y0[1];
+        // d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3))
+        // d3.select(id).select(".plot_info_focus_min").text(selected_features[i].origin_min.toFixed(3))
+        // d3.select(id).select(".plot_info_focus_max-ref").text(selected_features[i].ref_max.toFixed(3))
+        // d3.select(id).select(".plot_info_focus_min-ref").text(selected_features[i].ref_min.toFixed(3))
+
+
     }
 
     // ************* Append each tooltip *********************//
@@ -404,6 +452,8 @@ function drawTrack_withTwoLaps(){
         .append("g")
         .attr("transform",
             "translate(" + track_margin.left + "," + track_margin.top + ")");
+            // "translate(" + track_width/4+ "," + track_margin.top + ")");
+
 
     // *************** Append track line path :***************//
 
@@ -449,6 +499,10 @@ function drawTrack_withTwoLaps(){
     d3.select("#track_canvas").call(trackZoom);
 
 
+    // transform to center
+    // d3.select("#track_canvas").select("g").attr("transform", "translate(" + track_width/4 + "," + track_margin.top + ")");
+
+
 }
 
 function drawTrack(){
@@ -482,6 +536,7 @@ function drawTrack(){
         .attr("transform",
             "translate(" + track_margin.left + "," + track_margin.top + ")");
 
+
     // *************** Append track line path :***************//
 
     // draw inline, outline track boundary first
@@ -505,10 +560,11 @@ function drawTrack(){
     // append track focus element (circle)
     var track_focus = track_svg.append("g")
         .attr("id", "track_focus1");
-
-
     track_focus.append("circle")
         .attr("r", 4.5);
+
+
+
 
 
 }
@@ -813,6 +869,9 @@ function mousemove_twoLaps() {
         .selectAll("text.plot_info_focus");
     plot_focuses.text(function (d){ return +d.values[index].feature_val.toFixed(3); });
 
+
+
+
     // ********** reference lap focus **************
     var ref_index = 0;
     var ref_focuses = d3.select("#canvas").selectAll("svg")
@@ -1076,12 +1135,47 @@ function addChart_withTwoLaps(id) {
         .text("origin");
 
     svg.append("text")
+        .attr("class", "plot_info_focus_max")
+        .attr("y", height*0.1 + 25)
+        .attr("x", width + margin_for_plot_info*0.1 )
+        .style("fill", "steelblue")
+        .style("font-size", "12px")
+        .text("max");
+    // .text(function(d){ return d.origin_max.toFixed(3); });
+
+    svg.append("text")
+        .attr("class", "plot_info_focus_min")
+        .attr("y", height*0.1 + 50  )
+        .attr("x", width + margin_for_plot_info*0.1 )
+        .style("fill", "steelblue")
+        .style("font-size", "12px")
+        .text("min");
+    // .text(function(d){ return d.origin_min.toFixed(3); });
+
+    svg.append("text")
         .attr("class", "plot_info_focus-ref")
         .attr("y", height*0.1)
         .attr("x", 10+width + margin_for_plot_info/2)
         .style("fill", "red")
         .style("font-size", "15px")
         .text("ref");
+
+    svg.append("text")
+        .attr("class", "plot_info_focus_max-ref")
+        .attr("y", height*0.1 + 25)
+        .attr("x", 10+width + margin_for_plot_info/2)
+        .style("fill", "red")
+        .style("font-size", "12px")
+        .text("max");
+    // .text(functio?n(d){ return d.ref_max.toFixed(3); });
+
+    svg.append("text")
+        .attr("class", "plot_info_focus_min-ref")
+        .attr("y", height*0.1 + 50  )
+        .attr("x", 10+width + margin_for_plot_info/2)
+        .style("fill", "red")
+        .style("font-size", "12px")
+        .text("min");
 
 
     // ************** x axis, y axis 생성 ************************ //
@@ -1190,6 +1284,9 @@ function addChart_withTwoLaps(id) {
     d3.select("#canvas").selectAll("svg")
         .selectAll(".focus-ref")
         .style("display", "none");
+
+
+    d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
 
 }
 

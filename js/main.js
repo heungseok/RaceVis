@@ -104,6 +104,7 @@ var zoom =  d3.zoom()
     .extent([[0, 0], [width, height]])
     .on("zoom", zoomed);
 
+// track zoom
 var trackZoom = d3.zoom()
     .scaleExtent([1, 10]) // 1~10배까지만 허용.
     .on("zoom", track_zoomed);
@@ -175,8 +176,18 @@ function init_with_twoLaps() {
                             return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
                         });
                     }
-
                 });
+                // 다음으로 min max 계산. (필요없어짐)
+                /*
+                all_features.forEach(function(data, i){
+                    var origin_extent = d3.extent(_.pluck(data.values, "feature_val"));
+                    var ref_extent = d3.extent(_.pluck(data.ref_values, "feature_val"));
+                    all_features[i].origin_max = origin_extent[0];
+                    all_features[i].origin_min = origin_extent[1];
+                    all_features[i].ref_max = ref_extent[0];
+                    all_features[i].ref_min = ref_extent[1];
+                });
+                */
                 console.log("Finished merging all features")
 
                 // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
@@ -597,6 +608,7 @@ function brushed(){
     // console.log(s.map(zoom_x.invert, zoom_x));
 
     setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
+    setMinMax_by_animationRange();
     // setAnimationRange_fromZoom(current_zoomRange);
 
     d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
@@ -681,6 +693,29 @@ function setAnimationRange_fromZoom(s){
     if (typeof track_svg != 'undefined')
         drawing_animationPath()
 
+}
+function setMinMax_by_animationRange(){
+    console.log(animation_range);
+    selected_features.forEach(function(data, i){
+        // console.log(data);
+
+        var temp_arr = _.pluck(data.values, "feature_val").slice(animation_range[0], animation_range[1]);
+        var temp_arr_ref = _.pluck(data.ref_values, "feature_val").slice(animation_range[0], animation_range[1]);
+        var origin_extent = d3.extent(temp_arr);
+        var ref_extent = d3.extent(temp_arr_ref);
+        selected_features[i].origin_max = origin_extent[1];
+        selected_features[i].origin_min = origin_extent[0];
+        selected_features[i].ref_max = ref_extent[1];
+        selected_features[i].ref_min = ref_extent[0];
+
+        console.log(selected_features);
+        var id = "g#" + data.id.split(" ")[0];
+        d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3))
+        d3.select(id).select(".plot_info_focus_min").text(selected_features[i].origin_min.toFixed(3))
+        d3.select(id).select(".plot_info_focus_max-ref").text(selected_features[i].ref_max.toFixed(3))
+        d3.select(id).select(".plot_info_focus_min-ref").text(selected_features[i].ref_min.toFixed(3))
+
+    })
 }
 
 function drawing_animationPath() {
