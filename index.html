@@ -52,18 +52,8 @@
 
             <div class="track_nav col-sm-4">
 
-                <div class="track_summary">
+                <div id="track_nav_canvas">
 
-                    <img style="height: 250px;" class="img_summary" src="./img/track_summary.png">
-
-                    <div class="table_summary">
-                    <span>
-                        summary statistic
-                    </span>
-                    </div>
-                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                        s1 (2000-3000)
-                    </button>
                 </div>
             </div>
 
@@ -104,8 +94,31 @@
         </div>
 
         <div class="row bottom">
-            <div class="comment col-sm-3">
+            <div class="col-sm-3">
+
+                <ul  class="nav nav-pills">
+                    <li class="active"><a href="#1a" data-toggle="tab">Summary Statistics</a>
+                    </li>
+                    <li><a href="#2a" data-toggle="tab">Comments</a>
+                    </li>
+
+                </ul>
+
+                <div class="tab-content">
+                    <div class="tab-pane active table_summary" id="1a">
+                        <div>summary statistic</div>
+                        <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
+                            s1 (2000-3000)
+                        </button>
+                    </div>
+                    <div class="tab-pane comments" id="2a">
+                        <span>comments</span>
+                    </div>
+
+                </div>
             </div>
+
+
             <div id="main_canvas_wrapper" class = "col-sm-9">
                 <div id="zoom_canvas">
                     <button type="button" class="btn" id="zoom_reset" onclick="zoomReset()">

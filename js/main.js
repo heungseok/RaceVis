@@ -15,7 +15,10 @@ var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
 
 var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
-    track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+    track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top,
+    nav_track_width = document.getElementById("track_nav_canvas").offsetWidth - track_margin.left - track_margin.right,
+    nav_track_height = document.getElementById("track_nav_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+
 
 var sub_margin = {top: 10, right: 20, bottom: 20, left: 20},
     sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
@@ -25,7 +28,6 @@ var sub_margin = {top: 10, right: 20, bottom: 20, left: 20},
 // ************** selected lap, reference lap variable **************** //
 var selected_lap=1, selected_ref_lap=1;
 var vis_type = 2; // 1: one lap, 2: two laps
-
 
 // ************** line-graph variable and line function **************** //
 var x = d3.scaleLinear().range([0, width]);
@@ -41,7 +43,7 @@ var xAxis = d3.axisBottom(x);
 var zoom_xAxis = d3.axisBottom(zoom_x)
 
 var svg, zoom_svg,
-    track_svg, sub_svg;
+    track_svg, sub_svg, nav_track_svg;
 
 
 var all_features, ref_all_features, merged_all_features =[];
@@ -54,8 +56,7 @@ var root_x = "PositionIndex";
 
 // ************** track boundary variable and line function **************** //
 var track_data = [], ref_track_data =[], merged_track_data={ };
-var track_x, track_y,
-    ref_track_x, ref_track_y,
+var track_x, track_y, nav_track_x, nav_track_y,
     inline_track = [], outline_track = [];
 
 
@@ -64,6 +65,9 @@ var track_line = d3.line()
     .x(function(d) { return track_x(d.long); })
     .y(function(d) { return track_y(d.lat); });
 
+var nav_track_line = d3.line()
+    .x(function(d) { return nav_track_x(d.long); })
+    .y(function(d) { return nav_track_y(d.lat); });
 
 // ************** track animation variable **************** //
 var animation_index =0,
@@ -695,9 +699,8 @@ function setAnimationRange_fromZoom(s){
 
 }
 function setMinMax_by_animationRange(){
-    console.log(animation_range);
+
     selected_features.forEach(function(data, i){
-        // console.log(data);
 
         var temp_arr = _.pluck(data.values, "feature_val").slice(animation_range[0], animation_range[1]);
         var temp_arr_ref = _.pluck(data.ref_values, "feature_val").slice(animation_range[0], animation_range[1]);
@@ -708,7 +711,6 @@ function setMinMax_by_animationRange(){
         selected_features[i].ref_max = ref_extent[1];
         selected_features[i].ref_min = ref_extent[0];
 
-        console.log(selected_features);
         var id = "g#" + data.id.split(" ")[0];
         d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3))
         d3.select(id).select(".plot_info_focus_min").text(selected_features[i].origin_min.toFixed(3))

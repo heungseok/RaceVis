@@ -499,11 +499,49 @@ function drawTrack_withTwoLaps(){
     d3.select("#track_canvas").call(trackZoom);
 
 
-    // transform to center
-    // d3.select("#track_canvas").select("g").attr("transform", "translate(" + track_width/4 + "," + track_margin.top + ")");
+    // *************************** Draw Navigation Track *************************** //
+    var width_ratio = nav_track_width/track_width;
+    nav_track_x = d3.scaleLinear().range([0, abs_x_range *(nav_track_height*width_ratio) / abs_y_range ])
+        .domain(union_x0);
+    nav_track_y = d3.scaleLinear().range([(nav_track_height*width_ratio), 0])
+        .domain(union_y0);
 
+    // setting svg for drawing track
+    nav_track_svg = d3.select("#track_nav_canvas").append("svg")
+        .attr("width", nav_track_width + track_margin.left + track_margin.right)
+        .attr("height", nav_track_height + track_margin.top + track_margin.bottom)
+        .append("g")
+        .attr("transform",
+            // "translate(" + track_margin.left + "," + track_margin.top + ")");
+            "translate(" + nav_track_width/4 + "," + nav_track_height/4 + ")");
+
+
+    // *************** Append track line path :***************//
+    // draw inline, outline track boundary first
+    nav_track_svg.append("path")
+        .data([merged_track_data.inline])
+        .attr("class", "line boundary inline")
+        .attr("d", nav_track_line);
+
+    nav_track_svg.append("path")
+        .data([merged_track_data.outline])
+        .attr("class", "line boundary outline")
+        .attr("d", nav_track_line);
+
+    // draw track line, ref line
+    nav_track_svg.append("path")
+        .data([merged_track_data.ref])
+        .attr("class", "line ref")
+        .attr("d", nav_track_line);
+
+    nav_track_svg.append("path")
+        .data([merged_track_data.origin])
+        .attr("class", "line")
+        .attr("d", nav_track_line);
 
 }
+
+
 
 function drawTrack(){
 
