@@ -1,7 +1,6 @@
 /**
  * Created by totor on 2017-06-11.
  */
-
 // checkbox click listener
 function handleCBclick(cb){
     // check박스가 하나라도 클릭되었을 경우 check 되어진 값들 가져온 뒤 chart update

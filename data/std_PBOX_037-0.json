@@ -1,0 +1,103 @@
+{
+    "basic_info": {
+        "dataFile": "std_PBOX_037-0.csv", 
+        "deviceSource": "AIM_csv", 
+        "sampleRateHz": 10.000, 
+        "version": "data_handler_0.08"
+    }, 
+    "comments": {
+        "overall": {
+            "brake": [
+                -1.800, 
+                "브레이킹 구간이 더 깁니다.<br />짧은 거리의 브레이킹 시도는 기록 단축에 효과적이지만, 과진입을 유발할 수 있으므로 분석을 통해 판단해야 합니다."
+            ], 
+            "distance": [
+                -1.800, 
+                "전체 주행거리가 더 깁니다. <br />짧은 주행거리의 라인 선택은 기록 단축에 효과적이지만, 코너링 스피드가 떨어질 수 있으므로 분석을 통해 판단해야 합니다."
+            ], 
+            "engine": [
+                -1.800, 
+                "더 높은 출력을 가진 것으로 추정됩니다.<br />드라이버의 변속 습관에 따라 영향을 받을 수 있습니다."
+            ], 
+            "throttle": [
+                -1.800, 
+                "풀스로틀 구간이 더 짧습니다.<br />일반적으로 드라이버가 차량을 편안하게 느낄수록 풀스로틀 구간이 늘어납니다."
+            ]
+        }
+    }, 
+    "dataField": {
+        "emptyValue": [
+            "empty data column of standardized csv format", 
+            "can be determined by manual field-matching of an user"
+        ], 
+        "remaining": [
+            "remained data column name of origin file", 
+            "unmatched measurement data"
+        ], 
+        "total": [
+            "all set (list) of finalized column names"
+        ], 
+        "unit": [
+            "all set (list) of finalized column units"
+        ]
+    }, 
+    "lap_info": {
+        "laps_record": [
+            {
+                "invalid": "False", 
+                "lapNum": 1, 
+                "lapTime": "1:25.034", 
+                "splitTime": [
+                    30.000, 
+                    30.000, 
+                    30.000
+                ]
+            }, 
+            {
+                "invalid": "False", 
+                "lapNum": 2, 
+                "lapTime": "1:25.034", 
+                "splitTime": [
+                    30.000, 
+                    30.000, 
+                    30.000
+                ]
+            }, 
+            {
+                "invalid": "False", 
+                "lapNum": 3, 
+                "lapTime": "1:25.034", 
+                "splitTime": [
+                    30.000, 
+                    30.000, 
+                    30.000
+                ]
+            }
+        ], 
+        "total_laps": 3
+    }, 
+    "original_info": {
+        "Beacon Markers": "149.504, 244.443, 339.826, 435.049, 565.672, 660.552, 794.712, 931.130, 1107.724, 1256.700, 1351.065, 1470.562, 1565.579, 1660.401, 1755.410, 1921.013, 2044.257, 2139.181, 2318.303", 
+        "Comment": "20160409 hands 1R prac", 
+        "Data Source": "AIM Data Logger", 
+        "Date": "04/09/16", 
+        "Duration": 2318.303, 
+        "Format": "AIM CSV File", 
+        "Sample Rate": 10.000, 
+        "Segment": "Session", 
+        "Time": "14:50:33", 
+        "User": "dongwoo", 
+        "Vehicle": "toyota gt86 dongwoo", 
+        "Venue": "KIC short"
+    }, 
+    "time_info": {
+        "fastest": "1:25.034", 
+        "optimal": "1:25.034"
+    }, 
+    "track_info": {
+        "condition": "DRY", 
+        "splitNum": 6, 
+        "temperature": 25, 
+        "track_name": "KIC_FULL"
+    }
+}

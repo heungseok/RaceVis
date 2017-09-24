@@ -160,6 +160,19 @@ function init_with_twoLaps() {
         d3.csv("./data/moon_KIC_SHORT.csv", type, function (ref_data) {
             d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
 
+                d3.json("./data/std_PBOX_037-0.json", function(error, track_info_data) {
+                    var comments = track_info_data.comments.overall;
+                    console.log(comments);
+                    console.log(Object.keys(comments).length);
+                    Object.keys(comments).forEach(function(key){
+                        $('#comment-table-contents').append("<tr>" +
+                            "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
+                    });
+
+
+                });
+
+
                 // 먼저 origin data parsing 한 뒤 merged_all_features에 push
                 all_features = data.columns.slice(0).map(function (id) {
                     return {
@@ -303,6 +316,9 @@ function init_with_twoLaps() {
                 // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
                 zoomReset();
                 document.getElementById("loading").style.display = "none";
+
+
+
 
 
             });

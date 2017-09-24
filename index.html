@@ -55,6 +55,10 @@
                 <div id="track_nav_canvas">
 
                 </div>
+
+                <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
+                    s1 (2000-3000)
+                </button>
             </div>
 
             <div class="track col-sm-6">
@@ -97,22 +101,31 @@
             <div class="col-sm-3">
 
                 <ul  class="nav nav-pills">
-                    <li class="active"><a href="#1a" data-toggle="tab">Summary Statistics</a>
+                    <li class="active"><a href="#summary_tab" data-toggle="tab">Summary Statistics</a>
                     </li>
-                    <li><a href="#2a" data-toggle="tab">Comments</a>
+                    <li><a href="#comment_tab" data-toggle="tab">Comments</a>
                     </li>
 
                 </ul>
 
                 <div class="tab-content">
-                    <div class="tab-pane active table_summary" id="1a">
+                    <div class="tab-pane active table_summary" id="summary_tab">
                         <div>summary statistic</div>
-                        <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                            s1 (2000-3000)
-                        </button>
+
                     </div>
-                    <div class="tab-pane comments" id="2a">
-                        <span>comments</span>
+                    <div class="tab-pane comments" id="comment_tab">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>Types</th>
+                                    <th>Value</th>
+                                    <th>Comments</th>
+                                </tr>
+                                </thead>
+                                <tbody id="comment-table-contents"></tbody>
+                            </table>
+                        </div>
                     </div>
 
                 </div>

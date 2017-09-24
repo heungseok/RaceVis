@@ -221,6 +221,15 @@ path.line.boundary{
     z-index: -10;
 }
 
+/* Table */
+div.tab-content{
+    margin-left:2vw;
+    margin-top:1vw;
+}
+div.table-responsive{
+    height: 35vh;
+    overflow-y:auto;
+}
 
 
 

@@ -528,16 +528,6 @@ function drawTrack_withTwoLaps(){
         .attr("class", "line boundary outline")
         .attr("d", nav_track_line);
 
-    // draw track line, ref line
-    nav_track_svg.append("path")
-        .data([merged_track_data.ref])
-        .attr("class", "line ref")
-        .attr("d", nav_track_line);
-
-    nav_track_svg.append("path")
-        .data([merged_track_data.origin])
-        .attr("class", "line")
-        .attr("d", nav_track_line);
 
 }
 
@@ -1528,6 +1518,7 @@ function clearAllSVG_for_xAxis_switch() {
     d3.select("#zoom_canvas").select("svg").remove();
     d3.select("#canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
+    d3.select("#track_nav_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
     animation_range = [];
     animation_index = 0;
@@ -1538,6 +1529,7 @@ function clearAllSVG() {
     d3.select("#zoom_canvas").select("svg").remove();
     d3.select("#canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
+    d3.select("#track_nav_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
 
     // data clean
