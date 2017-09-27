@@ -487,12 +487,17 @@ function drawTrack_withTwoLaps(){
 
     track_focus.append("circle")
         .attr("r", 4.5);
+    track_focus.append("text")
+        .text("test");
+
 
     var ref_track_focus = track_svg.append("g")
         .attr("id", "track_focus1-ref");
 
     ref_track_focus.append("circle")
         .attr("r", 4.5);
+    ref_track_focus.append("text")
+        .text("test");
 
 
     // ********** Init track zoom ************ //

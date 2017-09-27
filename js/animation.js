@@ -103,9 +103,11 @@ function trackAnimation_withTwoLaps(){
         // ************** block for animation things *************** //
         var track_focus = d3.select("#track_focus1");
         track_focus.attr("transform", "translate(" + track_x(merged_track_data.origin[animation_index].long) + "," + track_y(merged_track_data.origin[animation_index].lat) + ")");
+        track_focus.select("text").text(merged_track_data.origin[animation_index].long + ", " + merged_track_data.origin[animation_index].lat);
 
         var track_focus_ref = d3.select("#track_focus1-ref");
         track_focus_ref.attr("transform", "translate(" + track_x(merged_track_data.ref[ref_animation_index].long) + "," + track_y(merged_track_data.ref[ref_animation_index].lat) + ")");
+        track_focus_ref.select("text").text(merged_track_data.ref[ref_animation_index].long + ", " + merged_track_data.ref[ref_animation_index].lat);
 
         // rotate by steering value
         var steer_focus = d3.select("#steer_focus1");
