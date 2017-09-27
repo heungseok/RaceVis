@@ -14,7 +14,7 @@ function handleCBclick(cb){
     });
     console.log(checked_values);
 
-    if(checked_values.length == 5){
+    if(checked_values.length == 20){
         // 4개 이상 일때 클릭할 경우 check value 원상태로..
         $("input[value='" + cb.value +"']").prop("checked", false);
         return;
