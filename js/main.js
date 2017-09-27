@@ -161,6 +161,7 @@ function init_with_twoLaps() {
             d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
 
                 d3.json("./data/std_PBOX_037-0.json", function(error, track_info_data) {
+                    console.log(track_info_data)
                     var comments = track_info_data.comments.overall;
                     console.log(comments);
                     console.log(Object.keys(comments).length);
@@ -239,9 +240,13 @@ function init_with_twoLaps() {
                     } else if (d.id == "PosLocalY") {
                         temp_lat = _.pluck(d.values, 'feature_val');
                         ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
+                        $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                            "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
                     } else if (d.id == "PosLocalX") {
                         temp_long = _.pluck(d.values, 'feature_val');
                         ref_temp_long = _.pluck(d.ref_values, 'feature_val');
+                        $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                            "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
                     } else if (d.id == "Steer_angle") {
                         steer_data = _.pluck(d.values, 'feature_val')
                         ref_steer_data = _.pluck(d.ref_values, 'feature_val')
