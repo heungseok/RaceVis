@@ -422,8 +422,9 @@ function drawTrack_withTwoLaps(){
     var ref_x0 = d3.extent(merged_track_data.ref, function(d) { return d.long; });
     var inline_x0 = d3.extent(merged_track_data.inline, function(d) { return d.long; });
     var outline_x0 = d3.extent(merged_track_data.outline, function(d) { return d.long; });
+    var centerline_x0 = d3.extent(merged_track_data.centerline, function(d) { return d.long; });
 
-    var union_x0 = d3.extent(_.union(origin_x0, ref_x0, inline_x0, outline_x0));
+    var union_x0 = d3.extent(_.union(origin_x0, ref_x0, inline_x0, outline_x0, centerline_x0));
     // var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
     console.log(union_x0);
     console.log(union_x0[1] - union_x0[0]);
@@ -433,9 +434,9 @@ function drawTrack_withTwoLaps(){
     var ref_y0 = d3.extent(merged_track_data.ref, function(d) { return d.lat; });
     var inline_y0 = d3.extent(merged_track_data.inline, function(d) { return d.lat; });
     var outline_y0 = d3.extent(merged_track_data.outline, function(d) { return d.lat; });
+    var centerline_y0 = d3.extent(merged_track_data.centerline, function(d) { return d.lat; });
 
-    var union_y0 = d3.extent(_.union(origin_y0, ref_y0, inline_y0, outline_y0));
-    // var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+    var union_y0 = d3.extent(_.union(origin_y0, ref_y0, inline_y0, outline_y0, centerline_y0));
     console.log(union_y0);
     console.log(union_y0[1] - union_y0[0]);
     var abs_y_range = union_y0[1] - union_y0[0];
@@ -479,8 +480,6 @@ function drawTrack_withTwoLaps(){
         .data([merged_track_data.origin])
         .attr("class", "line")
         .attr("d", track_line);
-
-
 
     // ********* Append track focus element (circle) *********** //
     var track_focus = track_svg.append("g")
@@ -1542,9 +1541,16 @@ function axisSwitch(axis_type){
 function clearAllSVG_for_xAxis_switch() {
 
     d3.select("#zoom_canvas").select("svg").remove();
+    // d3.select("#canvas").selectAll("svg").remove();
+    d3.select("#canvas").selectAll("svg > *").remove();
     d3.select("#canvas").selectAll("svg").remove();
+
+    d3.select("#track_canvas").selectAll("svg > *").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
+
+    d3.select("#track_nav_canvas").selectAll("svg > *").remove();
     d3.select("#track_nav_canvas").selectAll("svg").remove();
+
     d3.select("#sub_canvas").selectAll("svg").remove();
     animation_range = [];
     animation_index = 0;

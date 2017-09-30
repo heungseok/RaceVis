@@ -57,7 +57,7 @@ var root_x = "PositionIndex";
 // ************** track boundary variable and line function **************** //
 var track_data = [], ref_track_data =[], merged_track_data={ };
 var track_x, track_y, nav_track_x, nav_track_y,
-    inline_track = [], outline_track = [];
+    inline_track = [], outline_track = [], centerline_track = [];
 
 
 // var track_line = d3.line().curve(d3.curveBasis)
@@ -74,12 +74,11 @@ var animation_index =0,
     animation_length,
     animation_range = [],
     ref_animation_index = 0,
-    ref_animation_length,
-    ref_animation_range,
     animation_flag = false,
     resume_flag = false,
     animation_state = "play",
     animation_delay = 50; // default as 50 milliseconds.
+var bisect_for_find_animatingPosition = d3.bisector(function (d) { return d.x; }).left;
 
 
 
@@ -158,15 +157,15 @@ function init_with_twoLaps() {
     //     d3.csv("./data/moon_KIC_SHORT.csv", type, function (ref_data) {
     d3.csv("./data/2lap-test2.csv", type, function(data) {
         d3.csv("./data/5lap-test2.csv", type, function (ref_data) {
-            d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
-
+            // d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
+            d3.csv("./data/track_boundary/kic_short.csv", function(error, track_boundary_data) {
 
                 // 먼저 origin data parsing 한 뒤 merged_all_features에 push
                 all_features = data.columns.slice(0).map(function (id) {
                     return {
                         id: id,
                         values: data.map(function (d) {
-                            return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                            return {x: +d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
                         })
                     };
                 });
@@ -178,7 +177,7 @@ function init_with_twoLaps() {
                     })
                     if (temp_index != -1) {
                         all_features[temp_index].ref_values = ref_data.map(function (d) {
-                            return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                            return {x: +d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
                         });
                     }
                 });
@@ -262,17 +261,25 @@ function init_with_twoLaps() {
                 track_boundary_data.forEach(function (d) {
 
                     inline_track.push({
-                        long: parseFloat(d["InX"]),
-                        lat: parseFloat(d["InY"])
+                        long: parseFloat(d["In_x"]),
+                        lat: parseFloat(d["In_y"])
                     });
 
                     outline_track.push({
-                        long: parseFloat(d["OutX"]),
-                        lat: parseFloat(d["OutY"])
+                        long: parseFloat(d["Out_x"]),
+                        lat: parseFloat(d["Out_y"])
                     });
+
+                    centerline_track.push({
+                        long: parseFloat(d["Center_x"]),
+                        lat: parseFloat(d["Center_y"]),
+                        x: +d["PositionIndex"]
+                    });
+
                 });
                 merged_track_data.inline = inline_track;
                 merged_track_data.outline = outline_track;
+                merged_track_data.centerline = centerline_track;
 
                 console.log("finished merging all track data");
                 // animation_length = track_data.length;
@@ -568,6 +575,8 @@ function zoomOut() {
 }
 
 function setAnimationRange_fromZoom(s){
+    if(root_x == "TimeStamp")
+        return;
 
     // clear the animation range (composed of index of data); animation_range는 data의 index를 담고 있음.
     animation_range = [];
@@ -612,15 +621,65 @@ function setMinMax_by_animationRange(){
         selected_features[i].ref_min = ref_extent[0];
 
         var id = "g#" + data.id.split(" ")[0];
-        d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3))
-        d3.select(id).select(".plot_info_focus_min").text(selected_features[i].origin_min.toFixed(3))
-        d3.select(id).select(".plot_info_focus_max-ref").text(selected_features[i].ref_max.toFixed(3))
-        d3.select(id).select(".plot_info_focus_min-ref").text(selected_features[i].ref_min.toFixed(3))
+        d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3));
+        d3.select(id).select(".plot_info_focus_min").text(selected_features[i].origin_min.toFixed(3));
+        d3.select(id).select(".plot_info_focus_max-ref").text(selected_features[i].ref_max.toFixed(3));
+        d3.select(id).select(".plot_info_focus_min-ref").text(selected_features[i].ref_min.toFixed(3));
 
     })
 }
 
 function drawing_animationPath() {
+    // clean previous animation path
+    // track_svg.select("path.animation_path").remove();
+    // nav_track_svg.select("path.animation_path").remove();
+
+    d3.selectAll("path.animation_path").remove();
+
+
+    // if animation is playing, force to stop
+    resume_flag = true;
+    resume();
+
+    // reset animation track_data
+    animation_track_data = [];
+    console.log(track_data[animation_range[0]]);
+    console.log(track_data[animation_range[1]]);
+    console.log(animation_range);
+
+    var position_indices = _.pluck(selected_features[0].values, "x");
+
+    // animation_range의 start value & end value 값을 찾아야함.
+    var centerLine_start_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
+        selected_features[0].values[animation_range[0]].x);
+
+    var centerLine_end_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
+        selected_features[0].values[animation_range[1]].x);
+
+    for(var i=centerLine_start_index; i<centerLine_end_index; i++){
+        animation_track_data.push(merged_track_data.centerline[i])
+    }
+
+    console.log(animation_track_data);
+    // append path (drawing track)
+    d3.select("#track_canvas").select("svg").select("g").append("path")
+        .data([animation_track_data])
+        .attr("class", "animation_path")
+        .attr("d", track_line)
+        .style("z-index", -1);
+
+    // navigation track data
+    d3.select("#track_nav_canvas").select("svg").select("g").append("path")
+        .data([animation_track_data])
+        .attr("class", "animation_path")
+        .attr("d", nav_track_line)
+        .style("stroke-width", "7px")
+        .style("stroke-opacity", 0.9);
+
+}
+
+
+function drawing_animationPath_withOriginData() {
     // clean previous animation path
     track_svg.select("path.animation_path").remove();
 
@@ -632,14 +691,13 @@ function drawing_animationPath() {
     for(var i=animation_range[0]; i<animation_range[1]; i++){
         animation_track_data.push(track_data[i]);
     }
-
+    console.log(animation_track_data);
     // append path (drawing track)
     track_svg.append("path")
         .data([animation_track_data])
         .attr("class", "animation_path")
         .attr("d", track_line)
         .style("z-index", -1);
-
 }
 
 function zoomed(){
