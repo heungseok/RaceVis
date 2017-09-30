@@ -52,8 +52,10 @@ function trackAnimation_withTwoLaps(){
         // 우선 postion?일 경우일 때는 origin lap의 데이터에 맞는 reference data의 index를 먼저 구해야함.
 
         var origin_x_value = Number(selected_features[0].values[animation_index].x);
-        var ref_x_values =  _.pluck(selected_features[0].ref_values, 'x');
+        // console.log("x value: " + origin_x_value + ", positionIndex: " + all_features[39].);
+        var ref_x_values =  _.pluck(selected_features[0].ref_values, 'x'); // ref_x_values == position Index of x
         ref_animation_index = bisect_for_animation(ref_x_values, origin_x_value, 0, ref_x_values.length-1);
+        console.log("x value: " + origin_x_value + ", ref x value: " + ref_x_values[ref_animation_index]);
 
         // ****************** animation for line chart *************** //
         // **** 1. for origin line chart **** //
@@ -79,7 +81,7 @@ function trackAnimation_withTwoLaps(){
 
         var plot_focuses = d3.select("#canvas").selectAll("svg")
             .selectAll("text.plot_info_focus");
-        plot_focuses.text( function(d){ return +d.ref_values[ref_animation_index].feature_val.toFixed(3); });
+        plot_focuses.text( function(d){ return +d.values[animation_index].feature_val.toFixed(3); });
 
         // **** 2. for reference line chart **** //
         var ref_focuses = d3.select("#canvas").selectAll("svg")
@@ -112,14 +114,21 @@ function trackAnimation_withTwoLaps(){
         // rotate by steering value
         var steer_focus = d3.select("#steer_focus1");
         steer_focus.select("image.steer")
-            .attr("transform", "scale(0.5), translate(0, 50), rotate(" + steer_data[animation_index] + ", 35, 35)");
+            .attr("transform", "scale(0.5), translate(150, 80), rotate(" + steer_data[animation_index] + ", 35, 35)");
         steer_focus.select("image.steer-ref")
-            .attr("transform", "scale(0.5), translate(130, 50), rotate(" + ref_steer_data[ref_animation_index] + ", 35, 35)");
+            .attr("transform", "scale(0.5), translate(250, 80), rotate(" + ref_steer_data[ref_animation_index] + ", 35, 35)");
 
+        // steer_focus.select("text.steer_value")
+        //     .text(steer_data[animation_index].toFixed(3));
+        // steer_focus.select("text.steer-ref_value")
+        //     .text(ref_steer_data[ref_animation_index].toFixed(3));
+        var steer_diff = steer_data[animation_index] - ref_steer_data[ref_animation_index];
         steer_focus.select("text.steer_value")
-            .text(steer_data[animation_index].toFixed(3));
-        steer_focus.select("text.steer-ref_value")
-            .text(ref_steer_data[ref_animation_index].toFixed(3));
+            .text(steer_diff.toFixed(2))
+            .style("fill", function() {
+                if(steer_diff > 0) return "red";
+                else return "steelblue"
+            });
 
 
         var brake_focus = d3.select("#brake_focus1");
@@ -128,10 +137,13 @@ function trackAnimation_withTwoLaps(){
         brake_focus.select("rect.value-ref")
             .attr("width", 1+ ref_brake_data[ref_animation_index]);
 
+        var brake_diff = brake_data[animation_index] - ref_brake_data[ref_animation_index];
         brake_focus.select("text.brake_value")
-            .text(brake_data[animation_index].toFixed(3));
-        brake_focus.select("text.brake-ref_value")
-            .text(ref_brake_data[ref_animation_index].toFixed(3));
+            .text(brake_diff.toFixed(2))
+            .style("fill", function() {
+                if(brake_diff > 0) return "red";
+                else return "steelblue"
+            });
 
 
         var gas_focus = d3.select("#gas_focus1");
@@ -140,10 +152,13 @@ function trackAnimation_withTwoLaps(){
         gas_focus.select("rect.value-ref")
             .attr("width", 1+ref_gas_data[ref_animation_index]);
 
+        var gas_diff = gas_data[animation_index] - ref_gas_data[ref_animation_index];
         gas_focus.select("text.gas_value")
-            .text(gas_data[animation_index]);
-        gas_focus.select("text.gas-ref_value")
-            .text(ref_gas_data[ref_animation_index]);
+            .text(gas_diff.toFixed(2))
+            .style("fill", function() {
+                if(gas_diff > 0) return "red";
+                else return "steelblue"
+            });
 
 
         var gear_focus = d3.select("#gear_focus1");

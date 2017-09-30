@@ -137,6 +137,7 @@ function drawLineGraph_withTwoLaps() {
             .domain(union_y0);
 
         d3.select(id).append("g")
+            .attr("class", "axis axis--y")
             .call(d3.axisLeft(y_range).ticks(3))
 
         // 마지막 인덱스인 그래프에만 x axis
@@ -621,31 +622,41 @@ function drawSubInfo_withTwoLaps() {
         .attr("class", "steer")
         .attr("height", 80).attr("width", 80)
         .attr("xlink:href", "./img/steer.png")
-        .attr("transform", "scale(0.5), translate(0, 50)")
+        .attr("transform", "scale(0.5), translate(150, 80)")
         // .attr("transform", "scale(0.5)");
-    steering_focus.append("text").attr("class", "steer_value")
-        .attr("x", 0).attr("y", 85)
-        .text("");
+    // steering_focus.append("text").attr("class", "steer_value")
+    //     .attr("x", 0).attr("y", 85)
+    //     .text("");
 
     steering_focus.append("image")
         .attr("class", "steer-ref")
         .attr("height", 80).attr("width", 80)
         .attr("xlink:href", "./img/steer.png")
-        .attr("transform", "scale(0.5), translate(130, 50)")
+        .attr("transform", "scale(0.5), translate(250, 80)")
         // .attr("transform", "scale(0.5)");
-    steering_focus.append("text").attr("class", "steer-ref_value")
-        .attr("x", 80).attr("y", 85)
-        .text("");
+    // steering_focus.append("text").attr("class", "steer-ref_value")
+    //     .attr("x", 80).attr("y", 85)
+    //     .text("");
 
+    steering_focus.append("text")
+        .attr("x", 5)
+        .attr("y", 60)
+        .style("font-size", "20px")
+        .text("STR");
+    steering_focus.append("text").attr("class", "steer_value")
+        .attr("x", 5).attr("y", 80)
+        .style("font-size", "20px")
+        .style("fill", "steelblue")
+        .text("0.00");
 
-    // Brake
+    // ******** Brake ********* //
     var brake_focus = sub_svg.append("g")
         .attr("id", "brake_focus1")
         .attr("transform", "translate(0, 0)");
 
     brake_focus.append("rect")
         .attr("class", "background")
-        .attr("x", 5)
+        .attr("x", 70)
         .attr("y", 110)
         .attr("transform", "rotate(0)")
         .attr("width", 105)
@@ -654,7 +665,7 @@ function drawSubInfo_withTwoLaps() {
 
     brake_focus.append("rect")
         .attr("class", "value")
-        .attr("x", 5)
+        .attr("x", 70)
         .attr("y", 112)
         .attr("transform", "rotate(0)")
         .attr("width", 2)
@@ -663,7 +674,7 @@ function drawSubInfo_withTwoLaps() {
 
     brake_focus.append("rect")
         .attr("class", "background")
-        .attr("x", 5)
+        .attr("x", 70)
         .attr("y", 140)
         .attr("transform", "rotate(0)")
         .attr("width", 105)
@@ -672,33 +683,31 @@ function drawSubInfo_withTwoLaps() {
 
     brake_focus.append("rect")
         .attr("class", "value-ref")
-        .attr("x", 5)
+        .attr("x", 70)
         .attr("y", 142)
         .attr("transform", "rotate(0)")
         .attr("width", 2)
         .attr("height", 15)
         .style("fill", "red");
-    console.log("draw subinfo before text");
 
-    brake_focus.append("text").attr("class", "brake_value")
-        .attr("x", 115).attr("y", 125)
-        .text("");
-    brake_focus.append("text").attr("class", "brake-ref_value")
-        .attr("x", 115).attr("y", 155)
-        .text("");
     brake_focus.append("text")
         .attr("x", 5)
-        .attr("y", 100)
-        .text("BRAKE");
-    console.log("draw subinfo finish brake");
+        .attr("y", 125)
+        .style("font-size", "20px")
+        .text("BRK");
+    brake_focus.append("text").attr("class", "brake_value")
+        .attr("x", 5).attr("y", 145)
+        .style("font-size", "20px")
+        .style("fill", "steelblue")
+        .text("0.00");
 
-    // Gas
+    // ******** Gas ******** //
     var gas_focus = sub_svg.append("g")
         .attr("id", "gas_focus1")
         // .attr("transform", "translate(0, 250)");
     gas_focus.append("rect")
         .attr("class", "background")
-        .attr("x", 5)
+        .attr("x", 70)
         .attr("y", 185)
         .attr("transform", "rotate(0)")
         .attr("width", 105)
@@ -707,7 +716,7 @@ function drawSubInfo_withTwoLaps() {
 
     gas_focus.append("rect")
         .attr("class", "value")
-        .attr("x", 5)
+        .attr("x", 70)
         .attr("y", 187)
         .attr("transform", "rotate(0)")
         .attr("width", 1)
@@ -716,7 +725,7 @@ function drawSubInfo_withTwoLaps() {
 
     gas_focus.append("rect")
         .attr("class", "background")
-        .attr("x", 5)
+        .attr("x", 70)
         .attr("y", 215)
         .attr("transform", "rotate(0)")
         .attr("width", 105)
@@ -725,32 +734,33 @@ function drawSubInfo_withTwoLaps() {
 
     gas_focus.append("rect")
         .attr("class", "value-ref")
-        .attr("x", 5)
+        .attr("x", 70)
         .attr("y", 217)
         .attr("transform", "rotate(0)")
         .attr("width", 1)
         .attr("height", 15)
         .style("fill", "red");
 
-    gas_focus.append("text").attr("class", "gas_value")
-        .attr("x", 115).attr("y", 200)
-        .text("test");
-    gas_focus.append("text").attr("class", "gas-ref_value")
-        .attr("x", 115).attr("y", 230)
-        .text("test");
     gas_focus.append("text")
         .attr("x", 5)
-        .attr("y", 175)
-        .text("GAS");
+        .attr("y", 200)
+        .style("font-size", "20px")
+        .text("ACC");
+    gas_focus.append("text").attr("class", "gas_value")
+        .attr("x", 5).attr("y", 220)
+        .style("font-size", "20px")
+        .style("fill", "steelblue")
+        .text("0.00");
 
-    // Gear
+
+    // ******** Gear ******** //
     var gear_focus = sub_svg.append("g")
         .attr("id", "gear_focus1")
         // .attr("transform", "translate(360, 0)");
 
     gear_focus.append("text")
         .attr("class", "value")
-        .attr("x", 30)
+        .attr("x", 100)
         .attr("y", 280)
         .style("font-size", "25px")
         .style("fill", "steelblue")
@@ -758,7 +768,7 @@ function drawSubInfo_withTwoLaps() {
 
     gear_focus.append("text")
         .attr("class", "value-ref")
-        .attr("x", 60)
+        .attr("x", 130)
         .attr("y", 280)
         .style("font-size", "25px")
         .style("fill", "red")
@@ -766,7 +776,8 @@ function drawSubInfo_withTwoLaps() {
 
     gear_focus.append("text")
         .attr("x", 5)
-        .attr("y", 250)
+        .attr("y", 280)
+        .style("font-size", "20px")
         .text("GEAR");
 
 }
@@ -938,37 +949,47 @@ function mousemove_twoLaps() {
     // rotate by steering value
     var steer_focus = d3.select("#steer_focus1");
     steer_focus.select("image.steer")
-        .attr("transform", "scale(0.5), translate(0, 50), rotate(" + steer_data[index] + ", 35, 35)")
-    steer_focus.select("text.steer_value")
-        .text(steer_data[index].toFixed(3));
-
+        .attr("transform", "scale(0.5), translate(150, 80), rotate(" + steer_data[index] + ", 35, 35)")
     steer_focus.select("image.steer-ref")
-        .attr("transform", "scale(0.5), translate(130, 50), rotate(" + ref_steer_data[ref_index] + ", 35, 35)")
-    steer_focus.select("text.steer-ref_value")
-        .text(ref_steer_data[ref_index].toFixed(3));
+        .attr("transform", "scale(0.5), translate(250, 80), rotate(" + ref_steer_data[ref_index] + ", 35, 35)")
 
+    var steer_diff = steer_data[index] - ref_steer_data[ref_index];
+    steer_focus.select("text.steer_value")
+        .text(steer_diff.toFixed(2))
+        .style("fill", function() {
+            if(steer_diff > 0) return "red";
+            else return "steelblue"
+        });
 
 
     var brake_focus = d3.select("#brake_focus1");
     brake_focus.select("rect.value")
         .attr("width", 1+ brake_data[index]);
-    brake_focus.select("text.brake_value")
-        .text(brake_data[index].toFixed(3));
     brake_focus.select("rect.value-ref")
         .attr("width", 1+ ref_brake_data[ref_index]);
-    brake_focus.select("text.brake-ref_value")
-        .text(ref_brake_data[ref_index]);
+
+    var brake_diff = brake_data[index] - ref_brake_data[ref_index];
+    brake_focus.select("text.brake_value")
+        .text(brake_diff.toFixed(2))
+        .style("fill", function() {
+            if(brake_diff > 0) return "red";
+            else return "steelblue"
+        });
 
     var gas_focus = d3.select("#gas_focus1");
     gas_focus.select("rect.value")
         .attr("width", 1+gas_data[index]);
-    gas_focus.select("text.gas_value")
-        .text(gas_data[index]);
-
     gas_focus.select("rect.value-ref")
         .attr("width", 1+ref_gas_data[ref_index]);
-    gas_focus.select("text.gas-ref_value")
-        .text(ref_gas_data[ref_index]);
+
+    var gas_diff = gas_data[index] - ref_gas_data[ref_index];
+    gas_focus.select("text.gas_value")
+        .text(gas_diff.toFixed(2))
+        .style("fill", function() {
+            if(gas_diff > 0) return "red";
+            else return "steelblue"
+        });
+
 
     var gear_focus = d3.select("#gear_focus1");
     gear_focus.select("text.value")
