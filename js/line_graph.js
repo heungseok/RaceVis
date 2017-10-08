@@ -148,18 +148,6 @@ function drawLineGraph_withTwoLaps() {
                 .attr("class", "axis axis--x")
                 .attr("transform", "translate(" + 0 + "," + height + ")");
         }
-
-        // init max/min value
-        // selected_features[i].origin_min = origin_y0[0];
-        // selected_features[i].origin_max = origin_y0[1];
-        // selected_features[i].ref_min = ref_y0[0];
-        // selected_features[i].ref_max = ref_y0[1];
-        // d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3))
-        // d3.select(id).select(".plot_info_focus_min").text(selected_features[i].origin_min.toFixed(3))
-        // d3.select(id).select(".plot_info_focus_max-ref").text(selected_features[i].ref_max.toFixed(3))
-        // d3.select(id).select(".plot_info_focus_min-ref").text(selected_features[i].ref_min.toFixed(3))
-
-
     }
 
     // ************* Append each tooltip *********************//

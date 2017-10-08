@@ -138,11 +138,11 @@ function init(init_type) {
         .on("brush end", brushed);
 
     // init zoom listener
-    zoom = d3.zoom()
-        .scaleExtent([1, Infinity])
-        .translateExtent([[0, 0], [width, height]])
-        .extent([[0, 0], [width, height]])
-        .on("zoom", zoomed);
+    // zoom = d3.zoom()
+    //     .scaleExtent([1, Infinity])
+    //     .translateExtent([[0, 0], [width, height]])
+    //     .extent([[0, 0], [width, height]])
+    //     .on("zoom", zoomed);
 
     if(init_type == 1){
         init_with_originLap();
@@ -508,11 +508,48 @@ function brushed(){
     current_zoomRange = s;
     console.log(s);
     // current_zoomRange = s.map(zoom_x.invert, zoom_x);
-    x.domain(s.map(zoom_x.invert, zoom_x));
-    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
-    d3.select("#canvas").selectAll("path.line.ref").attr("d", function(d) { return line.get(this)(d.ref_values)});
-    d3.select("#canvas").selectAll(".axis--x").call(xAxis);
+    x.domain(s.map(zoom_x.invert, zoom_x)); // update x domain by zoom range
 
+
+    // **** update y scale **** //
+    d3.select("#canvas").selectAll("svg").select("g").each(function(d){
+        var origin_y0 = d3.extent(d.values, function(c) {
+            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+        });
+        var ref_y0 = d3.extent(d.ref_values, function(c) {
+            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+        });
+        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+
+        var ty = y.set(this, d3.scaleLinear()
+            .range([height, 0]))
+            .domain(union_y0); // local feature에 대한 y range setting
+
+        line.set(this, d3.line().curve(d3.curveBasis)
+            .x(function(c){ return x(c.x);})
+            .y(function(c){ return ty(c.feature_val); }));
+
+    });
+
+    // **** update y axis **** //
+    for (var i=0; i<selected_features.length; i++){
+        var id = "g#" + selected_features[i].id.split(" ")[0];
+
+        var origin_y0 = d3.extent(selected_features[i].values, function(c) {
+            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+        });
+        var ref_y0 = d3.extent(selected_features[i].ref_values, function(c) {
+            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+        });
+        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+        var y_range = d3.scaleLinear().range([height, 0]).domain(union_y0);
+
+        d3.select(id).select(".axis.axis--y").call(d3.axisLeft(y_range).ticks(3));
+    }
+
+    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values); });
+    d3.select("#canvas").selectAll("path.line.ref").attr("d", function(d) { return line.get(this)(d.ref_values); });
+    d3.select("#canvas").selectAll(".axis--x").call(xAxis);
 
     console.log("brushed!");
     console.log("current x domain is: " + x.domain());
@@ -522,9 +559,9 @@ function brushed(){
     setMinMax_by_animationRange();
     // setAnimationRange_fromZoom(current_zoomRange);
 
-    d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
-        .scale(width / (s[1] - s[0]))
-        .translate(-s[0], 0));
+    // d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
+    //     .scale(width / (s[1] - s[0]))
+    //     .translate(-s[0], 0));
 
 
     // set all focus elements' style to un-display
@@ -643,9 +680,9 @@ function drawing_animationPath() {
 
     // reset animation track_data
     animation_track_data = [];
-    console.log(track_data[animation_range[0]]);
-    console.log(track_data[animation_range[1]]);
-    console.log(animation_range);
+    // console.log(track_data[animation_range[0]]);
+    // console.log(track_data[animation_range[1]]);
+    // console.log(animation_range);
 
     var position_indices = _.pluck(selected_features[0].values, "x");
 
