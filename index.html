@@ -8,6 +8,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./style/style.css">
+    <link rel="stylesheet" type="text/css" href="./style/color_style.css">
 
 
     <title>3secondz</title>
@@ -54,31 +55,17 @@
 
                 <div id="track_nav_canvas">
 
-                </div>
-
-                <div id="sector_btn_wrapper">
-                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                        s1 (2000-3000)
-                    </button>
-                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                        s1 (2000-3000)
-                    </button>
-                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                        s1 (2000-3000)
-                    </button>
-                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                        s1 (2000-3000)
-                    </button>
-                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                        s1 (2000-3000)
-                    </button>
-                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                        s1 (2000-3000)
-                    </button>
-                    <button type="button" class="btn brush_control" value="2000-3000" onclick="setBrushRange(this)">
-                        s1 (2000-3000)
-                    </button>
-
+                    <div id="sector_btn_wrapper">
+                        <table class="table">
+                            <thead >
+                            <tr id ="split-table-header"></tr>
+                            </thead>
+                            <tbody>
+                            <tr id="split-table-contents"></tr>
+                            <tr id="split-table-contents-ref"></tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
 
             </div>

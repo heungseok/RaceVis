@@ -89,18 +89,6 @@ rect.selection{
 }
 
 
-.line {
-    fill: none;
-    stroke: steelblue;
-    stroke-width: 1px;
-}
-
-.line.ref{
-    stroke: red;
-    z-index: -10;
-    opacity: 0.3
-}
-
 
 .animation_path{
     fill: none;
@@ -142,10 +130,6 @@ rect.selection{
     /*float: right;*/
 }
 
-.track_nav {
-    /*position: absolute;*/
-    /*left:2vw;*/
-}
 
 /* right checkbox */
 .checkbox_wrapper{
@@ -165,17 +149,10 @@ rect.selection{
     width: 30vw;
     height: 35vh;
 }
-
-
-g.focus, g#track_focus1{
-    /*fill: #9d9d9d;*/
-    fill: steelblue;
+#sector_btn_wrapper{
+    position:relative;
 }
-g.focus-ref, g#track_focus1-ref{
-    /*fill: #9d9d9d;*/
-    fill: red;
-    opacity:0.4;
-}
+
 
 
 g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
@@ -215,10 +192,12 @@ g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
 
 
 path.line.boundary{
-    /*stroke: grey;*/
-    stroke: rgb(223, 235, 6);
     stroke-width: 0.5;
     z-index: -10;
+}
+
+#track_nav_canvas path{
+    stroke-width: 0.2;
 }
 
 /* Table */

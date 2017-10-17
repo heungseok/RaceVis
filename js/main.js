@@ -14,10 +14,11 @@ var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
     zoom_height = window.innerHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
 var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
+    nav_track_margin = {top: 50, right: 10, bottom: 100, left: 30},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top,
     nav_track_width = document.getElementById("track_nav_canvas").offsetWidth - track_margin.left - track_margin.right,
-    nav_track_height = document.getElementById("track_nav_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+    nav_track_height = document.getElementById("row-top container").offsetHeight - nav_track_margin.bottom - nav_track_margin.top;
 
 
 var sub_margin = {top: 10, right: 20, bottom: 20, left: 20},
@@ -116,6 +117,13 @@ var current_zoomRange;
 var context;
 
 
+
+// *** global color variable *** //
+var COLOR_POSITIVE = '#FF0000';
+var COLOR_NEGATIVE = '#00FF00';
+
+var COLOR_ORIGIN = '#ee337d';
+var COLOR_REF = '#00adeb';
 
 /**************************** END of initializing Global variable *******************************************/
 
@@ -292,6 +300,7 @@ function init_with_twoLaps() {
                 var ref_x0 = d3.extent(ref_data, function (d) { return +d.x; });
                 var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
 
+                console.log(union_x0);
                 x.domain(union_x0);
                 zoom_x.domain(union_x0);
 
@@ -315,6 +324,77 @@ function init_with_twoLaps() {
                             "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
                     });
                 });
+
+                var split =  [
+                    0,
+                    960,
+                    1550,
+                    2035,
+                    2560,
+                    3030
+                ];
+
+
+                var nSplits = Object.keys(split).length;
+
+                $('#split-table-header').append('<th>'+'<button type="button" style="width:100%;" class="btn brush_control" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this)">' +
+                    'FULL' +
+                    '</button></th>');
+
+                for(var z=0; z<nSplits-1; z++){
+                    $('#split-table-header').append('<th>'+'<button type="button" style="width:100%;" class="btn brush_control" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this)">' +
+                        'S' +(z+1)+
+                        '</button></th>');
+                }
+
+                var split_record =  [
+                    99.141,
+                    16.828,
+                    23.828,
+                    18.828,
+                    21.828,
+                    18.828
+                ];
+
+                var split_record_ref =  [
+                    89.141,
+                    17.828,
+                    18.828,
+                    16.828,
+                    19.828,
+                    16.828
+                ];
+
+                var split_record_diff = [];
+                var split_record_string = [];
+                var split_record_string_ref = [];
+
+                for(var z=0; z<nSplits; z++){
+                    split_record_diff[z] = split_record[z] - split_record_ref[z];
+
+                    if(z==0){
+                        split_record_string[z] = GetStringFromSec(split_record[z]);
+                        split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+                    }
+                    else{
+                        split_record_string[z] = GetStringFromSec(split_record[z],split_record_ref[z]);
+                        split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+                    }
+                }
+
+                for(var z=0; z<nSplits; z++){
+                    if(split_record_diff[z]<=0)
+                        $('#split-table-contents').append('<td align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string[z]+'</td>');
+                    else
+                        $('#split-table-contents').append('<td align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string[z]+'</td>');
+                }
+
+                for(var z=0; z<nSplits; z++){
+                    if(split_record_diff[z]>0)
+                        $('#split-table-contents-ref').append('<td align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string_ref[z]+'</td>');
+                    else
+                        $('#split-table-contents-ref').append('<td align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string_ref[z]+'</td>');
+                }
 
 
             });
@@ -788,4 +868,42 @@ function track_zoomReset(){
 }
 function track_dragged(d){
     d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+}
+
+
+// ***************** yongseop *************** //
+
+function GetStringFromSec(sec, sec_ref)
+{
+    var mode = typeof sec_ref === 'undefined' ?  0 : 1;
+    var is_positive = true;
+    var value = 0.0;
+    var ret;
+
+    if(mode==0){        // convert sec
+        value = sec;
+    }else{               // convert diff
+        value = sec-sec_ref;
+    }
+
+    if(value<0){
+        value = Math.abs(value);
+        is_positive = false;
+    }
+
+    if(value>=3600.0){
+        ret = new Date(value * 1000).toISOString().substr(11, 12);
+    }else if(value>=60.0){
+        ret = new Date(value * 1000).toISOString().substr(14, 9);
+    }else{
+        ret = new Date(value * 1000).toISOString().substr(17, 6);
+    }
+
+    if(is_positive == false){
+        ret = '-'+ret;
+    }else{
+        if(mode == 1) ret = '+'+ret;
+    }
+
+    return ret;
 }

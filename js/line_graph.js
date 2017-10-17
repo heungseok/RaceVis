@@ -68,7 +68,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "plot_info_focus")
         .attr("y", height*0.1)
         .attr("x", width + margin_for_plot_info*0.1 )
-        .style("fill", "steelblue")
+        .style("fill", COLOR_ORIGIN)
         .style("font-size", "15px")
         .text("origin");
 
@@ -76,7 +76,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "plot_info_focus_max")
         .attr("y", height*0.1 + 25)
         .attr("x", width + margin_for_plot_info*0.1 )
-        .style("fill", "steelblue")
+        .style("fill", COLOR_ORIGIN)
         .style("font-size", "12px")
         .text("max");
         // .text(function(d){ return d.origin_max.toFixed(3); });
@@ -85,7 +85,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "plot_info_focus_min")
         .attr("y", height*0.1 + 50  )
         .attr("x", width + margin_for_plot_info*0.1 )
-        .style("fill", "steelblue")
+        .style("fill", COLOR_ORIGIN)
         .style("font-size", "12px")
         .text("min");
         // .text(function(d){ return d.origin_min.toFixed(3); });
@@ -94,7 +94,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "plot_info_focus-ref")
         .attr("y", height*0.1)
         .attr("x", 10+width + margin_for_plot_info/2)
-        .style("fill", "red")
+        .style("fill", COLOR_REF)
         .style("font-size", "15px")
         .text("ref");
 
@@ -102,7 +102,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "plot_info_focus_max-ref")
         .attr("y", height*0.1 + 25)
         .attr("x", 10+width + margin_for_plot_info/2)
-        .style("fill", "red")
+        .style("fill", COLOR_REF)
         .style("font-size", "12px")
         .text("max");
         // .text(functio?n(d){ return d.ref_max.toFixed(3); });
@@ -111,7 +111,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "plot_info_focus_min-ref")
         .attr("y", height*0.1 + 50  )
         .attr("x", 10+width + margin_for_plot_info/2)
-        .style("fill", "red")
+        .style("fill", COLOR_REF)
         .style("font-size", "12px")
         .text("min");
         // .text(function(d){ return d.ref_min.toFixed(3); });
@@ -166,7 +166,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "chart_tooltip")
         .attr("x", 9)
         .attr("dy", ".35em")
-        .style("fill", "steelblue")
+        .style("fill", COLOR_ORIGIN)
         .text("nothing");
 
     // append x line.
@@ -192,7 +192,7 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "chart_tooltip-ref")
         .attr("x", 9)
         .attr("dy", ".35em")
-        .style("fill", "red")
+        .style("fill", COLOR_REF)
         .text("nothing");
 
 
@@ -239,167 +239,6 @@ function drawLineGraph_withTwoLaps() {
         .on("mousemove", mousemove_twoLaps);
 
 
-}
-
-function drawLineGraph(){
-
-    /*************************** DRAWING CHART ******************************/
-    svg = d3.select("#canvas").selectAll("svg")
-        .data(selected_features)
-        .enter().append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.bottom + margin.top)
-        .append("g")
-        .attr("id", function (d) {
-            return d.id.split(" ")[0];
-            // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
-        })
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .each(function (d) {
-
-            var ty = y.set(this, d3.scaleLinear()
-                .range([height, 0]))
-            // local feature에 대한 y range setting
-                .domain([
-                    d3.min(d.values, function(c) { return c.feature_val; }),
-                    d3.max(d.values, function(c) { return c.feature_val; }) ]);
-            // Global feature에 대한 y range setting
-            //                            .domain([
-            //                                d3.min(features, function(c) { return d3.min(c.values, function(d) { return d.feature_val; }); }),
-            //                                d3.max(features, function(c) { return d3.max(c.values, function(d) { return d.feature_val; }); }) ])
-
-            // local feature range (0~ max(y))
-//                            .domain([ 0, d3.max(d.values, function(c) { return c.feature_val;}) ]);
-
-            line.set(this, d3.line().curve(d3.curveBasis)
-                .x(function(d){ return x(d.x);})
-                .y(function(d){ return ty(d.feature_val); }));
-
-            zoom_line.set(this, d3.line().curve(d3.curveBasis)
-                .x(function(d){ return x(d.x);})
-                .y(function(d){ return ty(d.feature_val); }));
-
-        });
-
-    // clipPath init. ref-http://visualize.tistory.com/331
-    d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
-        .attr("id",  function (d) {
-            return "clip_" + d.id.split(" ")[0];
-        })
-        .append("rect")
-        .attr("width", width)
-        .attr("height", height)
-
-    // assign clipPath to each line area.
-    // & draw path line
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", function(d) { return line.get(this)(d.values); })
-        .attr("clip-path", function (d) {
-            return "url(#clip_" + d.id.split(" ")[0] + ")";
-        })
-    // end of init. clipPath
-
-
-    // append text label
-    svg.append("text")
-        .attr("y", height - 50)
-        .attr("x", 10)
-        .text(function(d) { return d.id; });
-
-    // define y axis
-    for (var i=0; i<selected_features.length; i++){
-        var id = "g#" + selected_features[i].id.split(" ")[0];
-
-        var y_range = d3.scaleLinear()
-            .range([height, 0])
-            //                        .domain([0, d3.max(selected_features[i].values, function (c) { return c.feature_val }) ]);
-            .domain([
-                d3.min(selected_features[i].values, function(c) { return c.feature_val; }),
-                d3.max(selected_features[i].values, function (c) { return c.feature_val })
-            ]);
-
-        d3.select(id).append("g")
-            .call(d3.axisLeft(y_range).ticks(3))
-
-
-        // 마지막 인덱스인 그래프에만 x axis
-        if( i == selected_features.length -1){
-            d3.select(id).append("g")
-                .call(xAxis)
-                .attr("id", "x-axis")
-                .attr("class", "axis axis--x")
-                .attr("transform", "translate(" + 0 + "," + height + ")");
-        }
-    }
-
-    var focus = svg.append("g")
-        .attr("class", "focus")
-        .style("display", "none");
-
-    // append the circle at the interaction
-    focus.append("circle")
-        .attr("class", "chart_tooltip")
-        .attr("r", 4.5);
-    // place the value at the interaction
-    focus.append("text")
-        .attr("class", "chart_tooltip")
-        .attr("x", 9)
-        .attr("dy", ".35em")
-        .style("fill", "steelblue")
-        .text("nothing");
-
-    // append x line.
-    focus.append("line")
-        .attr("class", "tooltip_line")
-        .style("stroke", "#fff")
-        .style("stroke-dasharray", "3,3")
-        .style("opacity", 0.9)
-        .attr("y1", -height)
-        .attr("y2", height);
-
-    // append the rectangle to capture mouse
-    svg.append("rect")
-        .attr("class", "overlay")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", "transparent")
-        // .on("mouseover", function() { focus.style("display", null); }) => 마지막에 따로 선언해야 brush와 충돌일어나지 않음.
-        // .on("mousemove", mousemove)
-    //
-
-    // ############################### BRUSH on CHART ##############################
-    svg.append("g")
-        .attr("class", "chartBrush")
-        .call(brush_onChart);
-
-    // ################################ ZOOM BRUSH PART ###############################
-    zoom_svg = d3.select("#zoom_canvas")
-        .append("svg")
-        .attr("width", zoom_width + zoom_margin.left + zoom_margin.right)
-        .attr("height", zoom_height + zoom_margin.top + zoom_margin.bottom)
-        .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-
-
-    context = zoom_svg.append("g")
-        .attr("class", "context");
-
-
-    context.append("g")
-        .attr("class", "axis axis--x")
-        .attr("transform", "translate(" + 0+ "," + zoom_height + ")")
-        .call(zoom_xAxis);
-    //
-    context.append("g")
-        .attr("class", "brush")
-        .call(brush)
-        .call(brush.move, x.range()); // 이걸로 초기 zoom range를 x.range()로 setting함. 없애면 brush 안보임.
-
-    // 마지막으로 mouse over effect 활성, 마지막에 선언함으로서 chart위에 brush와 겹치면서 잘 동작될 수 있음.
-    d3.select("#canvas").selectAll(".overlay")
-        .on("mouseover", function() { focus.style("display", null); })
-        .on("mousemove", mousemove);
 }
 
 function drawTrack_withTwoLaps(){
@@ -487,10 +326,8 @@ function drawTrack_withTwoLaps(){
     ref_track_focus.append("text")
         .text("test");
 
-
     // ********** Init track zoom ************ //
     d3.select("#track_canvas").call(trackZoom);
-
 
     // *************************** Draw Navigation Track *************************** //
     var width_ratio = nav_track_width/track_width;
@@ -501,8 +338,8 @@ function drawTrack_withTwoLaps(){
 
     // setting svg for drawing track
     nav_track_svg = d3.select("#track_nav_canvas").append("svg")
-        .attr("width", nav_track_width + track_margin.left + track_margin.right)
-        .attr("height", nav_track_height + track_margin.top + track_margin.bottom)
+        .attr("width", nav_track_width + nav_track_margin.left + nav_track_margin.right)
+        .attr("height", nav_track_height + nav_track_margin.top + nav_track_margin.bottom)
         .append("g")
         .attr("transform",
             // "translate(" + track_margin.left + "," + track_margin.top + ")");
@@ -633,7 +470,7 @@ function drawSubInfo_withTwoLaps() {
     steering_focus.append("text").attr("class", "steer_value")
         .attr("x", 5).attr("y", 80)
         .style("font-size", "20px")
-        .style("fill", "steelblue")
+        .style("fill", COLOR_NEGATIVE)
         .text("0.00");
 
     // ******** Brake ********* //
@@ -657,7 +494,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("transform", "rotate(0)")
         .attr("width", 2)
         .attr("height", 15)
-        .style("fill", "steelblue");
+        .style("fill", COLOR_ORIGIN);
 
     brake_focus.append("rect")
         .attr("class", "background")
@@ -675,7 +512,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("transform", "rotate(0)")
         .attr("width", 2)
         .attr("height", 15)
-        .style("fill", "red");
+        .style("fill", COLOR_REF);
 
     brake_focus.append("text")
         .attr("x", 5)
@@ -685,7 +522,7 @@ function drawSubInfo_withTwoLaps() {
     brake_focus.append("text").attr("class", "brake_value")
         .attr("x", 5).attr("y", 145)
         .style("font-size", "20px")
-        .style("fill", "steelblue")
+        .style("fill", COLOR_NEGATIVE)
         .text("0.00");
 
     // ******** Gas ******** //
@@ -708,7 +545,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("transform", "rotate(0)")
         .attr("width", 1)
         .attr("height", 15)
-        .style("fill", "steelblue");
+        .style("fill", COLOR_ORIGIN);
 
     gas_focus.append("rect")
         .attr("class", "background")
@@ -726,7 +563,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("transform", "rotate(0)")
         .attr("width", 1)
         .attr("height", 15)
-        .style("fill", "red");
+        .style("fill", COLOR_REF);
 
     gas_focus.append("text")
         .attr("x", 5)
@@ -736,7 +573,7 @@ function drawSubInfo_withTwoLaps() {
     gas_focus.append("text").attr("class", "gas_value")
         .attr("x", 5).attr("y", 220)
         .style("font-size", "20px")
-        .style("fill", "steelblue")
+        .style("fill", COLOR_NEGATIVE)
         .text("0.00");
 
 
@@ -750,7 +587,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("x", 100)
         .attr("y", 280)
         .style("font-size", "25px")
-        .style("fill", "steelblue")
+        .style("fill", COLOR_ORIGIN)
         .text("0");
 
     gear_focus.append("text")
@@ -758,7 +595,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("x", 130)
         .attr("y", 280)
         .style("font-size", "25px")
-        .style("fill", "red")
+        .style("fill", COLOR_REF)
         .text("0");
 
     gear_focus.append("text")
@@ -766,102 +603,6 @@ function drawSubInfo_withTwoLaps() {
         .attr("y", 280)
         .style("font-size", "20px")
         .text("GEAR");
-
-}
-
-function drawSubInfo() {
-
-    /******************** Drawing Sub Info ****************************/
-    // setting svg for drawing track
-    sub_svg = d3.select("#sub_canvas").append("svg")
-        .attr("width", sub_width + sub_margin.left + sub_margin.right)
-        .attr("height", sub_height + sub_margin.top + sub_margin.bottom)
-        .append("g")
-        .attr("transform",
-            "translate(" + sub_margin.left + "," + sub_margin.top + ")");
-
-    // steering
-
-    var steering_focus = sub_svg.append("g")
-        .attr("id", "steer_focus1")
-
-    steering_focus.append("image")
-        .attr("height", 80).attr("width", 80)
-        .attr("xlink:href", "./img/steer.png")
-        .attr("transform", "translate(0, 25)");
-    steering_focus.append("text")
-        .text("Steering degree: ");
-
-
-    // Brake
-    var brake_focus = sub_svg.append("g")
-        .attr("id", "brake_focus1")
-        .attr("transform", "translate(120, 0)");
-
-    brake_focus.append("rect")
-        .attr("class", "background")
-        .attr("x", -30)
-        .attr("y", -111)
-        .attr("transform", "rotate(180)")
-        .attr("width", 20)
-        .attr("height", 105)
-        .style("fill", "grey");
-
-    brake_focus.append("rect")
-        .attr("class", "value")
-        .attr("x", -25)
-        .attr("y", -110)
-        .attr("transform", "rotate(180)")
-        .attr("width", 10)
-        .attr("height", 1)
-        .style("fill", "steelblue");
-
-    brake_focus.append("text")
-        .text("Brake: ");
-
-
-    // Gas
-    var gas_focus = sub_svg.append("g")
-        .attr("id", "gas_focus1")
-        .attr("transform", "translate(240, 0)");
-
-    gas_focus.append("rect")
-        .attr("class", "background")
-        .attr("x", -30)
-        .attr("y", -111)
-        .attr("transform", "rotate(180)")
-        .attr("width", 20)
-        .attr("height", 105)
-        .style("fill", "grey");
-
-    gas_focus.append("rect")
-        .attr("class", "value")
-        .attr("x", -25)
-        .attr("y", -110)
-        .attr("transform", "rotate(180)")
-        .attr("width", 10)
-        .attr("height", 1)
-        .style("fill", "steelblue");
-
-    gas_focus.append("text")
-        .text("Gas: ");
-
-    // Gear
-    var gear_focus = sub_svg.append("g")
-        .attr("id", "gear_focus1")
-        .attr("transform", "translate(360, 0)");
-
-    gear_focus.append("text")
-        .attr("class", "value")
-        .attr("x", 0)
-        .attr("y", 65)
-        .style("font-size", "25px")
-        .style("fill", "steelblue")
-        .text("0");
-
-    gear_focus.append("text")
-        .text("Gear");
-
 
 }
 
@@ -944,8 +685,8 @@ function mousemove_twoLaps() {
     steer_focus.select("text.steer_value")
         .text(steer_diff.toFixed(2))
         .style("fill", function() {
-            if(steer_diff > 0) return "red";
-            else return "steelblue"
+            if(steer_diff > 0) return COLOR_POSITIVE;
+            else return COLOR_NEGATIVE;
         });
 
 
@@ -959,8 +700,8 @@ function mousemove_twoLaps() {
     brake_focus.select("text.brake_value")
         .text(brake_diff.toFixed(2))
         .style("fill", function() {
-            if(brake_diff > 0) return "red";
-            else return "steelblue"
+            if(brake_diff > 0) return COLOR_POSITIVE;
+            else return COLOR_NEGATIVE;
         });
 
     var gas_focus = d3.select("#gas_focus1");
@@ -973,8 +714,8 @@ function mousemove_twoLaps() {
     gas_focus.select("text.gas_value")
         .text(gas_diff.toFixed(2))
         .style("fill", function() {
-            if(gas_diff > 0) return "red";
-            else return "steelblue"
+            if(gas_diff > 0) return COLOR_POSITIVE;
+            else return COLOR_NEGATIVE;
         });
 
 
@@ -983,73 +724,6 @@ function mousemove_twoLaps() {
         .text(gear_data[index])
     gear_focus.select("text.value-ref")
         .text(ref_gear_data[ref_index]);
-
-}
-
-function mousemove(){
-
-    var x_value = x.invert(d3.mouse(this)[0]);
-    var x_value_from_origin = 0;
-    var index = 0;
-
-    var focuses = d3.select("#canvas").selectAll("svg")
-        .selectAll(".focus");
-
-    // 마지막 line x-axis에 맞추기.
-    var foc_lines = document.getElementsByClassName("tooltip_line");
-    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
-
-    // set all focus elements' style to display
-    focuses.style("display", null);
-    focuses.selectAll(".chart_tooltip").attr("transform", function(d){
-        index = bisect(d.values, x_value, 0, d.values.length -1);
-        var ty = y.get(this);
-
-        return "translate(" + x(d.values[index].x) + "," + ty(d.values[index].feature_val) + ")";
-
-    });
-
-    focuses.selectAll("text")
-        .text( function (d) { return +d.values[index].feature_val.toFixed(3); });
-
-    focuses.selectAll("line.tooltip_line").attr("transform", function(d){
-
-        return "translate(" + x(d.values[index].x) + "," + height +")";
-
-    });
-
-
-
-    // ************* moving Track ************* //
-    var track_focus = d3.select("#track_focus1");
-    track_focus.attr("transform", "translate(" + track_x(track_data[index].long) + "," + track_y(track_data[index].lat) + ")");
-
-
-
-    // ************* handle Steering, Brake, Gas, Gear ******************* //
-
-    // rotate by steering value
-    var steer_focus = d3.select("#steer_focus1");
-    steer_focus.select("image")
-        .attr("transform", "translate(0, 25), rotate(" + steer_data[index] + ", 35, 35)");
-    steer_focus.select("text")
-        .text("Steering degree: " + steer_data[index]);
-
-    var brake_focus = d3.select("#brake_focus1");
-    brake_focus.select("rect.value")
-        .attr("height", 1+ brake_data[index]);
-    brake_focus.select("text")
-        .text("Brake: " + brake_data[index]);
-
-    var gas_focus = d3.select("#gas_focus1");
-    gas_focus.select("rect.value")
-        .attr("height", 1+gas_data[index]);
-    gas_focus.select("text")
-        .text("Gas: " + gas_data[index]);
-
-    var gear_focus = d3.select("#gear_focus1");
-    gear_focus.select("text.value")
-        .text(gear_data[index])
 
 }
 
@@ -1229,6 +903,7 @@ function addChart_withTwoLaps(id) {
         .domain(union_y0);
 
     svg.append("g")
+        .attr("class", "axis axis--y")
         .call(d3.axisLeft(y_range).ticks(3));
 
     // *** x axis **** //
@@ -1266,7 +941,7 @@ function addChart_withTwoLaps(id) {
         .attr("class", "chart_tooltip")
         .attr("x", 9)
         .attr("dy", ".35em")
-        .style("fill", "steelblue")
+        .style("fill", COLOR_ORIGIN)
         .text("nothing");
 
     // append x line.
@@ -1292,9 +967,8 @@ function addChart_withTwoLaps(id) {
         .attr("class", "chart_tooltip-ref")
         .attr("x", 9)
         .attr("dy", ".35em")
-        .style("fill", "red")
+        .style("fill", COLOR_REF)
         .text("nothing");
-
 
 
     // **************** Init mouse event, zoom brush, zoom brush on Chart ********** //
@@ -1315,9 +989,6 @@ function addChart_withTwoLaps(id) {
         .on("mouseover", function() { focus.style("display", null); })
         .on("mousemove", mousemove_twoLaps);
 
-
-
-
     // ************ set the all circles as invisible ************//
     d3.select("#canvas").selectAll("svg")
         .selectAll(".focus")
@@ -1328,142 +999,6 @@ function addChart_withTwoLaps(id) {
 
 
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
-
-}
-
-function addChart(id) {
-    // 이전 x-axis 삭제
-    d3.select("#x-axis")
-        .remove();
-
-    // extract target data which is stored in last index of selected_features
-    var target_data = selected_features[selected_features.length-1];
-
-    ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
-    console.log(target_data);
-    svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
-    //                var update_svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
-        .append("svg")
-        .attr("width", width + margin.left + margin.right)
-        .attr("height", height + margin.bottom + margin.top)
-        .append("g")
-        .attr("id", function (d) {
-            return d.id.split(" ")[0];
-            // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
-        })
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-        .each(function (d) {
-
-            var ty = y.set(this, d3.scaleLinear()
-                .range([height, 0]))
-            // local feature에 대한 y range setting
-                .domain([
-                    d3.min(d.values, function(c) { return c.feature_val; }),
-                    d3.max(d.values, function(c) { return c.feature_val; }) ]);
-
-            line.set(this, d3.line().curve(d3.curveBasis)
-                .x(function(d){ return x(d.x);})
-                .y(function(d){ return ty(d.feature_val); }));
-
-        });
-
-    // clipPath init. ref-http://visualize.tistory.com/331
-    d3.select("#canvas").selectAll("svg").append("defs").append("clipPath")
-        .attr("id",  function (d) {
-            return "clip_" + d.id.split(" ")[0];
-        })
-        .append("rect")
-        .attr("width", width)
-        .attr("height", height)
-
-    // assign clipPath to each line area.
-    // & draw path line
-    svg.append("path")
-        .attr("class", "line")
-        .attr("d", function(d) { return line.get(this)(d.values); })
-        .attr("clip-path", function (d) {
-            return "url(#clip_" + d.id.split(" ")[0] + ")";
-        });
-
-    // end of init. clipPath
-
-
-
-    svg.append("text")
-        .attr("y", height - 50)
-        .attr("x", 10)
-        .text(function(d) { return d.id; });
-
-    var y_range = d3.scaleLinear()
-        .range([height, 0])
-        .domain([
-            d3.min(target_data.values, function(d) { return d.feature_val; }),
-            d3.max(target_data.values, function(d) { return d.feature_val; })
-        ]);
-
-    svg.append("text")
-        .attr("y", height - 50)
-        .attr("x", 10)
-        .text(id);
-
-    svg.append("g")
-        .call(d3.axisLeft(y_range).ticks(3));
-
-
-    // x axis
-    svg.append("g")
-        .call(xAxis)
-        .attr("id", "x-axis")
-        .attr("class", "axis axis--x")
-        .attr("transform", "translate(" + 0 + "," + height + ")");
-
-
-    var focus = svg.append("g")
-        .attr("class", "focus")
-        .style("display", "none");
-
-    // append x line.
-    focus.append("line")
-        .attr("class", "tooltip_line")
-        .style("stroke", "#fff")
-        .style("stroke-dasharray", "3,3")
-        .style("opacity", 0.9)
-        .attr("y1", -height)
-        .attr("y2", 0);
-
-    // 마지막 line x-axis에 맞추기.
-    var foc_lines = document.getElementsByClassName("tooltip_line");
-    for (var i =0; i<foc_lines.length-1; i++){
-        foc_lines[i].setAttribute("y2", height);
-    }
-    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
-
-    focus.append("circle")
-        .attr("class", "chart_tooltip")
-        .attr("r", 4.5);
-    focus.append("text")
-        .attr("class", "chart_tooltip")
-        .attr("x", 9)
-        .attr("dy", ".35em")
-        .text("nothing");
-
-    svg.append("rect")
-        .attr("class", "overlay")
-        .attr("width", width)
-        .attr("height", height)
-        .attr("fill", "transparent")
-
-    d3.select("#canvas").selectAll(".overlay")
-        .on("mouseover", function() { focus.style("display", null); })
-        // .on("mouseout", function() { focus.style("display", "none"); })
-        .on("mousemove", mousemove);
-
-
-    // set the all circles as invisible
-    var focuses = d3.select("#canvas").selectAll("svg")
-        .selectAll(".focus");
-    focuses.style("display", "none");
-
 
 }
 
@@ -1529,19 +1064,25 @@ function axisSwitch(axis_type){
 function clearAllSVG_for_xAxis_switch() {
 
     d3.select("#zoom_canvas").select("svg").remove();
-    // d3.select("#canvas").selectAll("svg").remove();
-    d3.select("#canvas").selectAll("svg > *").remove();
     d3.select("#canvas").selectAll("svg").remove();
-
-    d3.select("#track_canvas").selectAll("svg > *").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
-
-    d3.select("#track_nav_canvas").selectAll("svg > *").remove();
     d3.select("#track_nav_canvas").selectAll("svg").remove();
-
     d3.select("#sub_canvas").selectAll("svg").remove();
+
+    // remove section split buttons & info
+    var temp_node = document.getElementById("split-table-header");
+    while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
+    temp_node = document.getElementById("split-table-contents");
+    while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
+    temp_node = document.getElementById("split-table-contents-ref");
+    while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
+
+    // data clean
     animation_range = [];
     animation_index = 0;
+    steer_data = [], brake_data = [], gas_data = [], gear_data = [];
+    track_data = [], inline_track = [], outline_track = [];
+    all_features= [], selected_features = [];
 }
 
 function clearAllSVG() {
@@ -1552,98 +1093,18 @@ function clearAllSVG() {
     d3.select("#track_nav_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
 
+    // remove section split buttons & info
+    var temp_node = document.getElementById("split-table-header");
+    while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
+    temp_node = document.getElementById("split-table-contents");
+    while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
+    temp_node = document.getElementById("split-table-contents-ref");
+    while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
+
     // data clean
     animation_range = [];
     animation_index = 0;
     steer_data = [], brake_data = [], gas_data = [], gear_data = [];
     track_data = [], inline_track = [], outline_track = [];
     all_features= [], selected_features = [];
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-function draw_ref_LineGraph(){
-
-    ref_selected_features.forEach(function (ref_data){
-
-        // g select (origin data)
-        var ref_graph_svg = d3.select("g#"+ref_data.id).select( function() { return this.parentNode; });
-
-
-        // parent node(svg) select, and add clipPath
-        ref_graph_svg
-            .append("defs").append("clipPath")
-            .attr("id",  function (d) {
-                return "clip_ref-" + d.id;
-            })
-            .append("rect")
-            .attr("width", width)
-            .attr("height", height);
-
-        ref_graph_svg
-            .data([ref_data])
-            .append("g")
-            .attr("id", function (d) {
-                console.log(d);
-                return "ref-" + d.id;
-            })
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
-            // path append
-            .append("path")
-            .attr("class", "line ref")
-            .attr("d", function(d) {
-
-                var ty = y.set(this, d3.scaleLinear()
-                    .range([height, 0]))
-                // local feature에 대한 y range setting
-                    .domain([
-                        d3.min(d.values, function(c) { return c.feature_val; }),
-                        d3.max(d.values, function(c) { return c.feature_val; }) ]);
-
-                line.set(this, d3.line().curve(d3.curveBasis)
-                    .x(function(d){ return x(d.x); })
-                    .y(function(d){ return ty(d.feature_val); }));
-
-                return line.get(this)(d.values);
-            })
-            .attr("clip-path", function (d) {
-                return "url(#clip_ref-" + ref_data.id + ")";
-            })
-
-        var focus = d3.select("g#ref-"+ref_data.id)
-            .append("g")
-            .attr("class", "focus-ref")
-            .style("display", "none");
-
-        // append the circle at the interaction
-        focus.append("circle")
-            .attr("class", "chart_tooltip-ref")
-            .attr("r", 4.5);
-        // place the value at the interaction
-        focus.append("text")
-            .attr("class", "chart_tooltip-ref")
-            .attr("x", 9)
-            .attr("dy", ".35em")
-            .style("fill", "red")
-            .text("nothing");
-
-
-    });
 }

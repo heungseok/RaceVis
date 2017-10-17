@@ -1,0 +1,28 @@
+.line {
+    /* COLOR_ORIGIN */
+    fill: none;
+    stroke: #ee337d;
+    stroke-width: 1px;
+}
+
+.line.ref{
+    /* COLOR_REF */
+    stroke: #00adeb;
+    z-index: -10;
+    /*opacity: 0.3*/
+}
+
+g.focus, g#track_focus1{
+    /*fill: #9d9d9d;*/
+    /* COLOR_ORIGIN */
+    fill: #ee337d;
+}
+g.focus-ref, g#track_focus1-ref{
+    /* COLOR_REF*/
+    fill: #00adeb;
+    /*opacity:0.4;*/
+}
+
+path.line.boundary{
+    stroke: rgb(255,255,255);
+}

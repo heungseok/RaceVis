@@ -126,8 +126,8 @@ function trackAnimation_withTwoLaps(){
         steer_focus.select("text.steer_value")
             .text(steer_diff.toFixed(2))
             .style("fill", function() {
-                if(steer_diff > 0) return "red";
-                else return "steelblue"
+                if(steer_diff > 0) return COLOR_POSITIVE;
+                else return COLOR_NEGATIVE;
             });
 
 
@@ -141,8 +141,8 @@ function trackAnimation_withTwoLaps(){
         brake_focus.select("text.brake_value")
             .text(brake_diff.toFixed(2))
             .style("fill", function() {
-                if(brake_diff > 0) return "red";
-                else return "steelblue"
+                if(brake_diff > 0) return COLOR_POSITIVE;
+                else return COLOR_NEGATIVE;
             });
 
 
@@ -156,8 +156,8 @@ function trackAnimation_withTwoLaps(){
         gas_focus.select("text.gas_value")
             .text(gas_diff.toFixed(2))
             .style("fill", function() {
-                if(gas_diff > 0) return "red";
-                else return "steelblue"
+                if(gas_diff > 0) return COLOR_POSITIVE;
+                else return COLOR_NEGATIVE;
             });
 
 
