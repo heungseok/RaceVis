@@ -51,21 +51,27 @@
         <div id="loading"></div>
         <div id="row-top container" class="row top">
 
-            <div class="track_nav col-sm-4">
+            <div class="track_nav col-sm-4" style="position:relative;">
 
-                <div id="track_nav_canvas">
 
-                    <div id="sector_btn_wrapper">
-                        <table class="table">
-                            <thead >
-                            <tr id ="split-table-header"></tr>
-                            </thead>
-                            <tbody>
-                            <tr id="split-table-contents"></tr>
-                            <tr id="split-table-contents-ref"></tr>
-                            </tbody>
-                        </table>
-                    </div>
+
+                <div id="track_nav_canvas" style="position:relative;">
+
+
+                </div>
+
+                <div id="sector_btn_wrapper" style="position:absolute; top:70%; width: 80%; left:5%;">
+                    <div id="sector_track_info" style="font-size:14px; font-weight:500; color:#ffffff"></div>
+
+                    <table class="table">
+                        <thead >
+                        <tr id ="split-table-header"></tr>
+                        </thead>
+                        <tbody>
+                        <tr id="split-table-contents"></tr>
+                        <tr id="split-table-contents-ref"></tr>
+                        </tbody>
+                    </table>
                 </div>
 
             </div>
@@ -108,17 +114,25 @@
 
         <div class="row bottom">
             <div class="col-sm-3">
+                <div style="position:relative;">
 
-                <ul  class="nav nav-pills">
-                    <li class="active"><a href="#summary_tab" data-toggle="tab">Summary Statistics</a>
-                    </li>
-                    <li><a href="#comment_tab" data-toggle="tab">Comments</a>
-                    </li>
+                    <div id = "split_name" style="position:absolute; right:0%; top:30%; color:#ffffff; font-weight:700;">
 
-                </ul>
 
+                    </div>
+
+                    <div style="position:relative;">
+                        <ul  class="nav nav-pills">
+                            <li class="active"><a href="#guide_tab" data-toggle="tab">Guide</a>
+                            </li>
+                            <li><a href="#comment_tab" data-toggle="tab">Comments</a>
+                            </li>
+                        </ul>
+                    </div>
+
+                </div>
                 <div class="tab-content">
-                    <div class="tab-pane active table_summary" id="summary_tab">
+                    <div class="tab-pane active table_summary" id="guide_tab">
                         <div>summary statistic</div>
 
                     </div>
