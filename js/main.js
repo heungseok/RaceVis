@@ -125,6 +125,10 @@ var COLOR_NEGATIVE = '#00FF00';
 var COLOR_ORIGIN = '#ee337d';
 var COLOR_REF = '#00adeb';
 
+
+var split_comments= [];
+var split_guides = [];
+
 /**************************** END of initializing Global variable *******************************************/
 
 
@@ -163,8 +167,8 @@ function init(init_type) {
 function init_with_twoLaps() {
     // d3.csv("./data/m4_KIC_SHORT.csv", type, function(data) {
     //     d3.csv("./data/moon_KIC_SHORT.csv", type, function (ref_data) {
-    d3.csv("./data/2lap-test2.csv", type, function(data) {
-        d3.csv("./data/5lap-test2.csv", type, function (ref_data) {
+    d3.csv("./data/1018-short/2lap-ex_up_std_oragi_kicshort_86_session-0.csv", type, function(data) {
+        d3.csv("./data/1018-short/5lap-ex_up_std_oragi_kicshort_86_session-0.csv", type, function (ref_data) {
             // d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
             d3.csv("./data/track_boundary/kic_short.csv", function(error, track_boundary_data) {
 
@@ -314,89 +318,96 @@ function init_with_twoLaps() {
 
 
                 //  ******* comment box contents ********* //
-                d3.json("./data/std_PBOX_037-0.json", function(error, track_info_data) {
-                    console.log(track_info_data)
-                    var comments = track_info_data.comments.overall;
-                    console.log(comments);
-                    console.log(Object.keys(comments).length);
-                    Object.keys(comments).forEach(function(key){
-                        $('#comment-table-contents').append("<tr>" +
-                            "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
-                    });
-                });
+                d3.json("./data/1018-short/2_5comparison-ex_up_std_oragi_kicshort_86_session-0.json", function(error, track_info_data) {
+                    console.log(track_info_data);
 
-                var split =  [
-                    0,
-                    960,
-                    1550,
-                    2035,
-                    2560,
-                    3030
-                ];
+                    track_name = track_info_data.track_info.TrackName;
+                    split = track_info_data.track_info.Split;
+                    optimal_time = track_info_data.optimal_info;
+                    optimal_time = GetStringFromSec(optimal_time);
+                    nSplits = Object.keys(split).length;
+                    track_length = split[nSplits-1];
 
 
-                var nSplits = Object.keys(split).length;
+                    $('#sector_track_info').html('');
+                    $('#sector_track_info').append(''+track_name+', '+track_length+'m<br />Optimal: <span style="color:'+ COLOR_NEGATIVE+'">'+optimal_time+'</span>');
 
-                $('#split-table-header').append('<th>'+'<button type="button" style="width:100%;" class="btn brush_control" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this)">' +
-                    'FULL' +
-                    '</button></th>');
+                    //console.log(split);
+                    //var comments = track_info_data.comments.overall;
+                    // console.log(comments);
+                    // console.log(Object.keys(comments).length);
+                    // Object.keys(comments).forEach(function(key){
+                    //     $('#comment-table-contents').append("<tr>" +
+                    //         "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
+                    // });
 
-                for(var z=0; z<nSplits-1; z++){
-                    $('#split-table-header').append('<th>'+'<button type="button" style="width:100%;" class="btn brush_control" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this)">' +
-                        'S' +(z+1)+
+
+
+                    $('#split-table-header').append('<th>'+'<button type="button" style="width:100%;" class="btn brush_control" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">' +
+                        'FULL' +
                         '</button></th>');
-                }
 
-                var split_record =  [
-                    99.141,
-                    16.828,
-                    23.828,
-                    18.828,
-                    21.828,
-                    18.828
-                ];
-
-                var split_record_ref =  [
-                    89.141,
-                    17.828,
-                    18.828,
-                    16.828,
-                    19.828,
-                    16.828
-                ];
-
-                var split_record_diff = [];
-                var split_record_string = [];
-                var split_record_string_ref = [];
-
-                for(var z=0; z<nSplits; z++){
-                    split_record_diff[z] = split_record[z] - split_record_ref[z];
-
-                    if(z==0){
-                        split_record_string[z] = GetStringFromSec(split_record[z]);
-                        split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+                    for(z=0; z<nSplits-1; z++){
+                        $('#split-table-header').append('<th>'+'<button type="button" style="width:100%;" class="btn brush_control" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
+                            'S' +(z+1)+
+                            '</button></th>');
                     }
-                    else{
-                        split_record_string[z] = GetStringFromSec(split_record[z],split_record_ref[z]);
-                        split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+
+                    split_record=[];
+                    split_record_ref=[];
+
+
+                    for(z=0; z<nSplits; z++){
+                        if(z==0){
+                            sector_name = 'FULL';
+                        }
+                        else{
+                            sector_name = 'S'+z;
+                        }
+
+                        split_record[z] = track_info_data.sector_info[sector_name].Laptime_A;
+                        split_record_ref[z] = track_info_data.sector_info[sector_name].Laptime_B;
+
+                        split_comments[z] = track_info_data.sector_info[sector_name].comments;
+                        split_guides[z] = track_info_data.sector_info[sector_name].guides;
                     }
-                }
 
-                for(var z=0; z<nSplits; z++){
-                    if(split_record_diff[z]<=0)
-                        $('#split-table-contents').append('<td align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string[z]+'</td>');
-                    else
-                        $('#split-table-contents').append('<td align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string[z]+'</td>');
-                }
+                    //console.log(split_comments);
 
-                for(var z=0; z<nSplits; z++){
-                    if(split_record_diff[z]>0)
-                        $('#split-table-contents-ref').append('<td align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string_ref[z]+'</td>');
-                    else
-                        $('#split-table-contents-ref').append('<td align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string_ref[z]+'</td>');
-                }
+                    split_record_diff = [];
+                    split_record_string = [];
+                    split_record_string_ref = [];
 
+                    for(z=0; z<nSplits; z++){
+                        split_record_diff[z] = split_record[z] - split_record_ref[z];
 
+                        if(z==0){
+                            split_record_string[z] = GetStringFromSec(split_record[z]);
+                            split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+                        }
+                        else{
+                            split_record_string[z] = GetStringFromSec(split_record[z],split_record_ref[z]);
+                            split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+                        }
+                    }
+
+                    for(z=0; z<nSplits; z++){
+                        if(split_record_diff[z]<=0)
+                            $('#split-table-contents').append('<td align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string[z]+'</td>');
+                        else
+                            $('#split-table-contents').append('<td align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string[z]+'</td>');
+                    }
+
+                    for(z=0; z<nSplits; z++){
+                        if(split_record_diff[z]>0)
+                            $('#split-table-contents-ref').append('<td align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string_ref[z]+'</td>');
+                        else
+                            $('#split-table-contents-ref').append('<td align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string_ref[z]+'</td>');
+                    }
+
+                    UpdateGuideComments(0);
+
+                });
             });
         });
     });
@@ -637,6 +648,7 @@ function brushed(){
 
     setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x));
     setMinMax_by_animationRange();
+
     // setAnimationRange_fromZoom(current_zoomRange);
 
     // d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
@@ -700,17 +712,24 @@ function setAnimationRange_fromZoom(s){
 
     var originX0 = s[0].toFixed(1),
         originX1 = s[1].toFixed(1),
-        targetX0, targetX1;
+        targetX0 = 0,
+        targetX1 = 0;
+
+
 
     all_features.forEach(function (data){
 
         if (data.id == root_x){
 
+            targetX1 = data.values.length-1;
+
             for (var i=0; i<data.values.length-1; i++){
-                if (data.values[i].feature_val <= originX0 && data.values[i+1].feature_val >= originX0)
+                if (data.values[i].feature_val <= originX0  &&  data.values[i+1].feature_val >= originX0) {
                     targetX0 = i;
-                if (data.values[i].feature_val <= originX1 && data.values[i+1].feature_val >= originX1)
-                    targetX1 = i+1;
+                }
+                if (data.values[i].feature_val <= originX1  &&  data.values[i+1].feature_val >= originX1) {
+                    targetX1 = i + 1;
+                }
             }
             // setting animation range and initializing animation_index ( 애니메이션 인덱스 재조절)
             animation_range.push(targetX0);
@@ -760,8 +779,8 @@ function drawing_animationPath() {
 
     // reset animation track_data
     animation_track_data = [];
-    // console.log(track_data[animation_range[0]]);
-    // console.log(track_data[animation_range[1]]);
+    //console.log(animation_range[0]);
+    //console.log(animation_range[1]);
     // console.log(animation_range);
 
     var position_indices = _.pluck(selected_features[0].values, "x");
@@ -777,7 +796,7 @@ function drawing_animationPath() {
         animation_track_data.push(merged_track_data.centerline[i])
     }
 
-    console.log(animation_track_data);
+    //console.log(animation_track_data);
     // append path (drawing track)
     d3.select("#track_canvas").select("svg").select("g").append("path")
         .data([animation_track_data])
@@ -844,7 +863,7 @@ function zoomReset() {
     zoomIn(0.5)
 }
 
-function setBrushRange(btn){
+function setBrushRange(btn,split){
     // 1. btn value를 split해서 brush 조정할 range값을 parsing
     var range = btn.value.split("-").map(Number);
 
@@ -855,6 +874,39 @@ function setBrushRange(btn){
 
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
 
+
+    // 여기서 comment 테이블도 새로 그려 줘야 되는디....
+
+    UpdateGuideComments(split);
+
+}
+
+function UpdateGuideComments(split)
+{
+    $('#split_name').html('');
+
+    if(split ==0 ) $('#split_name').append('FULL');
+    else $('#split_name').append('S'+split);
+
+    $('#guide_tab').html('');
+    $('#guide_tab').append(split_guides[split]);
+
+    $('#comment-table-contents').html('');
+
+    Object.keys(split_comments[split]).forEach(function(key){
+
+        if(split_comments[split][key][0] <=0){
+            sign = "";
+            color = COLOR_NEGATIVE;
+        }
+        else{
+            sign = "+";
+            color = COLOR_POSITIVE;
+        }
+
+        $('#comment-table-contents').append("<tr>" +
+            "<td>" + key + '</td><td><span style="color:'+color+'">' + sign+split_comments[split][key][0] + split_comments[split][key][1] +"</span></td><td>" + split_comments[split][key][2] + "</td>");
+    });
 
 }
 
