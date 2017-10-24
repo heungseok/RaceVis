@@ -1056,13 +1056,13 @@ function axisSwitch(axis_type){
         console.log("type is different, change the axis");
         root_x = axis_type.value;
         clearAllSVG_for_xAxis_switch();
-        init(vis_type);
 
     }
 }
 
 function clearAllSVG_for_xAxis_switch() {
 
+    d3.selectAll("path.animation_path").remove(); // animation path remove
     d3.select("#zoom_canvas").select("svg").remove();
     d3.select("#canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
@@ -1082,11 +1082,14 @@ function clearAllSVG_for_xAxis_switch() {
     animation_index = 0;
     steer_data = [], brake_data = [], gas_data = [], gear_data = [];
     track_data = [], inline_track = [], outline_track = [];
-    all_features= [], selected_features = [];
+    all_features= [], selected_features = [], animation_track_data = [], animation_time_delta=[];
+
+    init(vis_type);
 }
 
 function clearAllSVG() {
 
+    d3.selectAll("path.animation_path").remove(); // animation path remove
     d3.select("#zoom_canvas").select("svg").remove();
     d3.select("#canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
@@ -1106,5 +1109,5 @@ function clearAllSVG() {
     animation_index = 0;
     steer_data = [], brake_data = [], gas_data = [], gear_data = [];
     track_data = [], inline_track = [], outline_track = [];
-    all_features= [], selected_features = [];
+    all_features= [], selected_features = [], animation_track_data = [], animation_time_delta=[];
 }

@@ -78,8 +78,16 @@ var animation_index =0,
     animation_flag = false,
     resume_flag = false,
     animation_state = "play",
-    animation_delay = 50; // default as 50 milliseconds.
+    animation_delay = 50, // default as 50 milliseconds.
+    animation_track_data = [],
+    animation_time_delta = [],
+    animation_color_domain,
+    animation_track_color;
 var bisect_for_find_animatingPosition = d3.bisector(function (d) { return d.x; }).left;
+
+var animation_path = d3.line()
+    .x(function(d) { return track_x(d.long); })
+    .y(function(d) { return track_y(d.lat); });
 
 
 
@@ -87,7 +95,8 @@ var bisect_for_find_animatingPosition = d3.bisector(function (d) { return d.x; }
 var steer_data =[],
     brake_data = [],
     gas_data = [],
-    gear_data = [];
+    gear_data = [],
+    timeDelta_data = [];
 
 var ref_steer_data = [],
     ref_brake_data = [],
@@ -244,6 +253,8 @@ function init_with_twoLaps() {
                     } else if (d.id == "Pedal_throttle") {
                         gas_data = _.pluck(d.values, 'feature_val')
                         ref_gas_data = _.pluck(d.ref_values, 'feature_val')
+                    } else if (d.id == "timeDelta"){
+                        timeDelta_data = _.pluck(d.values, 'feature_val');
                     } else {
                         $('.checkbox_wrapper').append("<li class ='checkbox'> " +
                             "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
@@ -267,6 +278,7 @@ function init_with_twoLaps() {
                 });
                 merged_track_data.origin = track_data;
                 merged_track_data.ref = ref_track_data;
+                merged_track_data.origin_time_delta = timeDelta_data;
 
                 console.log("merge track boundary data with track data");
 
@@ -415,119 +427,6 @@ function init_with_twoLaps() {
 }
 
 
-function init_with_originLap() {
-    d3.csv("./data/m4_KIC_SHORT.csv", type, function(error, data) {
-        d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
-
-            if (error) throw error;
-
-            console.log(data)
-
-            all_features = data.columns.slice(0).map(function (id) {
-
-                return {
-                    id: id,
-                    values: data.map(function (d) {
-                        return {x: d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
-                    })
-                };
-            });
-
-            // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
-            selected_features = [];
-            var temp_lat = [];
-            var temp_long = [];
-
-
-            all_features.forEach(function (d) {
-
-                /*
-                 // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
-                 if(isNaN(d.values[0].feature_val)){
-                 $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
-                 }
-                 */
-
-                // default feature로 GPS_Speed, RPM 을 plotting.
-                if (d.id == "GPS_Speed" || d.id == "RPM") {
-                    selected_features.push(d)
-                    selected_feat_names.push(d.id);
-                    $('.checkbox_wrapper').append("<div class ='checkbox'> " +
-                        "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></div>");
-                    // }else if(d.id == "RefinedPosLat"){
-                    //    temp_lat = _.pluck(d.values, 'feature_val');
-                    // }else if(d.id == "RefinedPosLon"){
-                    //    temp_long = _.pluck(d.values, 'feature_val');
-                } else if (d.id == "PosLocalY") {
-                    temp_lat = _.pluck(d.values, 'feature_val');
-                } else if (d.id == "PosLocalX") {
-                    temp_long = _.pluck(d.values, 'feature_val');
-                } else if (d.id == "Steer_angle") {
-                    steer_data = _.pluck(d.values, 'feature_val')
-                } else if (d.id == "Pedal_brake") {
-                    brake_data = _.pluck(d.values, 'feature_val')
-                } else if (d.id == "Gear") {
-                    gear_data = _.pluck(d.values, 'feature_val')
-                } else if (d.id == "ECU_THROTTLE") {
-                    gas_data = _.pluck(d.values, 'feature_val')
-                } else {
-                    $('.checkbox_wrapper').append("<div class ='checkbox'> " +
-                        "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></div>");
-                }
-
-            });
-            /// ***** assign temp lat long data to global variable *****
-            temp_lat.forEach(function (value, index) {
-                track_data.push({
-                    long: temp_long[index],
-                    lat: value
-                });
-
-            });
-
-            merged_track_data.origin = track_data;
-
-            console.log("merge track boundary data with track data");
-            track_boundary_data.forEach(function (d) {
-
-                inline_track.push({
-                    long: parseFloat(d["InX"]),
-                    lat: parseFloat(d["InY"])
-                });
-
-                outline_track.push({
-                    long: parseFloat(d["OutX"]),
-                    lat: parseFloat(d["OutY"])
-                });
-            });
-            merged_track_data.inline = inline_track;
-            merged_track_data.outline = outline_track;
-
-            console.log("finished merging all track data");
-            animation_length = track_data.length;
-
-            // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
-            // x0 = d3.extent(data, function(d) {return d.x;}) => 가 string array ['1', '2', '33', ...] 에서 동작하려면
-            // x0 = d3.extent(data, function(d) {return +d.x;}) 와같이 coerce를 거쳐야함.
-            x0 = d3.extent(data, function (d) {
-                return +d.x;
-            });
-            x.domain(x0);
-            zoom_x.domain(x0);
-            console.log(x0);
-
-            drawLineGraph();
-            drawTrack();
-            drawSubInfo();
-            setBtnState();
-            setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
-            zoomReset();
-            document.getElementById("loading").style.display = "none";
-
-        });
-    });
-}
-
 
 // This function supports parsing the column from input data.
 function type(d, _, columns) {
@@ -538,19 +437,6 @@ function type(d, _, columns) {
         return d;
     }
 }
-
-// This function supports parsing the column from input data.
-function type_with_whole_data(d, _, columns) {
-// data를 칼럼으로 나누고, LapNo가 selected Lap과 같을 경우만 parsing
-    d.x = d[root_x];
-    for (var i = 1, n = columns.length, c; i < n; ++i) {
-        if(parseInt(d["LapNo"]) == parseInt(selected_lap)) {
-            d[c = columns[i]] = +d[c];
-            return d;
-        }
-    }
-}
-
 
 
 function brushedOnChart(){
@@ -597,7 +483,7 @@ function brushed(){
     var s = d3.event.selection || zoom_x.range();
 
     current_zoomRange = s;
-    console.log(s);
+    // console.log(s);
     // current_zoomRange = s.map(zoom_x.invert, zoom_x);
     x.domain(s.map(zoom_x.invert, zoom_x)); // update x domain by zoom range
 
@@ -651,11 +537,6 @@ function brushed(){
 
     // setAnimationRange_fromZoom(current_zoomRange);
 
-    // d3.select("#canvas").selectAll(".zoom").call(zoom.transform, d3.zoomIdentity
-    //     .scale(width / (s[1] - s[0]))
-    //     .translate(-s[0], 0));
-
-
     // set all focus elements' style to un-display
     var focuses = d3.select("#canvas").selectAll("svg")
         .selectAll(".focus");
@@ -683,6 +564,7 @@ function zoomIn(value) {
 
     // brush move
     // brush.extent(current_zoomRange[0], current_zoomRange[1])
+
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
 
 }
@@ -715,19 +597,16 @@ function setAnimationRange_fromZoom(s){
         targetX0 = 0,
         targetX1 = 0;
 
-
-
     all_features.forEach(function (data){
 
         if (data.id == root_x){
-
             targetX1 = data.values.length-1;
 
             for (var i=0; i<data.values.length-1; i++){
-                if (data.values[i].feature_val <= originX0  &&  data.values[i+1].feature_val >= originX0) {
+                if (data.values[i].feature_val <= originX0  &&  data.values[i+1].feature_val > originX0) {
                     targetX0 = i;
                 }
-                if (data.values[i].feature_val <= originX1  &&  data.values[i+1].feature_val >= originX1) {
+                if (data.values[i].feature_val <= originX1  &&  data.values[i+1].feature_val > originX1) {
                     targetX1 = i + 1;
                 }
             }
@@ -772,47 +651,144 @@ function drawing_animationPath() {
 
     d3.selectAll("path.animation_path").remove();
 
-
     // if animation is playing, force to stop
     resume_flag = true;
     resume();
 
     // reset animation track_data
     animation_track_data = [];
-    //console.log(animation_range[0]);
-    //console.log(animation_range[1]);
-    // console.log(animation_range);
+    animation_time_delta = [];
 
     var position_indices = _.pluck(selected_features[0].values, "x");
 
-    // animation_range의 start value & end value 값을 찾아야함.
+    // animation_range의 start value & end value 값을 찾아야함. => axis 바꾼뒤에 여기서 start index, end index를 못찾는 경우가 생김.
     var centerLine_start_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
         selected_features[0].values[animation_range[0]].x);
 
     var centerLine_end_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
         selected_features[0].values[animation_range[1]].x);
 
+    // animation start index ~ end index 사이 값을 animation track data array 에 push
+    // + origin lap data 의 time delta 값도 push
     for(var i=centerLine_start_index; i<centerLine_end_index; i++){
-        animation_track_data.push(merged_track_data.centerline[i])
+        animation_track_data.push({
+            'long': merged_track_data.centerline[i].long,
+            'lat': merged_track_data.centerline[i].lat,
+            'x': merged_track_data.centerline[i].x,
+            'timeDelta': merged_track_data.origin_time_delta[i]
+        });
+        animation_time_delta.push(merged_track_data.origin_time_delta[i]);
     }
 
-    //console.log(animation_track_data);
-    // append path (drawing track)
-    d3.select("#track_canvas").select("svg").select("g").append("path")
-        .data([animation_track_data])
+    // setting the time delta color palette
+    animation_color_domain = d3.extent(_.pluck(animation_track_data, 'timeDelta'));
+    animation_track_color = d3.scaleLinear().domain(animation_color_domain).range(['red',  'green']);
+    // var track_color = d3.interpolateRainbow;
+    console.log(animation_track_data);
+    // console.log(quads(samples(track_line(animation_track_data), 0.79)))
+
+    // drawing animation path.
+    // 1. draw animation path to main track line
+    var sample_precision = 0.79;
+    // 0.79로 했을 때 가장 근사치가 나오긴하는데 (현재 가진 animation point array length랑 내부적으로 생성하는 패쓰를 uniformly 0.79로 샘플 했을 때 가장 근사함.. 나중에 문제 있을듯)
+    var animation_path_width = 7;
+    d3.select("#track_canvas").select("svg").select("g").selectAll("path")
+        .data(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)))
+        .enter().append("path")
         .attr("class", "animation_path")
-        .attr("d", track_line)
+        .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], animation_path_width)})
+        .style("fill", function(d) { return animation_track_color(d.timeDelta)})
+        .style("stroke", function(d) { return animation_track_color(d.timeDelta)})
+        .style("fill-opacity", 0.4)
         .style("z-index", -1);
 
-    // navigation track data
+
+    // 2. draw animation path to navigation track line
     d3.select("#track_nav_canvas").select("svg").select("g").append("path")
         .data([animation_track_data])
         .attr("class", "animation_path")
         .attr("d", nav_track_line)
         .style("stroke-width", "7px")
+        .style("stroke", "grey")
         .style("stroke-opacity", 0.9);
 
+
 }
+
+// ********************** Gradient color utility ****************************** //
+
+// Sample the SVG path uniformly with the specified precision. (precision이 낮을 수록 더 잘게 쪼개고 resolution이 높아짐)
+function samples(d, precision) {
+    console.log(animation_time_delta);
+    var path = document.createElementNS(d3.namespaces.svg, "path");
+    path.setAttribute("d", d);
+
+    var n = path.getTotalLength(), t = [0], i = 0, dt = precision;
+    while ((i += dt) < n) {
+        t.push(i);
+    }
+    t.push(n);
+
+    return t.map(function(t) {
+        // console.log(t);
+        // console.log(animation_time_delta[Math.round(t)]);
+        var p = path.getPointAtLength(t), a = [p.x, p.y];
+        a.t = t / n;
+        // a.timeDelta = animation_time_delta[Math.round(t)];
+        return a;
+    });
+}
+
+// Compute quads of adjacent points [p0, p1, p2, p3].
+function quads(points) {
+    return d3.range(points.length - 1).map(function(i) {
+        var a = [points[i - 1], points[i], points[i + 1], points[i + 2]];
+        a.t = (points[i].t + points[i + 1].t) / 2;
+        a.timeDelta = Math.random() * (animation_color_domain[1] - animation_color_domain[0]) + animation_color_domain[0];
+        return a;
+    });
+}
+
+// Compute stroke outline for segment p12.
+function lineJoin(p0, p1, p2, p3, width) {
+    var u12 = perp(p1, p2),
+        r = width / 2,
+        a = [p1[0] + u12[0] * r, p1[1] + u12[1] * r],
+        b = [p2[0] + u12[0] * r, p2[1] + u12[1] * r],
+        c = [p2[0] - u12[0] * r, p2[1] - u12[1] * r],
+        d = [p1[0] - u12[0] * r, p1[1] - u12[1] * r];
+
+    if (p0) { // clip ad and dc using average of u01 and u12
+        var u01 = perp(p0, p1), e = [p1[0] + u01[0] + u12[0], p1[1] + u01[1] + u12[1]];
+        a = lineIntersect(p1, e, a, b);
+        d = lineIntersect(p1, e, d, c);
+    }
+
+    if (p3) { // clip ab and dc using average of u12 and u23
+        var u23 = perp(p2, p3), e = [p2[0] + u23[0] + u12[0], p2[1] + u23[1] + u12[1]];
+        b = lineIntersect(p2, e, a, b);
+        c = lineIntersect(p2, e, d, c);
+    }
+
+    return "M" + a + "L" + b + " " + c + " " + d + "Z";
+}
+
+// Compute intersection of two infinite lines ab and cd.
+function lineIntersect(a, b, c, d) {
+    var x1 = c[0], x3 = a[0], x21 = d[0] - x1, x43 = b[0] - x3,
+        y1 = c[1], y3 = a[1], y21 = d[1] - y1, y43 = b[1] - y3,
+        ua = (x43 * (y1 - y3) - y43 * (x1 - x3)) / (y43 * x21 - x43 * y21);
+    return [x1 + ua * x21, y1 + ua * y21];
+}
+
+// Compute unit vector perpendicular to p01.
+function perp(p0, p1) {
+    var u01x = p0[1] - p1[1], u01y = p1[0] - p0[0],
+        u01d = Math.sqrt(u01x * u01x + u01y * u01y);
+    return [u01x / u01d, u01y / u01d];
+}
+
+// ********************** END of gradient color utility ****************************** //
 
 
 function drawing_animationPath_withOriginData() {

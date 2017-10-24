@@ -92,13 +92,13 @@ rect.selection{
 
 .animation_path{
     fill: none;
-    stroke: grey;
-    stroke-width: 10px;
-    stroke-opacity: 0.5;
+    /*stroke: grey;*/
+    /*stroke-width: 10px;*/
+    stroke-opacity: 0.01;
 
     /* 점선 및 animation */
-    stroke-dasharray: 3; /* 값이 클수록 간격이 넒어짐 */
-    animation: dash 30s linear;
+    /*stroke-dasharray: 3; !* 값이 클수록 간격이 넒어짐 *!*/
+    /*animation: dash 30s linear;*/
 }
 @keyframes dash {
 
