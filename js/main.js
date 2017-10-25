@@ -255,6 +255,8 @@ function init_with_twoLaps() {
                         ref_gas_data = _.pluck(d.ref_values, 'feature_val')
                     } else if (d.id == "timeDelta"){
                         timeDelta_data = _.pluck(d.values, 'feature_val');
+                        $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                            "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
                     } else {
                         $('.checkbox_wrapper').append("<li class ='checkbox'> " +
                             "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
@@ -282,6 +284,11 @@ function init_with_twoLaps() {
 
                 console.log("merge track boundary data with track data");
 
+                // init track data;
+                inline_track = [];
+                outline_track = [];
+                centerline_track = [];
+
                 track_boundary_data.forEach(function (d) {
 
                     inline_track.push({
@@ -304,6 +311,8 @@ function init_with_twoLaps() {
                 merged_track_data.inline = inline_track;
                 merged_track_data.outline = outline_track;
                 merged_track_data.centerline = centerline_track;
+
+
 
                 console.log("finished merging all track data");
                 // animation_length = track_data.length;
@@ -661,7 +670,7 @@ function drawing_animationPath() {
 
     var position_indices = _.pluck(selected_features[0].values, "x");
 
-    // animation_range의 start value & end value 값을 찾아야함. => axis 바꾼뒤에 여기서 start index, end index를 못찾는 경우가 생김.
+    // ***************** animation_range의 start value & end value 값을 찾아야함. => axis 바꾼뒤에 여기서 start index, end index를 못찾는 경우가 생김. *************** //
     var centerLine_start_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
         selected_features[0].values[animation_range[0]].x);
 
@@ -674,19 +683,16 @@ function drawing_animationPath() {
         animation_track_data.push({
             'long': merged_track_data.centerline[i].long,
             'lat': merged_track_data.centerline[i].lat,
-            'x': merged_track_data.centerline[i].x,
-            'timeDelta': merged_track_data.origin_time_delta[i]
+            'x': merged_track_data.centerline[i].x
         });
         animation_time_delta.push(merged_track_data.origin_time_delta[i]);
     }
 
     // setting the time delta color palette
-    animation_color_domain = d3.extent(_.pluck(animation_track_data, 'timeDelta'));
-    animation_track_color = d3.scaleLinear().domain(animation_color_domain).range(['red',  'green']);
-    // var track_color = d3.interpolateRainbow;
-    console.log(animation_track_data);
-    // console.log(quads(samples(track_line(animation_track_data), 0.79)))
-
+    animation_color_domain = d3.extent(animation_time_delta);
+    console.log(animation_color_domain);
+    animation_track_color = d3.scaleLinear().domain(animation_color_domain).range(['red', 'green']);
+    // console.log(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)));
     // drawing animation path.
     // 1. draw animation path to main track line
     var sample_precision = 0.79;
@@ -724,7 +730,12 @@ function samples(d, precision) {
     path.setAttribute("d", d);
 
     var n = path.getTotalLength(), t = [0], i = 0, dt = precision;
-    while ((i += dt) < n) {
+    console.log(n);
+    // calculate our custom precsion (lap 길이와 동일한 path length를 만들기 위해)
+    var custom_precision = n / animation_time_delta.length;
+    console.log(custom_precision);
+    // while ((i += dt) < n) {
+    while ((i += custom_precision) < n) {
         t.push(i);
     }
     t.push(n);
@@ -744,7 +755,11 @@ function quads(points) {
     return d3.range(points.length - 1).map(function(i) {
         var a = [points[i - 1], points[i], points[i + 1], points[i + 2]];
         a.t = (points[i].t + points[i + 1].t) / 2;
-        a.timeDelta = Math.random() * (animation_color_domain[1] - animation_color_domain[0]) + animation_color_domain[0];
+        // set time Delta value as random
+        // a.timeDelta = Math.random() * (animation_color_domain[1] - animation_color_domain[0]) + animation_color_domain[0];
+
+        // proxy of time delta
+        a.timeDelta = animation_time_delta[i];
         return a;
     });
 }
