@@ -659,6 +659,7 @@ function drawing_animationPath() {
     // nav_track_svg.select("path.animation_path").remove();
 
     d3.selectAll("path.animation_path").remove();
+    d3.selectAll("path.nav_animation_path").remove();
 
     // if animation is playing, force to stop
     resume_flag = true;
@@ -712,12 +713,11 @@ function drawing_animationPath() {
     // 2. draw animation path to navigation track line
     d3.select("#track_nav_canvas").select("svg").select("g").append("path")
         .data([animation_track_data])
-        .attr("class", "animation_path")
+        .attr("class", "nav_animation_path")
         .attr("d", nav_track_line)
-        .style("stroke-width", "7px")
-        .style("stroke", "grey")
-        .style("stroke-opacity", 0.9);
-
+        .style("stroke", "#dfeb06")
+        .style("stroke-width", 4)
+        .style("stroke-opacity", 0.8);
 
 }
 

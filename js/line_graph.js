@@ -845,33 +845,35 @@ function addChart_withTwoLaps(id) {
         .attr("class", "plot_info_focus")
         .attr("y", height*0.1)
         .attr("x", width + margin_for_plot_info*0.1 )
-        .style("fill", "steelblue")
+        .style("fill", COLOR_ORIGIN)
         .style("font-size", "15px")
         .text("origin");
+
+
 
     svg.append("text")
         .attr("class", "plot_info_focus_max")
         .attr("y", height*0.1 + 25)
         .attr("x", width + margin_for_plot_info*0.1 )
-        .style("fill", "steelblue")
-        .style("font-size", "12px")
+        .style("fill", COLOR_ORIGIN)
+        .style("font-size", "15px")
         .text("max");
-    // .text(function(d){ return d.origin_max.toFixed(3); });
+
 
     svg.append("text")
         .attr("class", "plot_info_focus_min")
         .attr("y", height*0.1 + 50  )
         .attr("x", width + margin_for_plot_info*0.1 )
-        .style("fill", "steelblue")
-        .style("font-size", "12px")
-        .text("min");
+        .style("fill", COLOR_ORIGIN)
+        .style("font-size", "15px")
+        .text("max");
     // .text(function(d){ return d.origin_min.toFixed(3); });
 
     svg.append("text")
         .attr("class", "plot_info_focus-ref")
         .attr("y", height*0.1)
         .attr("x", 10+width + margin_for_plot_info/2)
-        .style("fill", "red")
+        .style("fill", COLOR_REF)
         .style("font-size", "15px")
         .text("ref");
 
@@ -879,8 +881,8 @@ function addChart_withTwoLaps(id) {
         .attr("class", "plot_info_focus_max-ref")
         .attr("y", height*0.1 + 25)
         .attr("x", 10+width + margin_for_plot_info/2)
-        .style("fill", "red")
-        .style("font-size", "12px")
+        .style("fill", COLOR_REF)
+        .style("font-size", "15px")
         .text("max");
     // .text(functio?n(d){ return d.ref_max.toFixed(3); });
 
@@ -888,8 +890,8 @@ function addChart_withTwoLaps(id) {
         .attr("class", "plot_info_focus_min-ref")
         .attr("y", height*0.1 + 50  )
         .attr("x", 10+width + margin_for_plot_info/2)
-        .style("fill", "red")
-        .style("font-size", "12px")
+        .style("fill", COLOR_REF)
+        .style("font-size", "15px")
         .text("min");
 
 

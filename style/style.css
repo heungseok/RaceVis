@@ -88,23 +88,9 @@ rect.selection{
     pointer-events: all;
 }
 
-
-
 .animation_path{
     fill: none;
-    /*stroke: grey;*/
-    /*stroke-width: 10px;*/
     stroke-opacity: 0.01;
-
-    /* 점선 및 animation */
-    /*stroke-dasharray: 3; !* 값이 클수록 간격이 넒어짐 *!*/
-    /*animation: dash 30s linear;*/
-}
-@keyframes dash {
-
-    to {
-        stroke-dashoffset: -200;
-    }
 }
 
 .zoom{
@@ -197,8 +183,27 @@ path.line.boundary{
 }
 
 #track_nav_canvas path{
-    stroke-width: 0.2;
+    stroke-width: 0.4;
 }
+
+.nav_animation_path{
+    fill: none;
+    /*stroke: white;*/
+    stroke: rgb(223, 235, 6);
+    stroke-width: 2;
+    /*stroke-opacity: 0.2;*/
+    /* 점선 및 animation */
+    stroke-dasharray: 3; /* 값이 클수록 간격이 넒어짐 */
+    animation: dash 30s linear;
+}
+
+@keyframes dash {
+    to {
+        stroke-dashoffset: -200;
+    }
+}
+
+
 
 /* Table */
 div.tab-content{
@@ -479,57 +484,6 @@ div.table-responsive{
     }
 }
 
-
-/* Scroll bar CSS */
-/*#canvas::-webkit-scrollbar-track
-{
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    border-radius: 10px;
-    background-color: #333;
-    margin-left: 30px;
-    padding-left: 30px;
-}
-
-#canvas::-webkit-scrollbar
-{
-    width: 12px;
-    background-color: #333;
-    margin-left: 30px;
-    padding-left: 30px;
-}
-
-#canvas::-webkit-scrollbar-thumb
-{
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,.3);
-    background-color: #333;
-    !*background-color: transparent;*!
-    margin-left: 30px;
-    padding-left: 30px;
-}*/
-/*
-::-webkit-scrollbar {
-    width: 14px;
-    height: 18px;
-}
-::-webkit-scrollbar-thumb {
-    height: 6px;
-    border: 4px solid rgba(0, 0, 0, 0);
-    background-clip: padding-box;
-    -webkit-border-radius: 7px;
-    background-color: rgba(0, 0, 0, 0.15);
-    -webkit-box-shadow: inset -1px -1px 0px rgba(0, 0, 0, 0.05), inset 1px 1px 0px rgba(0, 0, 0, 0.05);
-}
-::-webkit-scrollbar-button {
-    width: 0;
-    height: 0;
-    display: none;
-}
-::-webkit-scrollbar-corner {
-    background-color: transparent;
-}
-
-*/
 
 
 ::-webkit-scrollbar {
