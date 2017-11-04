@@ -314,8 +314,8 @@ function drawTrack_withTwoLaps(){
 
     track_focus.append("circle")
         .attr("r", 4.5);
-    track_focus.append("text")
-        .text("test");
+    // track_focus.append("text")
+    //     .text("test");
 
 
     var ref_track_focus = track_svg.append("g")
@@ -323,8 +323,8 @@ function drawTrack_withTwoLaps(){
 
     ref_track_focus.append("circle")
         .attr("r", 4.5);
-    ref_track_focus.append("text")
-        .text("test");
+    // ref_track_focus.append("text")
+    //     .text("test");
 
     // ********** Init track zoom ************ //
     d3.select("#track_canvas").call(trackZoom);
@@ -856,7 +856,7 @@ function addChart_withTwoLaps(id) {
         .attr("y", height*0.1 + 25)
         .attr("x", width + margin_for_plot_info*0.1 )
         .style("fill", COLOR_ORIGIN)
-        .style("font-size", "15px")
+        .style("font-size", "12px")
         .text("max");
 
 
@@ -865,7 +865,7 @@ function addChart_withTwoLaps(id) {
         .attr("y", height*0.1 + 50  )
         .attr("x", width + margin_for_plot_info*0.1 )
         .style("fill", COLOR_ORIGIN)
-        .style("font-size", "15px")
+        .style("font-size", "12px")
         .text("max");
     // .text(function(d){ return d.origin_min.toFixed(3); });
 
@@ -882,7 +882,7 @@ function addChart_withTwoLaps(id) {
         .attr("y", height*0.1 + 25)
         .attr("x", 10+width + margin_for_plot_info/2)
         .style("fill", COLOR_REF)
-        .style("font-size", "15px")
+        .style("font-size", "12px")
         .text("max");
     // .text(functio?n(d){ return d.ref_max.toFixed(3); });
 
@@ -891,7 +891,7 @@ function addChart_withTwoLaps(id) {
         .attr("y", height*0.1 + 50  )
         .attr("x", 10+width + margin_for_plot_info/2)
         .style("fill", COLOR_REF)
-        .style("font-size", "15px")
+        .style("font-size", "12px")
         .text("min");
 
 

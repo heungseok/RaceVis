@@ -59,6 +59,7 @@ var root_x = "PositionIndex";
 var track_data = [], ref_track_data =[], merged_track_data={ };
 var track_x, track_y, nav_track_x, nav_track_y,
     inline_track = [], outline_track = [], centerline_track = [];
+var track_delta = []; // position index 에 해당하는 delta 값 저장 array
 
 
 // var track_line = d3.line().curve(d3.curveBasis)
@@ -181,253 +182,276 @@ function init_with_twoLaps() {
             // d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
             d3.csv("./data/track_boundary/kic_short.csv", function(error, track_boundary_data) {
 
-                // 먼저 origin data parsing 한 뒤 merged_all_features에 push
-                all_features = data.columns.slice(0).map(function (id) {
-                    return {
-                        id: id,
-                        values: data.map(function (d) {
-                            return {x: +d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                // ******* time delta data load ********* //
+                d3.csv("./data/delta_data/delta_2lap-ex_up_std_oragi_kicshort_86_session-0.csv_5lap-ex_up_std_oragi_kicshort_86_session-0.csv", function(error, track_delta_data){
+
+                    // 먼저 origin data parsing 한 뒤 merged_all_features에 push
+                    all_features = data.columns.slice(0).map(function (id) {
+                        return {
+                            id: id,
+                            values: data.map(function (d) {
+                                return {x: +d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                            })
+                        };
+                    });
+
+                    // 다음으로 ref data parsing 후 origin data의 ref_values 에 push
+                    ref_data.columns.slice(0).map(function (id) {
+                        var temp_index = _.findIndex(all_features, function (item) {
+                            return item.id == id;
                         })
-                    };
-                });
+                        if (temp_index != -1) {
+                            all_features[temp_index].ref_values = ref_data.map(function (d) {
+                                return {x: +d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                            });
+                        }
+                    });
 
-                // 다음으로 ref data parsing 후 origin data의 ref_values 에 push
-                ref_data.columns.slice(0).map(function (id) {
-                    var temp_index = _.findIndex(all_features, function (item) {
-                        return item.id == id;
-                    })
-                    if (temp_index != -1) {
-                        all_features[temp_index].ref_values = ref_data.map(function (d) {
-                            return {x: +d.x, feature_val: parseFloat(d[id])};    // float로 parsing 해주어야함.
+                    console.log("Finished merging all features")
+                    console.log(all_features);
+
+                    // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
+                    selected_features = [];
+                    var temp_lat = [];
+                    var temp_long = [];
+                    var ref_temp_lat = [];
+                    var ref_temp_long = [];
+
+                    console.log("generating check box by each features, and assign track_data, gas, and etc.");
+
+                    // 다음으로 origin data를 기준으로 check box 형성
+                    all_features.forEach(function (d) {
+                        /*
+                         // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
+                         if(isNaN(d.values[0].feature_val)){
+                         $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
+                         }
+                         */
+                        // default feature로 GPS_Speed, RPM 을 plotting.
+                        if (d.id == "GPS_Speed" || d.id == "RPM") {
+                            selected_features.push(d)
+                            selected_feat_names.push(d.id);
+                            $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                                "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
+                        // }else if(d.id == "RefinedPosLat"){
+                        //     temp_lat = _.pluck(d.values, 'feature_val');
+                        //     ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
+                        // }else if(d.id == "RefinedPosLon"){
+                        //     temp_long = _.pluck(d.values, 'feature_val');
+                        //     ref_temp_long = _.pluck(d.ref_values, 'feature_val');
+                        } else if (d.id == "PosLocalY") {
+                            temp_lat = _.pluck(d.values, 'feature_val');
+                            ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
+                        } else if (d.id == "PosLocalX") {
+                            temp_long = _.pluck(d.values, 'feature_val');
+                            ref_temp_long = _.pluck(d.ref_values, 'feature_val');
+                        } else if (d.id == "Steer_angle") {
+                            steer_data = _.pluck(d.values, 'feature_val')
+                            ref_steer_data = _.pluck(d.ref_values, 'feature_val')
+                        } else if (d.id == "Pedal_brake") {
+                            brake_data = _.pluck(d.values, 'feature_val')
+                            ref_brake_data = _.pluck(d.ref_values, 'feature_val')
+                        } else if (d.id == "Gear") {
+                            gear_data = _.pluck(d.values, 'feature_val')
+                            ref_gear_data = _.pluck(d.ref_values, 'feature_val')
+                        } else if (d.id == "Pedal_throttle") {
+                            gas_data = _.pluck(d.values, 'feature_val')
+                            ref_gas_data = _.pluck(d.ref_values, 'feature_val')
+                        } else if (d.id == "timeDelta"){
+                            timeDelta_data = _.pluck(d.values, 'feature_val');
+                            $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                                "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
+                        } else {
+                            $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                                "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
+                        }
+
+                    });
+                    console.log("finished generating checkbox by each features, and assigning focus data");
+
+                    /// ***** assign temp lat long data to global variable *****
+                    temp_lat.forEach(function (value, index) {
+                        track_data.push({
+                            long: temp_long[index],
+                            lat: value
                         });
-                    }
-                });
-
-                console.log("Finished merging all features")
-                console.log(all_features);
-
-                // filter the specific features ( 기본값은 GPS_Speed / RPM ) & push Lat Long for track line
-                selected_features = [];
-                var temp_lat = [];
-                var temp_long = [];
-                var ref_temp_lat = [];
-                var ref_temp_long = [];
-
-                console.log("generating check box by each features, and assign track_data, gas, and etc.");
-
-                // 다음으로 origin data를 기준으로 check box 형성
-                all_features.forEach(function (d) {
-                    /*
-                     // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
-                     if(isNaN(d.values[0].feature_val)){
-                     $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
-                     }
-                     */
-                    // default feature로 GPS_Speed, RPM 을 plotting.
-                    if (d.id == "GPS_Speed" || d.id == "RPM") {
-                        selected_features.push(d)
-                        selected_feat_names.push(d.id);
-                        $('.checkbox_wrapper').append("<li class ='checkbox'> " +
-                            "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
-                    // }else if(d.id == "RefinedPosLat"){
-                    //     temp_lat = _.pluck(d.values, 'feature_val');
-                    //     ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
-                    // }else if(d.id == "RefinedPosLon"){
-                    //     temp_long = _.pluck(d.values, 'feature_val');
-                    //     ref_temp_long = _.pluck(d.ref_values, 'feature_val');
-                    } else if (d.id == "PosLocalY") {
-                        temp_lat = _.pluck(d.values, 'feature_val');
-                        ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
-                    } else if (d.id == "PosLocalX") {
-                        temp_long = _.pluck(d.values, 'feature_val');
-                        ref_temp_long = _.pluck(d.ref_values, 'feature_val');
-                    } else if (d.id == "Steer_angle") {
-                        steer_data = _.pluck(d.values, 'feature_val')
-                        ref_steer_data = _.pluck(d.ref_values, 'feature_val')
-                    } else if (d.id == "Pedal_brake") {
-                        brake_data = _.pluck(d.values, 'feature_val')
-                        ref_brake_data = _.pluck(d.ref_values, 'feature_val')
-                    } else if (d.id == "Gear") {
-                        gear_data = _.pluck(d.values, 'feature_val')
-                        ref_gear_data = _.pluck(d.ref_values, 'feature_val')
-                    } else if (d.id == "Pedal_throttle") {
-                        gas_data = _.pluck(d.values, 'feature_val')
-                        ref_gas_data = _.pluck(d.ref_values, 'feature_val')
-                    } else if (d.id == "timeDelta"){
-                        timeDelta_data = _.pluck(d.values, 'feature_val');
-                        $('.checkbox_wrapper').append("<li class ='checkbox'> " +
-                            "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
-                    } else {
-                        $('.checkbox_wrapper').append("<li class ='checkbox'> " +
-                            "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
-                    }
-
-                });
-                console.log("finished generating checkbox by each features, and assigning focus data");
-
-                /// ***** assign temp lat long data to global variable *****
-                temp_lat.forEach(function (value, index) {
-                    track_data.push({
-                        long: temp_long[index],
-                        lat: value
                     });
-                });
-                ref_temp_lat.forEach(function (value, index) {
-                    ref_track_data.push({
-                        long: ref_temp_long[index],
-                        lat: value
+                    ref_temp_lat.forEach(function (value, index) {
+                        ref_track_data.push({
+                            long: ref_temp_long[index],
+                            lat: value
+                        });
                     });
-                });
-                merged_track_data.origin = track_data;
-                merged_track_data.ref = ref_track_data;
-                merged_track_data.origin_time_delta = timeDelta_data;
+                    merged_track_data.origin = track_data;
+                    merged_track_data.ref = ref_track_data;
+                    merged_track_data.origin_time_delta = timeDelta_data;
 
-                console.log("merge track boundary data with track data");
+                    console.log("merge track boundary data with track data");
 
-                // init track data;
-                inline_track = [];
-                outline_track = [];
-                centerline_track = [];
+                    // init track data;
+                    inline_track = [];
+                    outline_track = [];
+                    centerline_track = [];
 
-                track_boundary_data.forEach(function (d) {
+                    track_boundary_data.forEach(function (d) {
 
-                    inline_track.push({
-                        long: parseFloat(d["In_x"]),
-                        lat: parseFloat(d["In_y"])
+                        inline_track.push({
+                            long: parseFloat(d["In_x"]),
+                            lat: parseFloat(d["In_y"])
+                        });
+
+                        outline_track.push({
+                            long: parseFloat(d["Out_x"]),
+                            lat: parseFloat(d["Out_y"])
+                        });
+
+                        centerline_track.push({
+                            long: parseFloat(d["Center_x"]),
+                            lat: parseFloat(d["Center_y"]),
+                            x: +d["PositionIndex"]
+                        });
+
+                    });
+                    merged_track_data.inline = inline_track;
+                    merged_track_data.outline = outline_track;
+                    merged_track_data.centerline = centerline_track;
+
+                    // track_delta data init
+                    track_delta= []; // 전역 변수 초기화
+                    track_delta = track_delta_data.map(function(data){
+                        return{
+                            x: parseInt(data["PositionIndex"]), // x is pidx
+                            TimeDelta: Math.round(parseFloat(data["DeltaTimeDelta"]), 3) // 일단 소수점 3자리로 round
+                        }
                     });
 
-                    outline_track.push({
-                        long: parseFloat(d["Out_x"]),
-                        lat: parseFloat(d["Out_y"])
-                    });
+                    // animation color setting by overall delta data
+                    // : (-1.5~1.5까지 linear green to red) -1.5 이하는 green, 1.5이상은 red.
 
-                    centerline_track.push({
-                        long: parseFloat(d["Center_x"]),
-                        lat: parseFloat(d["Center_y"]),
-                        x: +d["PositionIndex"]
-                    });
+                    // -1.5 ~ 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑
+                    // animation_track_color = d3.scaleLinear().domain([-1.5, 1.5]).range(['red', 'green']);
 
-                });
-                merged_track_data.inline = inline_track;
-                merged_track_data.outline = outline_track;
-                merged_track_data.centerline = centerline_track;
+                    // -1.5, 0, 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑, 0인 경우 투명 컬러.
+                    animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(0, 0, 0, 0.5)', 'green']);
 
 
 
-                console.log("finished merging all track data");
-                // animation_length = track_data.length;
 
-                // ********  x domain setting, zoom_x domain setting ******** //
-                // 두 데이터의 x 값중 min값과 max값을 골라서 x.domain에 setting
-                // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
+                    console.log("finished merging all track data");
+                    // animation_length = track_data.length;
 
-                var origin_x0 = d3.extent(data, function (d) { return +d.x;});
-                var ref_x0 = d3.extent(ref_data, function (d) { return +d.x; });
-                var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
+                    // ********  x domain setting, zoom_x domain setting ******** //
+                    // 두 데이터의 x 값중 min값과 max값을 골라서 x.domain에 setting
+                    // x domain은 TimeStamp 또는 Distance로 ... default로는 Distance => TimeStamp
 
-                console.log(union_x0);
-                x.domain(union_x0);
-                zoom_x.domain(union_x0);
+                    var origin_x0 = d3.extent(data, function (d) { return +d.x;});
+                    var ref_x0 = d3.extent(ref_data, function (d) { return +d.x; });
+                    var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
 
-                drawLineGraph_withTwoLaps();
-                drawTrack_withTwoLaps();
-                drawSubInfo_withTwoLaps();
-                setBtnState();
-                // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
-                zoomReset();
-                document.getElementById("loading").style.display = "none";
+                    console.log(union_x0);
+                    x.domain(union_x0);
+                    zoom_x.domain(union_x0);
 
-
-                //  ******* comment box contents ********* //
-                d3.json("./data/1018-short/2_5comparison-ex_up_std_oragi_kicshort_86_session-0.json", function(error, track_info_data) {
-                    console.log(track_info_data);
-
-                    track_name = track_info_data.track_info.TrackName;
-                    split = track_info_data.track_info.Split;
-                    optimal_time = track_info_data.optimal_info;
-                    optimal_time = GetStringFromSec(optimal_time);
-                    nSplits = Object.keys(split).length;
-                    track_length = split[nSplits-1];
-
-
-                    $('#sector_track_info').html('');
-                    $('#sector_track_info').append(''+track_name+', '+track_length+'m<br />Optimal: <span style="color:'+ COLOR_NEGATIVE+'">'+optimal_time+'</span>');
-
-                    //console.log(split);
-                    //var comments = track_info_data.comments.overall;
-                    // console.log(comments);
-                    // console.log(Object.keys(comments).length);
-                    // Object.keys(comments).forEach(function(key){
-                    //     $('#comment-table-contents').append("<tr>" +
-                    //         "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
-                    // });
+                    drawLineGraph_withTwoLaps();
+                    drawTrack_withTwoLaps();
+                    drawSubInfo_withTwoLaps();
+                    setBtnState();
+                    // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
+                    zoomReset();
+                    document.getElementById("loading").style.display = "none";
 
 
 
-                    $('#split-table-header').append('<th>'+'<button type="button" style="width:100%;" class="btn brush_control" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">' +
-                        'FULL' +
-                        '</button></th>');
+                    //  ******* comment box contents ********* //
+                    d3.json("./data/1018-short/2_5comparison-ex_up_std_oragi_kicshort_86_session-0.json", function(error, track_info_data) {
+                        console.log(track_info_data);
 
-                    for(z=0; z<nSplits-1; z++){
-                        $('#split-table-header').append('<th>'+'<button type="button" style="width:100%;" class="btn brush_control" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
-                            'S' +(z+1)+
+                        track_name = track_info_data.track_info.TrackName;
+                        split = track_info_data.track_info.Split;
+                        optimal_time = track_info_data.optimal_info;
+                        optimal_time = GetStringFromSec(optimal_time);
+                        nSplits = Object.keys(split).length;
+                        track_length = split[nSplits - 1];
+
+
+                        $('#sector_track_info').html('');
+                        $('#sector_track_info').append('' + track_name + ', ' + track_length + 'm<br />Optimal: <span style="color:' + COLOR_NEGATIVE + '">' + optimal_time + '</span>');
+
+                        //console.log(split);
+                        //var comments = track_info_data.comments.overall;
+                        // console.log(comments);
+                        // console.log(Object.keys(comments).length);
+                        // Object.keys(comments).forEach(function(key){
+                        //     $('#comment-table-contents').append("<tr>" +
+                        //         "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
+                        // });
+
+
+                        $('#split-table-header').append('<th>' + '<button type="button" style="width:100%;" class="btn brush_control" value="' + split[0] + '-' + split[nSplits - 1] + '" onclick="setBrushRange(this,0)">' +
+                            'FULL' +
                             '</button></th>');
-                    }
 
-                    split_record=[];
-                    split_record_ref=[];
-
-
-                    for(z=0; z<nSplits; z++){
-                        if(z==0){
-                            sector_name = 'FULL';
-                        }
-                        else{
-                            sector_name = 'S'+z;
+                        for (z = 0; z < nSplits - 1; z++) {
+                            $('#split-table-header').append('<th>' + '<button type="button" style="width:100%;" class="btn brush_control" value="' + split[z] + '-' + split[z + 1] + '" onclick="setBrushRange(this,' + (z + 1) + ')">' +
+                                'S' + (z + 1) +
+                                '</button></th>');
                         }
 
-                        split_record[z] = track_info_data.sector_info[sector_name].Laptime_A;
-                        split_record_ref[z] = track_info_data.sector_info[sector_name].Laptime_B;
+                        split_record = [];
+                        split_record_ref = [];
 
-                        split_comments[z] = track_info_data.sector_info[sector_name].comments;
-                        split_guides[z] = track_info_data.sector_info[sector_name].guides;
-                    }
 
-                    //console.log(split_comments);
+                        for (z = 0; z < nSplits; z++) {
+                            if (z == 0) {
+                                sector_name = 'FULL';
+                            }
+                            else {
+                                sector_name = 'S' + z;
+                            }
 
-                    split_record_diff = [];
-                    split_record_string = [];
-                    split_record_string_ref = [];
+                            split_record[z] = track_info_data.sector_info[sector_name].Laptime_A;
+                            split_record_ref[z] = track_info_data.sector_info[sector_name].Laptime_B;
 
-                    for(z=0; z<nSplits; z++){
-                        split_record_diff[z] = split_record[z] - split_record_ref[z];
-
-                        if(z==0){
-                            split_record_string[z] = GetStringFromSec(split_record[z]);
-                            split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+                            split_comments[z] = track_info_data.sector_info[sector_name].comments;
+                            split_guides[z] = track_info_data.sector_info[sector_name].guides;
                         }
-                        else{
-                            split_record_string[z] = GetStringFromSec(split_record[z],split_record_ref[z]);
-                            split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+
+                        //console.log(split_comments);
+
+                        split_record_diff = [];
+                        split_record_string = [];
+                        split_record_string_ref = [];
+
+                        for (z = 0; z < nSplits; z++) {
+                            split_record_diff[z] = split_record[z] - split_record_ref[z];
+
+                            if (z == 0) {
+                                split_record_string[z] = GetStringFromSec(split_record[z]);
+                                split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+                            }
+                            else {
+                                split_record_string[z] = GetStringFromSec(split_record[z], split_record_ref[z]);
+                                split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+                            }
                         }
-                    }
 
-                    for(z=0; z<nSplits; z++){
-                        if(split_record_diff[z]<=0)
-                            $('#split-table-contents').append('<td align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string[z]+'</td>');
-                        else
-                            $('#split-table-contents').append('<td align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string[z]+'</td>');
-                    }
+                        for (z = 0; z < nSplits; z++) {
+                            if (split_record_diff[z] <= 0)
+                                $('#split-table-contents').append('<td align="center" style="color:' + COLOR_NEGATIVE + ';">' + split_record_string[z] + '</td>');
+                            else
+                                $('#split-table-contents').append('<td align="center" style="color:' + COLOR_POSITIVE + ';">' + split_record_string[z] + '</td>');
+                        }
 
-                    for(z=0; z<nSplits; z++){
-                        if(split_record_diff[z]>0)
-                            $('#split-table-contents-ref').append('<td align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string_ref[z]+'</td>');
-                        else
-                            $('#split-table-contents-ref').append('<td align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string_ref[z]+'</td>');
-                    }
+                        for (z = 0; z < nSplits; z++) {
+                            if (split_record_diff[z] > 0)
+                                $('#split-table-contents-ref').append('<td align="center" style="color:' + COLOR_NEGATIVE + ';">' + split_record_string_ref[z] + '</td>');
+                            else
+                                $('#split-table-contents-ref').append('<td align="center" style="color:' + COLOR_POSITIVE + ';">' + split_record_string_ref[z] + '</td>');
+                        }
 
-                    UpdateGuideComments(0);
-
+                        UpdateGuideComments(0);
+                        
+                    });
                 });
             });
         });
@@ -595,8 +619,8 @@ function zoomOut() {
 }
 
 function setAnimationRange_fromZoom(s){
-    if(root_x == "TimeStamp")
-        return;
+    // if(root_x == "TimeStamp")
+    //     return;
 
     // clear the animation range (composed of index of data); animation_range는 data의 index를 담고 있음.
     animation_range = [];
@@ -653,11 +677,10 @@ function setMinMax_by_animationRange(){
     })
 }
 
+
+
 function drawing_animationPath() {
     // clean previous animation path
-    // track_svg.select("path.animation_path").remove();
-    // nav_track_svg.select("path.animation_path").remove();
-
     d3.selectAll("path.animation_path").remove();
     d3.selectAll("path.nav_animation_path").remove();
 
@@ -671,43 +694,70 @@ function drawing_animationPath() {
 
     var position_indices = _.pluck(selected_features[0].values, "x");
 
-    // ***************** animation_range의 start value & end value 값을 찾아야함. => axis 바꾼뒤에 여기서 start index, end index를 못찾는 경우가 생김. *************** //
-    var centerLine_start_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
-        selected_features[0].values[animation_range[0]].x);
 
-    var centerLine_end_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
-        selected_features[0].values[animation_range[1]].x);
 
-    // animation start index ~ end index 사이 값을 animation track data array 에 push
-    // + origin lap data 의 time delta 값도 push
-    for(var i=centerLine_start_index; i<centerLine_end_index; i++){
-        animation_track_data.push({
-            'long': merged_track_data.centerline[i].long,
-            'lat': merged_track_data.centerline[i].lat,
-            'x': merged_track_data.centerline[i].x
-        });
-        animation_time_delta.push(merged_track_data.origin_time_delta[i]);
+    // Position Index일 경우 animation path drawing (uniformly sample path legnth && split those to draw with gradient color)
+    if(root_x=="PositionIndex"){
+
+        // ***************** animation_range의 start value & end value 값을 찾아야함. => axis 바꾼뒤에 여기서 start index, end index를 못찾는 경우가 생김. *************** //
+        var centerLine_start_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
+            selected_features[0].values[animation_range[0]].x);
+
+        var centerLine_end_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
+            selected_features[0].values[animation_range[1]].x);
+
+        // animation start index ~ end index 사이 값을 animation track data array 에 push
+        // + origin lap data 의 time delta 값도 push
+        for(var i=centerLine_start_index; i<centerLine_end_index; i++){
+            animation_track_data.push({
+                'long': merged_track_data.centerline[i].long,
+                'lat': merged_track_data.centerline[i].lat,
+                'x': merged_track_data.centerline[i].x
+            });
+            animation_time_delta.push(track_delta[i].TimeDelta);
+        }
+
+        // setting the time delta color palette (지금은 안씀. 이 코드는 매번 선택된 레인지에 따라서 변화할 때만 사용.
+        // animation_color_domain = d3.extent(animation_time_delta);
+        // animation_track_color = d3.scaleLinear().domain(animation_color_domain).range(['red', 'green']);
+
+        // console.log(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)));
+        // drawing animation path.
+        // 1. draw animation path to main track line
+        var sample_precision = 0.79;
+        // 0.79로 했을 때 가장 근사치가 나오긴하는데 (현재 가진 animation point array length랑 내부적으로 생성하는 패쓰를 uniformly 0.79로 샘플 했을 때 가장 근사함.. 나중에 문제 있을듯)
+        var animation_path_width = 7;
+        d3.select("#track_canvas").select("svg").select("g").selectAll("path")
+            .data(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)))
+            .enter().append("path")
+            .attr("class", "animation_path")
+            .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], animation_path_width)})
+            .style("fill", function(d) { return animation_track_color(d.timeDelta)})
+            .style("stroke", function(d) { return animation_track_color(d.timeDelta)})
+            .style("fill-opacity", 0.4)
+            .style("z-index", -1);
+
+
+    // Time Stamp 일 경우 animation path drawing (일반 path drawing)
+    }else if(root_x=="TimeStamp"){
+
+        // time stamp가 축일 경우 centerline 으로 그리지 말고, 우선은 origin track 따라 그리기.
+        // 센터라인에 큰 의미가 있다면 바꿀수 있겠으나 추가 연산이 필요함.
+        for(var i=animation_range[0]; i<animation_range[1]; i++){
+            animation_track_data.push(track_data[i]);
+        }
+
+        d3.select("#track_canvas").select("svg").select("g").append("path")
+            .data([animation_track_data])
+            .attr("class", "animation_path")
+            .attr("d", track_line)
+            .style("stroke", "#dfeb06")
+            .style("stroke-width", 4)
+            .style("stroke-opacity", 0.8)
+            .style("stroke-dasharray", 3) /* 값이 클수록 간격이 넒어짐 */
+            .style("animation", "dash 30s linear");
+
     }
-
-    // setting the time delta color palette
-    animation_color_domain = d3.extent(animation_time_delta);
-    console.log(animation_color_domain);
-    animation_track_color = d3.scaleLinear().domain(animation_color_domain).range(['red', 'green']);
-    // console.log(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)));
-    // drawing animation path.
-    // 1. draw animation path to main track line
-    var sample_precision = 0.79;
-    // 0.79로 했을 때 가장 근사치가 나오긴하는데 (현재 가진 animation point array length랑 내부적으로 생성하는 패쓰를 uniformly 0.79로 샘플 했을 때 가장 근사함.. 나중에 문제 있을듯)
-    var animation_path_width = 7;
-    d3.select("#track_canvas").select("svg").select("g").selectAll("path")
-        .data(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)))
-        .enter().append("path")
-        .attr("class", "animation_path")
-        .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], animation_path_width)})
-        .style("fill", function(d) { return animation_track_color(d.timeDelta)})
-        .style("stroke", function(d) { return animation_track_color(d.timeDelta)})
-        .style("fill-opacity", 0.4)
-        .style("z-index", -1);
 
 
     // 2. draw animation path to navigation track line

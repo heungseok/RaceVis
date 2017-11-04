@@ -55,7 +55,7 @@ function trackAnimation_withTwoLaps(){
         // console.log("x value: " + origin_x_value + ", positionIndex: " + all_features[39].);
         var ref_x_values =  _.pluck(selected_features[0].ref_values, 'x'); // ref_x_values == position Index of x
         ref_animation_index = bisect_for_animation(ref_x_values, origin_x_value, 0, ref_x_values.length-1);
-        console.log("x value: " + origin_x_value + ", ref x value: " + ref_x_values[ref_animation_index]);
+        // console.log("x value: " + origin_x_value + ", ref x value: " + ref_x_values[ref_animation_index]);
 
         // ****************** animation for line chart *************** //
         // **** 1. for origin line chart **** //
@@ -105,11 +105,11 @@ function trackAnimation_withTwoLaps(){
         // ************** block for animation things *************** //
         var track_focus = d3.select("#track_focus1");
         track_focus.attr("transform", "translate(" + track_x(merged_track_data.origin[animation_index].long) + "," + track_y(merged_track_data.origin[animation_index].lat) + ")");
-        track_focus.select("text").text(merged_track_data.origin[animation_index].long + ", " + merged_track_data.origin[animation_index].lat);
+        // track_focus.select("text").text(merged_track_data.origin[animation_index].long + ", " + merged_track_data.origin[animation_index].lat);
 
         var track_focus_ref = d3.select("#track_focus1-ref");
         track_focus_ref.attr("transform", "translate(" + track_x(merged_track_data.ref[ref_animation_index].long) + "," + track_y(merged_track_data.ref[ref_animation_index].lat) + ")");
-        track_focus_ref.select("text").text(merged_track_data.ref[ref_animation_index].long + ", " + merged_track_data.ref[ref_animation_index].lat);
+        // track_focus_ref.select("text").text(merged_track_data.ref[ref_animation_index].long + ", " + merged_track_data.ref[ref_animation_index].lat);
 
         // rotate by steering value
         var steer_focus = d3.select("#steer_focus1");
