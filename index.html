@@ -9,6 +9,7 @@
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./style/style.css">
     <link rel="stylesheet" type="text/css" href="./style/color_style.css">
+    <link rel="stylesheet" type="text/css" href="./style/radarChart_style.css">
 
 
     <title>3secondz</title>
@@ -51,28 +52,47 @@
         <div id="loading"></div>
         <div id="row-top container" class="row top">
 
-            <div class="track_nav col-sm-4" style="position:relative;">
+            <div class="track_nav col-sm-4" id="top-left-components" style="position:relative;">
 
+                <div style="position:relative;">
+                    <ul  class="nav nav-pills">
+                        <li class="active"><a href="#nav_track_tab" data-toggle="tab">Track</a>
+                        </li>
+                        <li><a href="#radar_tab" data-toggle="tab">Radar</a>
+                        </li>
+                    </ul>
+                </div>
 
+                <div class="tab-content">
 
-                <div id="track_nav_canvas" style="position:relative;">
+                    <div class="tab-pane active track_nav" id="nav_track_tab">
 
+                        <div id="track_nav_canvas" style="position:relative;">
+
+                        </div>
+
+                        <div id="sector_btn_wrapper" style="position:absolute; top:70%; width: 80%; left:5%;">
+                            <div id="sector_track_info" style="font-size:14px; font-weight:500; color:#ffffff"></div>
+
+                            <table class="table">
+                                <thead >
+                                <tr id ="split-table-header"></tr>
+                                </thead>
+                                <tbody>
+                                <tr id="split-table-contents"></tr>
+                                <tr id="split-table-contents-ref"></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <div class="tab-pane radar_chart" id="radar_tab">
+                        <div id="radar_chart" style="position:relative;"></div>
+                    </div>
 
                 </div>
 
-                <div id="sector_btn_wrapper" style="position:absolute; top:70%; width: 80%; left:5%;">
-                    <div id="sector_track_info" style="font-size:14px; font-weight:500; color:#ffffff"></div>
 
-                    <table class="table">
-                        <thead >
-                        <tr id ="split-table-header"></tr>
-                        </thead>
-                        <tbody>
-                        <tr id="split-table-contents"></tr>
-                        <tr id="split-table-contents-ref"></tr>
-                        </tbody>
-                    </table>
-                </div>
 
             </div>
 
@@ -294,7 +314,9 @@
 
     <script src="js/lap_select.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/line_graph.js"></script>
+    <script src="js/mainGraph_drawing.js"></script>
+    <script src="js/RadarChart.js"></script>
+    <script src="js/radarChart_drawing.js"></script>
     <script src="js/checkbox.js"></script>
     <script src="js/animation.js"></script>
     <script src="js/nav.js"></script>

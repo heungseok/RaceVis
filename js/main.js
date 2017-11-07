@@ -1,18 +1,22 @@
 /**
  * Created by totor on 2017-06-11.
  */
-/* global variable for drawing ling graph */
 
+// ******************** Global Variable for drawing d3 objects (line graph, track, sub info, chart) ********************* //
+
+// ** main chart variables ** //
 var margin = {top: 5, right: 20, bottom: 20, left: 50},
     margin_for_plot_info = document.getElementById("canvas").offsetWidth*0.2,
     width = document.getElementById("canvas").offsetWidth - margin.left - margin.right - margin_for_plot_info,
     // height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
     height = window.innerHeight/8 - margin.bottom - margin.top;
 
+// ** zoom component variables ** //
 var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
     zoom_width = width,
     zoom_height = window.innerHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
+// ** track, navigation track variables ** //
 var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
     nav_track_margin = {top: 50, right: 10, bottom: 100, left: 30},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
@@ -20,11 +24,25 @@ var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
     nav_track_width = document.getElementById("track_nav_canvas").offsetWidth - track_margin.left - track_margin.right,
     nav_track_height = document.getElementById("row-top container").offsetHeight - nav_track_margin.bottom - nav_track_margin.top;
 
-
+// ** sub-info components variables ** //
 var sub_margin = {top: 10, right: 20, bottom: 20, left: 20},
     sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
     // sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
     sub_height = document.getElementById("row-top container").offsetHeight - sub_margin.bottom - sub_margin.top;
+
+// ** radar chart variables ** //
+var radar_chart_margin = {top:100, right:100, bottom:100, left:100}
+// var radar_chart_width = document.getElementById("top-left-components").offsetWidth - radar_chart_margin.left - radar_chart_margin.right,
+var radar_chart_width = document.getElementById("top-left-components").offsetWidth/3,
+    radar_chart_height = radar_chart_width; // width와 동일하게.
+// Config for the Radar chart
+var radar_chart_config = {
+    w: radar_chart_width,
+    h: radar_chart_height,
+    maxValue: 100,
+    levels: 5,
+    ExtraWidthX: 300
+}
 
 // ************** selected lap, reference lap variable **************** //
 var selected_lap=1, selected_ref_lap=1;
@@ -52,8 +70,6 @@ var selected_features = [], ref_selected_features = [], merged_selected_features
 var selected_feat_names = [];
 // var root_x = "Distance (m)"
 var root_x = "PositionIndex";
-
-
 
 // ************** track boundary variable and line function **************** //
 var track_data = [], ref_track_data =[], merged_track_data={ };
@@ -126,18 +142,17 @@ var trackZoom = d3.zoom()
 var current_zoomRange;
 var context;
 
-
-
-// *** global color variable *** //
+// *****************************  Global Color Variable ****************************** //
 var COLOR_POSITIVE = '#FF0000';
 var COLOR_NEGATIVE = '#00FF00';
 
 var COLOR_ORIGIN = '#ee337d';
 var COLOR_REF = '#00adeb';
 
-
+// *****************************  Comments and Guide variables ****************************** //
 var split_comments= [];
 var split_guides = [];
+
 
 /**************************** END of initializing Global variable *******************************************/
 
@@ -321,7 +336,7 @@ function init_with_twoLaps() {
                     track_delta = track_delta_data.map(function(data){
                         return{
                             x: parseInt(data["PositionIndex"]), // x is pidx
-                            TimeDelta: Math.round(parseFloat(data["DeltaTimeDelta"]), 3) // 일단 소수점 3자리로 round
+                            TimeDelta: parseFloat(data["DeltaTimeDelta"]) // 일단 소수점 3자리로 round
                         }
                     });
 
@@ -332,7 +347,8 @@ function init_with_twoLaps() {
                     // animation_track_color = d3.scaleLinear().domain([-1.5, 1.5]).range(['red', 'green']);
 
                     // -1.5, 0, 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑, 0인 경우 투명 컬러.
-                    animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(0, 0, 0, 0.5)', 'green']);
+                    // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(0, 0, 0, 0.5)', 'green']);
+                    animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(255,255,0, 0.4)', 'green']);
 
 
 
@@ -450,6 +466,37 @@ function init_with_twoLaps() {
                         }
 
                         UpdateGuideComments(0);
+
+
+                        // ********************* drawing radar chart ******************** //
+                        // setting dummy data
+                        var radar_data = [
+                            [
+                                {"area": "Central ", "value": 80},
+                                {"area": "Kirkdale", "value": 40},
+                                {"area": "Kensington ", "value": 40},
+                                {"area": "Everton ", "value": 90},
+                                {"area": "Picton ", "value": 60},
+                                {"area": "Riverside ", "value": 80}
+                            ],
+                            [
+                                {"area": "Central ", "value": 20},
+                                {"area": "Kirkdale", "value": 10},
+                                {"area": "Kensington ", "value": 30},
+                                {"area": "Everton ", "value": 30},
+                                {"area": "Picton ", "value": 20},
+                                {"area": "Riverside ", "value": 100}
+                            ]
+                        ]
+
+                        // drawing radar chart
+                        RadarChart.draw("#radar_chart", radar_data, radar_chart_config)
+
+                        d3.select('#radar_chart')
+                            .selectAll('svg')
+                            .append('svg')
+                            .attr("width", radar_chart_width)
+                            .attr("height", radar_chart_height);
                         
                     });
                 });
@@ -734,6 +781,10 @@ function drawing_animationPath() {
             .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], animation_path_width)})
             .style("fill", function(d) { return animation_track_color(d.timeDelta)})
             .style("stroke", function(d) { return animation_track_color(d.timeDelta)})
+            // .style("fill-opacity", function(d) {
+            //     if (d.timeDelta > -1 && d.timeDelta < 1) return 0.5;
+            //     else return 1;
+            // })
             .style("fill-opacity", 0.4)
             .style("z-index", -1);
 

@@ -1,0 +1,25 @@
+#radar_chart{
+    width: 30vw;
+    height: 35vh;
+    fill: white; /* text label color */
+}
+
+.radar.toolTip {
+    pointer-events: none;
+    position: absolute;
+    display: none;
+    min-width: 40px;
+    height: auto;
+    background: none repeat scroll 0 0 #333;
+    padding: 9px 14px 6px 14px;
+    border-radius: 2px;
+    text-align: center;
+    line-height: 1;
+    color: white;
+    box-shadow: 0px 3px 9px rgba(0, 0, 0, .15);
+}
+
+.radar.toolTip span {
+    font-weight: 500;
+    color: white;
+}
