@@ -3,13 +3,14 @@
 <head>
     <meta charset="UTF-8">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet"   href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     <link rel="stylesheet" type="text/css" href="./style/style.css">
     <link rel="stylesheet" type="text/css" href="./style/color_style.css">
     <link rel="stylesheet" type="text/css" href="./style/radarChart_style.css">
+    <link rel="stylesheet" type="text/css" href="style/RWD_style.css">
 
 
     <title>3secondz</title>
@@ -312,11 +313,30 @@
     </div>
 
 
+    <div id="warningModal" class="modal">
+        <!-- about Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close" onclick="maximize_refresh()">&times;</span>
+                <h3>Warning</h3>
+            </div>
+            <div class="modal-body">
+                <section>
+                    <h4>Current resolution doesn't support the system.</h4>
+                    <p>Our system is optimized for resolutions over 1000x650. Please maximize the window as much as possible.</p>
+                    <br>
+                    <p>If you see this message, please maximize the window and refresh it.</p>
+
+                </section>
+            </div>
+        </div>
+    </div>
+
+
     <script src="js/lap_select.js"></script>
     <script src="js/main.js"></script>
     <script src="js/mainGraph_drawing.js"></script>
     <script src="js/RadarChart.js"></script>
-    <script src="js/radarChart_drawing.js"></script>
     <script src="js/checkbox.js"></script>
     <script src="js/animation.js"></script>
     <script src="js/nav.js"></script>

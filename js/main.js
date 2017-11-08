@@ -3,6 +3,9 @@
  */
 
 // ******************** Global Variable for drawing d3 objects (line graph, track, sub info, chart) ********************* //
+var MAX_WIDTH = 1000;
+var MAX_HEIGHT = 650;
+
 
 // ** main chart variables ** //
 var margin = {top: 5, right: 20, bottom: 20, left: 50},
@@ -154,9 +157,8 @@ var split_comments= [];
 var split_guides = [];
 
 
+
 /**************************** END of initializing Global variable *******************************************/
-
-
 
 
 // document가 ready 되었을 때 chart initialization
@@ -164,8 +166,32 @@ $(document).ready(function () {
     init(vis_type);
 });
 
+// window resize
+window.addEventListener("resize", redraw);
+function redraw(){
+    console.log("Window Resize!!");
+    if(window.innerWidth <= MAX_WIDTH || window.innerHeight <= MAX_HEIGHT){
+        // Open modal and Set all elements invisible
+        // document.body.style.display = "none";
+        document.getElementById("warningModal").style.display = "block";
+
+    }else{
+        // Close modal and Set all elements visible
+        document.getElementById("warningModal").style.display = "none";
+        // document.body.style.display = null;
+
+    }
+
+}
+
 function init(init_type) {
     init_type = init_type || 1;
+
+    if(window.innerWidth <= MAX_WIDTH || window.innerHeight <= MAX_HEIGHT){
+        document.getElementById("warningModal").style.display = "block";
+        document.getElementById("loading").style.display = "none";
+        return;
+    }
 
     document.getElementById("loading").style.display = "block";
 
@@ -803,9 +829,9 @@ function drawing_animationPath() {
             .attr("class", "animation_path")
             .attr("d", track_line)
             .style("stroke", "#dfeb06")
-            .style("stroke-width", 4)
-            .style("stroke-opacity", 0.8)
-            .style("stroke-dasharray", 3) /* 값이 클수록 간격이 넒어짐 */
+            .style("stroke-width", 5)
+            .style("stroke-opacity", 0.4)
+            .style("stroke-dasharray", 2) /* 값이 클수록 간격이 넒어짐 */
             .style("animation", "dash 30s linear");
 
     }
@@ -1013,6 +1039,8 @@ function track_zoomReset(){
 function track_dragged(d){
     d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
 }
+
+
 
 
 // ***************** yongseop *************** //

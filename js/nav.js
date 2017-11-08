@@ -62,3 +62,17 @@ function closeNavRight() {
     document.getElementById("sideNavRight").style.width = "0";
 
 }
+
+function maximize_refresh(){
+    // window.innerWidth = window.screen.width;
+    // window.innerHeight = window.screen.height;
+    // window.screenX = 0;
+    // window.screenY = 0;
+    // alwaysLowered = false;
+    // this.window.resizeTo(window.screen.width, window.screen.height);
+    window.moveTo(0, 0);
+    window.resizeTo(screen.availWidth, screen.availHeight);
+    location.reload(true);
+
+    // init(vis_type);
+}
