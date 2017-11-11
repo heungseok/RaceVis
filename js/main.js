@@ -6,7 +6,6 @@
 var MAX_WIDTH = 1000;
 var MAX_HEIGHT = 650;
 
-
 // ** main chart variables ** //
 var margin = {top: 5, right: 20, bottom: 20, left: 50},
     margin_for_plot_info = document.getElementById("canvas").offsetWidth*0.2,
@@ -16,7 +15,7 @@ var margin = {top: 5, right: 20, bottom: 20, left: 50},
 
 // ** zoom component variables ** //
 var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
-    zoom_width = width,
+    zoom_width = width, // line chart랑 같은 width
     zoom_height = window.innerHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
 // ** track, navigation track variables ** //
@@ -62,7 +61,7 @@ var bisect = d3.bisector(function (d) { return d.x; }).left;
 var bisect_for_animation = d3.bisector(function (d) { return d; }).left;
 
 var xAxis = d3.axisBottom(x);
-var zoom_xAxis = d3.axisBottom(zoom_x)
+var zoom_xAxis = d3.axisBottom(zoom_x);
 
 var svg, zoom_svg,
     track_svg, sub_svg, nav_track_svg;
@@ -71,7 +70,6 @@ var svg, zoom_svg,
 var all_features, ref_all_features, merged_all_features =[];
 var selected_features = [], ref_selected_features = [], merged_selected_features =[];
 var selected_feat_names = [];
-// var root_x = "Distance (m)"
 var root_x = "PositionIndex";
 
 // ************** track boundary variable and line function **************** //
@@ -167,31 +165,30 @@ $(document).ready(function () {
 });
 
 // window resize
-window.addEventListener("resize", redraw);
-function redraw(){
+window.addEventListener("resize", resize);
+function resize(){
     console.log("Window Resize!!");
     if(window.innerWidth <= MAX_WIDTH || window.innerHeight <= MAX_HEIGHT){
         // Open modal and Set all elements invisible
         // document.body.style.display = "none";
         document.getElementById("warningModal").style.display = "block";
-
     }else{
         // Close modal and Set all elements visible
         document.getElementById("warningModal").style.display = "none";
         // document.body.style.display = null;
-
     }
+    // d3_components_resize();
 
 }
 
 function init(init_type) {
     init_type = init_type || 1;
 
-    if(window.innerWidth <= MAX_WIDTH || window.innerHeight <= MAX_HEIGHT){
-        document.getElementById("warningModal").style.display = "block";
-        document.getElementById("loading").style.display = "none";
-        return;
-    }
+    // if(window.innerWidth <= MAX_WIDTH || window.innerHeight <= MAX_HEIGHT){
+    //     document.getElementById("warningModal").style.display = "block";
+    //     document.getElementById("loading").style.display = "none";
+    //     return;
+    // }
 
     document.getElementById("loading").style.display = "block";
 
@@ -515,6 +512,7 @@ function init_with_twoLaps() {
                             ]
                         ]
 
+
                         // drawing radar chart
                         RadarChart.draw("#radar_chart", radar_data, radar_chart_config)
 
@@ -591,7 +589,9 @@ function brushed(){
     current_zoomRange = s;
     // console.log(s);
     // current_zoomRange = s.map(zoom_x.invert, zoom_x);
-    x.domain(s.map(zoom_x.invert, zoom_x)); // update x domain by zoom range
+
+    // update x domain by zoom range
+    x.domain(s.map(zoom_x.invert, zoom_x));
 
 
     // **** update y scale **** //
@@ -993,8 +993,7 @@ function setBrushRange(btn,split){
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
 
 
-    // 여기서 comment 테이블도 새로 그려 줘야 되는디....
-
+    // Update comment table
     UpdateGuideComments(split);
 
 }
@@ -1078,4 +1077,66 @@ function GetStringFromSec(sec, sec_ref)
     }
 
     return ret;
+}
+
+
+
+// ********** d3 components resize ************** //
+function d3_components_resize(){
+
+    // lineCharts_resize();
+}
+
+function lineCharts_resize(){
+    // reset the width/height
+    width = document.getElementById("canvas").offsetWidth - margin.left - margin.right - margin_for_plot_info;
+    height = window.innerHeight/8 - margin.bottom - margin.top;
+
+    // update the range of the scale with new width/height
+    x = x.range([0, width]);
+
+    // **** update y scale **** //
+    d3.select("#canvas").selectAll("svg").select("g").each(function(d){
+        var origin_y0 = d3.extent(d.values, function(c) {
+            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+        });
+        var ref_y0 = d3.extent(d.ref_values, function(c) {
+            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+        });
+        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+
+        var ty = y.set(this, d3.scaleLinear()
+            .range([height, 0]))
+            .domain(union_y0); // local feature에 대한 y range setting
+
+        line.set(this, d3.line().curve(d3.curveBasis)
+            .x(function(c){ return x(c.x);})
+            .y(function(c){ return ty(c.feature_val); }));
+
+    });
+
+    // **** update y axis **** //
+    for (var i=0; i<selected_features.length; i++){
+        var id = "g#" + selected_features[i].id.split(" ")[0];
+
+        var origin_y0 = d3.extent(selected_features[i].values, function(c) {
+            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+        });
+        var ref_y0 = d3.extent(selected_features[i].ref_values, function(c) {
+            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+        });
+        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+        var y_range = d3.scaleLinear().range([height, 0]).domain(union_y0);
+
+        d3.select(id).select(".axis.axis--y").call(d3.axisLeft(y_range).ticks(3));
+    }
+
+    // update each svg of line charts
+    d3.select("#canvas").selectAll("svg")
+        .attr("transform", "translate(0, " + height + ")")
+
+    // update each line
+    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
+    // d3.select("#canvas").selectAll("path.line.ref").attr("d", function(d) { return line.get(this)(d.ref_values); });
+
 }

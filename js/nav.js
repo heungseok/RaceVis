@@ -70,9 +70,10 @@ function maximize_refresh(){
     // window.screenY = 0;
     // alwaysLowered = false;
     // this.window.resizeTo(window.screen.width, window.screen.height);
+    console.log("start resize!");
     window.moveTo(0, 0);
-    window.resizeTo(screen.availWidth, screen.availHeight);
-    location.reload(true);
+    window.resizeTo(window.screen.availWidth, window.screen.availHeight);
+    console.log("end of resize!");
 
     // init(vis_type);
 }

@@ -11,9 +11,15 @@ function drawLineGraph_withTwoLaps() {
     /*************************** DRAWING CHART ******************************/
     svg = d3.select("#canvas").selectAll("svg")
         .data(selected_features)
-        .enter().append("svg")
-        .attr("width", width + margin.left + margin.right + margin_for_plot_info)
-        .attr("height", height + margin.bottom + margin.top)
+        .enter()
+        .append("div").classed("svg-container.line-chart", true) // container class to make it responsive
+        .append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet") // responsive SVG needs these 2 attributes and no width and height attr
+        .attr("viewBox","0 0 " + (width+margin.left+margin.right+margin_for_plot_info)
+            + " " + (height+margin.bottom+margin.top))
+        .classed("svg-content-responsive", true) // class to make it responsive
+        // .attr("width", width + margin.left + margin.right + margin_for_plot_info)
+        // .attr("height", height + margin.bottom + margin.top)
         .append("g")
         .attr("id", function (d) {
             return d.id.split(" ")[0];
@@ -212,13 +218,19 @@ function drawLineGraph_withTwoLaps() {
         .attr("class", "chartBrush")
         .call(brush_onChart);
 
+
     // ################################ ZOOM BRUSH PART (on ZOOM CANVAS) ###############################
     zoom_svg = d3.select("#zoom_canvas")
+        .append("div").classed("svg-container.line-chart", true)
         .append("svg")
-        .attr("width", zoom_width + zoom_margin.left + zoom_margin.right)
-        .attr("height", zoom_height + zoom_margin.top + zoom_margin.bottom)
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + (width+margin.left+margin.right+margin_for_plot_info)
+                + " " + (zoom_height+zoom_margin.bottom+zoom_margin.top))
+        .classed("svg-content-responsive", true)
+        // .attr("width", zoom_width + zoom_margin.left + zoom_margin.right)
+        // .attr("height", zoom_height + zoom_margin.top + zoom_margin.bottom)
         .append("g")
-        .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
+        .attr("transform", "translate(" + zoom_margin.left + "," + zoom_margin.top + ")")
 
     context = zoom_svg.append("g")
         .attr("class", "context");
@@ -275,13 +287,18 @@ function drawTrack_withTwoLaps(){
         .domain(union_x0);
 
     // setting svg for drawing track
-    track_svg = d3.select("#track_canvas").append("svg")
-        .attr("width", track_width + track_margin.left + track_margin.right)
-        .attr("height", track_height + track_margin.top + track_margin.bottom)
+    track_svg = d3.select("#track_canvas")
+        .append("div").classed("svg-container.main-track", true)
+        .append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + (track_width + track_margin.left + track_margin.right)
+            + " " + (track_height + track_margin.top + track_margin.bottom))
+        .classed("svg-content-responsive", true)
+        // .attr("width", track_width + track_margin.left + track_margin.right)
+        // .attr("height", track_height + track_margin.top + track_margin.bottom)
         .append("g")
         .attr("transform",
             "translate(" + track_margin.left + "," + track_margin.top + ")");
-            // "translate(" + track_width/4+ "," + track_margin.top + ")");
 
 
     // *************** Append track line path :***************//
@@ -337,9 +354,17 @@ function drawTrack_withTwoLaps(){
         .domain(union_y0);
 
     // setting svg for drawing track
-    nav_track_svg = d3.select("#track_nav_canvas").append("svg")
-        .attr("width", nav_track_width + nav_track_margin.left + nav_track_margin.right)
-        .attr("height", nav_track_height + nav_track_margin.top + nav_track_margin.bottom)
+    nav_track_svg = d3.select("#track_nav_canvas")
+        .append("div").classed("svg-container.main-track", true)
+        .append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet")
+        .attr("viewBox", "0 0 " + (nav_track_width + nav_track_margin.left + nav_track_margin.right)
+            + " " + (nav_track_height + nav_track_margin.top + nav_track_margin.bottom))
+        .classed("svg-content-responsive", true)
+        // .append("svg")
+        // .append("svg")
+        // .attr("width", nav_track_width + nav_track_margin.left + nav_track_margin.right)
+        // .attr("height", nav_track_height + nav_track_margin.top + nav_track_margin.bottom)
         .append("g")
         .attr("transform",
             // "translate(" + track_margin.left + "," + track_margin.top + ")");
@@ -431,9 +456,16 @@ function drawSubInfo_withTwoLaps() {
     console.log("draw subinfo");
     /******************** Drawing Sub Info ****************************/
     // setting svg for drawing track
-    sub_svg = d3.select("#sub_canvas").append("svg")
-        .attr("width", sub_width + sub_margin.left + sub_margin.right)
-        .attr("height", sub_height + sub_margin.top + sub_margin.bottom)
+    sub_svg = d3.select("#sub_canvas")
+        .append("div").classed("svg-container.sub-info", true) // container class to make it responsive
+        .append("svg")
+        .attr("preserveAspectRatio", "xMinYMin meet") // responsive SVG needs these 2 attributes and no width and height attr
+        .attr("viewBox","0 0 " + (sub_width + sub_margin.left + sub_margin.right)
+            + " " + (sub_height + sub_margin.top + sub_margin.bottom))
+        .classed("svg-content-responsive", true) // class to make it responsive
+        // .append("svg")
+        // .attr("width", sub_width + sub_margin.left + sub_margin.right)
+        // .attr("height", sub_height + sub_margin.top + sub_margin.bottom)
         .append("g")
         .attr("transform",
             "translate(" + sub_margin.left + "," + sub_margin.top + ")");
@@ -782,10 +814,12 @@ function addChart_withTwoLaps(id) {
     ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
     console.log(target_data);
     svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
-    //                var update_svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
+        .append("div").classed("svg-container.line-chart", true) // container class to make it responsive
         .append("svg")
-        .attr("width", width + margin.left + margin.right  + margin_for_plot_info)
-        .attr("height", height + margin.bottom + margin.top)
+        .attr("preserveAspectRatio", "xMinYMin meet") // responsive SVG needs these 2 attributes and no width and height attr
+        .attr("viewBox","0 0 " + (width+margin.left+margin.right+margin_for_plot_info)
+            + " " + (height+margin.bottom+margin.top))
+        .classed("svg-content-responsive", true) // class to make it responsive
         .append("g")
         .attr("id", function (d) {
             return d.id.split(" ")[0];

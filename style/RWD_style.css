@@ -18,3 +18,84 @@
 
     transition: all 0.3s ease-out;
 }
+
+/* line-chart (and zoom brush) svg CSS */
+.svg-container.line-chart {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 10%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content-responsive.line-chart {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
+/* sub-info svg CSS */
+.svg-container.sub-info {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 200%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content-responsive.sub-info {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
+
+/* track svg CSS */
+.svg-container.main-track {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 20%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content-responsive.main-track {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
+/* nav_track svg CSS */
+.svg-container.nav-track {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 20%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content-responsive.nav-track {
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
+
+/* nav_track svg CSS */
+.svg-container.radar_chart {
+    display: inline-block;
+    position: relative;
+    width: 100%;
+    padding-bottom: 150%; /* aspect ratio */
+    vertical-align: top;
+    overflow: hidden;
+}
+.svg-content-responsive.radar_chart{
+    display: inline-block;
+    position: absolute;
+    top: 10px;
+    left: 0;
+}
