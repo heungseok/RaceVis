@@ -39,7 +39,7 @@ nav {
 
 #canvas{
     /*width:100%; !* 이렇게 해야 안가려짐 *!*/
-    width:90%; /* 이렇게 해야 안가려짐 */
+    width:100%; /* 이렇게 해야 안가려짐 */
     height: 300px;
     min-height: 100% !important;
     margin-right: 20px;
@@ -62,7 +62,7 @@ path.domain{
 }
 
 #zoom_canvas{
-    width:90%;
+    width:100%;
     height: 10%;
 }
 button#zoom_reset{
@@ -143,8 +143,6 @@ rect.selection{
 #sector_btn_wrapper{
     position:relative;
 }
-
-
 
 g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
     display: None;

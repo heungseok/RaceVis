@@ -12,12 +12,14 @@ function drawLineGraph_withTwoLaps() {
     svg = d3.select("#canvas").selectAll("svg")
         .data(selected_features)
         .enter()
+        // for responsive charts //
         .append("div").classed("svg-container.line-chart", true) // container class to make it responsive
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet") // responsive SVG needs these 2 attributes and no width and height attr
         .attr("viewBox","0 0 " + (width+margin.left+margin.right+margin_for_plot_info)
             + " " + (height+margin.bottom+margin.top))
         .classed("svg-content-responsive", true) // class to make it responsive
+        // for non-responsive chart //
         // .attr("width", width + margin.left + margin.right + margin_for_plot_info)
         // .attr("height", height + margin.bottom + margin.top)
         .append("g")
@@ -73,24 +75,36 @@ function drawLineGraph_withTwoLaps() {
     svg.append("text")
         .attr("class", "plot_info_focus")
         .attr("y", height*0.1)
-        .attr("x", width + margin_for_plot_info*0.1 )
+        .attr("x", additional_margin+width + margin_for_plot_info*0.1 )
         .style("fill", COLOR_ORIGIN)
         .style("font-size", "15px")
         .text("origin");
 
+    svg.append("image")
+        .attr("class", "plot_info_focus_max_arrow")
+        .attr("height", 20).attr("width", 20)
+        .attr("xlink:href", "./img/arrow_origin.png")
+        .attr("transform", "translate(" + (width+additional_margin) + ", " + (height*.225) + ")")
+
     svg.append("text")
         .attr("class", "plot_info_focus_max")
         .attr("y", height*0.1 + 25)
-        .attr("x", width + margin_for_plot_info*0.1 )
+        .attr("x", additional_margin+width + margin_for_plot_info*0.1 )
         .style("fill", COLOR_ORIGIN)
         .style("font-size", "12px")
         .text("max");
         // .text(function(d){ return d.origin_max.toFixed(3); });
 
+    svg.append("image")
+        .attr("class", "plot_info_focus_min_arrow")
+        .attr("height", 20).attr("width", 20)
+        .attr("xlink:href", "./img/arrow_origin(rev).png")
+        .attr("transform", "translate(" + (width+additional_margin) + ", " + (height*.6) + ")")
+
     svg.append("text")
         .attr("class", "plot_info_focus_min")
         .attr("y", height*0.1 + 50  )
-        .attr("x", width + margin_for_plot_info*0.1 )
+        .attr("x", additional_margin+width + margin_for_plot_info*0.1 )
         .style("fill", COLOR_ORIGIN)
         .style("font-size", "12px")
         .text("min");
@@ -99,7 +113,7 @@ function drawLineGraph_withTwoLaps() {
     svg.append("text")
         .attr("class", "plot_info_focus-ref")
         .attr("y", height*0.1)
-        .attr("x", 10+width + margin_for_plot_info/2)
+        .attr("x", additional_margin+width + margin_for_plot_info*0.5)
         .style("fill", COLOR_REF)
         .style("font-size", "15px")
         .text("ref");
@@ -107,20 +121,32 @@ function drawLineGraph_withTwoLaps() {
     svg.append("text")
         .attr("class", "plot_info_focus_max-ref")
         .attr("y", height*0.1 + 25)
-        .attr("x", 10+width + margin_for_plot_info/2)
+        .attr("x", additional_margin+width + margin_for_plot_info*0.5)
         .style("fill", COLOR_REF)
         .style("font-size", "12px")
         .text("max");
         // .text(functio?n(d){ return d.ref_max.toFixed(3); });
 
+    svg.append("image")
+        .attr("class", "plot_info_focus_max_arrow")
+        .attr("height", 20).attr("width", 20)
+        .attr("xlink:href", "./img/arrow_ref.png")
+        .attr("transform", "translate(" + (width+additional_margin+margin_for_plot_info*.4) + ", " + (height*.225) + ")")
+
     svg.append("text")
         .attr("class", "plot_info_focus_min-ref")
-        .attr("y", height*0.1 + 50  )
-        .attr("x", 10+width + margin_for_plot_info/2)
+        .attr("y", height*0.1 + 50)
+        .attr("x", additional_margin+width + margin_for_plot_info*0.5)
         .style("fill", COLOR_REF)
         .style("font-size", "12px")
         .text("min");
         // .text(function(d){ return d.ref_min.toFixed(3); });
+
+    svg.append("image")
+        .attr("class", "plot_info_focus_max_arrow")
+        .attr("height", 20).attr("width", 20)
+        .attr("xlink:href", "./img/arrow_ref(rev).png")
+        .attr("transform", "translate(" + (width+additional_margin+margin_for_plot_info*.4) + ", " + (height*.6) + ")")
 
 
     // ************* Append x-axis, y-axis *********************//
@@ -477,7 +503,7 @@ function drawSubInfo_withTwoLaps() {
     steering_focus.append("image")
         .attr("class", "steer")
         .attr("height", 80).attr("width", 80)
-        .attr("xlink:href", "./img/steer.png")
+        .attr("xlink:href", "./img/steer_origin.png")
         .attr("transform", "scale(0.5), translate(150, 80)")
         // .attr("transform", "scale(0.5)");
     // steering_focus.append("text").attr("class", "steer_value")
@@ -487,7 +513,7 @@ function drawSubInfo_withTwoLaps() {
     steering_focus.append("image")
         .attr("class", "steer-ref")
         .attr("height", 80).attr("width", 80)
-        .attr("xlink:href", "./img/steer.png")
+        .attr("xlink:href", "./img/steer_ref.png")
         .attr("transform", "scale(0.5), translate(250, 80)")
         // .attr("transform", "scale(0.5)");
     // steering_focus.append("text").attr("class", "steer-ref_value")
@@ -878,35 +904,44 @@ function addChart_withTwoLaps(id) {
     svg.append("text")
         .attr("class", "plot_info_focus")
         .attr("y", height*0.1)
-        .attr("x", width + margin_for_plot_info*0.1 )
+        .attr("x", additional_margin+width + margin_for_plot_info*0.1 )
         .style("fill", COLOR_ORIGIN)
         .style("font-size", "15px")
         .text("origin");
 
-
+    svg.append("image")
+        .attr("class", "plot_info_focus_max_arrow")
+        .attr("height", 20).attr("width", 20)
+        .attr("xlink:href", "./img/arrow_origin.png")
+        .attr("transform", "translate(" + (width+additional_margin) + ", " + (height*.225) + ")")
 
     svg.append("text")
         .attr("class", "plot_info_focus_max")
         .attr("y", height*0.1 + 25)
-        .attr("x", width + margin_for_plot_info*0.1 )
+        .attr("x", additional_margin+width + margin_for_plot_info*0.1 )
         .style("fill", COLOR_ORIGIN)
         .style("font-size", "12px")
         .text("max");
 
+    svg.append("image")
+        .attr("class", "plot_info_focus_min_arrow")
+        .attr("height", 20).attr("width", 20)
+        .attr("xlink:href", "./img/arrow_origin(rev).png")
+        .attr("transform", "translate(" + (width+additional_margin) + ", " + (height*.6) + ")")
 
     svg.append("text")
         .attr("class", "plot_info_focus_min")
         .attr("y", height*0.1 + 50  )
-        .attr("x", width + margin_for_plot_info*0.1 )
+        .attr("x", additional_margin+width + margin_for_plot_info*0.1 )
         .style("fill", COLOR_ORIGIN)
         .style("font-size", "12px")
-        .text("max");
-    // .text(function(d){ return d.origin_min.toFixed(3); });
+        .text("min");
+
 
     svg.append("text")
         .attr("class", "plot_info_focus-ref")
         .attr("y", height*0.1)
-        .attr("x", 10+width + margin_for_plot_info/2)
+        .attr("x", additional_margin+width + margin_for_plot_info*0.5)
         .style("fill", COLOR_REF)
         .style("font-size", "15px")
         .text("ref");
@@ -914,20 +949,32 @@ function addChart_withTwoLaps(id) {
     svg.append("text")
         .attr("class", "plot_info_focus_max-ref")
         .attr("y", height*0.1 + 25)
-        .attr("x", 10+width + margin_for_plot_info/2)
+        .attr("x", additional_margin+width + margin_for_plot_info*0.5)
         .style("fill", COLOR_REF)
         .style("font-size", "12px")
         .text("max");
     // .text(functio?n(d){ return d.ref_max.toFixed(3); });
 
+    svg.append("image")
+        .attr("class", "plot_info_focus_max_arrow")
+        .attr("height", 20).attr("width", 20)
+        .attr("xlink:href", "./img/arrow_ref.png")
+        .attr("transform", "translate(" + (width+additional_margin+margin_for_plot_info*.4) + ", " + (height*.225) + ")")
+
     svg.append("text")
         .attr("class", "plot_info_focus_min-ref")
-        .attr("y", height*0.1 + 50  )
-        .attr("x", 10+width + margin_for_plot_info/2)
+        .attr("y", height*0.1 + 50)
+        .attr("x", additional_margin+width + margin_for_plot_info*0.5)
         .style("fill", COLOR_REF)
         .style("font-size", "12px")
         .text("min");
+    // .text(function(d){ return d.ref_min.toFixed(3); });
 
+    svg.append("image")
+        .attr("class", "plot_info_focus_max_arrow")
+        .attr("height", 20).attr("width", 20)
+        .attr("xlink:href", "./img/arrow_ref(rev).png")
+        .attr("transform", "translate(" + (width+additional_margin+margin_for_plot_info*.4) + ", " + (height*.6) + ")")
 
     // ************** x axis, y axis 생성 ************************ //
     var origin_y0 = d3.extent(target_data.values, function(c) { return +c.feature_val;});

@@ -12,6 +12,9 @@ var margin = {top: 5, right: 20, bottom: 20, left: 50},
     width = document.getElementById("canvas").offsetWidth - margin.left - margin.right - margin_for_plot_info,
     // height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
     height = window.innerHeight/8 - margin.bottom - margin.top;
+// additional margin to show min, max value next to the line chart
+var additional_margin = 40;
+
 
 // ** zoom component variables ** //
 var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
