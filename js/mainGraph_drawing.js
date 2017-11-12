@@ -75,7 +75,7 @@ function drawLineGraph_withTwoLaps() {
     svg.append("text")
         .attr("class", "plot_info_focus")
         .attr("y", height*0.1)
-        .attr("x", additional_margin+width + margin_for_plot_info*0.1 )
+        .attr("x", additional_margin+width + margin_for_plot_info*0.1-10 )
         .style("fill", COLOR_ORIGIN)
         .style("font-size", "15px")
         .text("origin");
@@ -113,7 +113,7 @@ function drawLineGraph_withTwoLaps() {
     svg.append("text")
         .attr("class", "plot_info_focus-ref")
         .attr("y", height*0.1)
-        .attr("x", additional_margin+width + margin_for_plot_info*0.5)
+        .attr("x", additional_margin+width + margin_for_plot_info*0.5 -10)
         .style("fill", COLOR_REF)
         .style("font-size", "15px")
         .text("ref");
@@ -152,6 +152,7 @@ function drawLineGraph_withTwoLaps() {
     // ************* Append x-axis, y-axis *********************//
     // append text label
     svg.append("text")
+        .attr("class", "chart_label")
         .attr("y", height - 50)
         .attr("x", 10)
         .text(function(d) { return d.id; });
@@ -483,15 +484,18 @@ function drawSubInfo_withTwoLaps() {
     /******************** Drawing Sub Info ****************************/
     // setting svg for drawing track
     sub_svg = d3.select("#sub_canvas")
+        // for responsive chart //
         .append("div").classed("svg-container.sub-info", true) // container class to make it responsive
         .append("svg")
         .attr("preserveAspectRatio", "xMinYMin meet") // responsive SVG needs these 2 attributes and no width and height attr
         .attr("viewBox","0 0 " + (sub_width + sub_margin.left + sub_margin.right)
             + " " + (sub_height + sub_margin.top + sub_margin.bottom))
         .classed("svg-content-responsive", true) // class to make it responsive
+        // for non-responsive chart //
         // .append("svg")
         // .attr("width", sub_width + sub_margin.left + sub_margin.right)
         // .attr("height", sub_height + sub_margin.top + sub_margin.bottom)
+
         .append("g")
         .attr("transform",
             "translate(" + sub_margin.left + "," + sub_margin.top + ")");
@@ -505,20 +509,14 @@ function drawSubInfo_withTwoLaps() {
         .attr("height", 80).attr("width", 80)
         .attr("xlink:href", "./img/steer_origin.png")
         .attr("transform", "scale(0.5), translate(150, 80)")
-        // .attr("transform", "scale(0.5)");
-    // steering_focus.append("text").attr("class", "steer_value")
-    //     .attr("x", 0).attr("y", 85)
-    //     .text("");
+
 
     steering_focus.append("image")
         .attr("class", "steer-ref")
         .attr("height", 80).attr("width", 80)
         .attr("xlink:href", "./img/steer_ref.png")
         .attr("transform", "scale(0.5), translate(250, 80)")
-        // .attr("transform", "scale(0.5)");
-    // steering_focus.append("text").attr("class", "steer-ref_value")
-    //     .attr("x", 80).attr("y", 85)
-    //     .text("");
+
 
     steering_focus.append("text")
         .attr("x", 5)
@@ -895,16 +893,12 @@ function addChart_withTwoLaps(id) {
             return "url(#clip_" + d.id.split(" ")[0] + ")";
         });
 
-    svg.append("text")
-        .attr("y", height - 50)
-        .attr("x", 10)
-        .text(function(d) { return d.id; });
 
     // ************* Append plot detail info *********************//
     svg.append("text")
         .attr("class", "plot_info_focus")
         .attr("y", height*0.1)
-        .attr("x", additional_margin+width + margin_for_plot_info*0.1 )
+        .attr("x", additional_margin+width + margin_for_plot_info*0.1 -10)
         .style("fill", COLOR_ORIGIN)
         .style("font-size", "15px")
         .text("origin");
@@ -941,7 +935,7 @@ function addChart_withTwoLaps(id) {
     svg.append("text")
         .attr("class", "plot_info_focus-ref")
         .attr("y", height*0.1)
-        .attr("x", additional_margin+width + margin_for_plot_info*0.5)
+        .attr("x", additional_margin+width + margin_for_plot_info*0.5 -10)
         .style("fill", COLOR_REF)
         .style("font-size", "15px")
         .text("ref");
@@ -1004,7 +998,7 @@ function addChart_withTwoLaps(id) {
     foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
 
     // ***  chart title ***
-    svg.append("text")
+    svg.append("text").attr("class", "chart_label")
         .attr("y", height - 50)
         .attr("x", 10)
         .text(id);

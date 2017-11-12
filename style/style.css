@@ -31,7 +31,7 @@ nav {
     padding-bottom: 10px;
 }
 .row.bottom{
-    padding-top: 40px;
+    padding-top: 20px;
     border-top-style: solid;
     border-top-width: 0.1px;
 
@@ -40,13 +40,19 @@ nav {
 #canvas{
     /*width:100%; !* 이렇게 해야 안가려짐 *!*/
     width:100%; /* 이렇게 해야 안가려짐 */
-    height: 300px;
+    height:13vw;
+    /*height:200px;*/
+    /*height: 40%;*/
     min-height: 100% !important;
     margin-right: 20px;
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
 
+}
+text.chart_label{
+    color:white;
+    fill:white;
 }
 
 g.tick {

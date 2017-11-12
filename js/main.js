@@ -3,8 +3,8 @@
  */
 
 // ******************** Global Variable for drawing d3 objects (line graph, track, sub info, chart) ********************* //
-var MAX_WIDTH = 1000;
-var MAX_HEIGHT = 650;
+var MIN_WIDTH = 1000;
+var MIN_HEIGHT = 650;
 
 // ** main chart variables ** //
 var margin = {top: 5, right: 20, bottom: 20, left: 50},
@@ -170,30 +170,29 @@ $(document).ready(function () {
 // window resize
 window.addEventListener("resize", resize);
 function resize(){
-    console.log("Window Resize!!");
-    if(window.innerWidth <= MAX_WIDTH || window.innerHeight <= MAX_HEIGHT){
+
+    if(window.innerWidth <= MIN_WIDTH || window.innerHeight <= MIN_HEIGHT){
         // Open modal and Set all elements invisible
-        // document.body.style.display = "none";
         document.getElementById("warningModal").style.display = "block";
     }else{
         // Close modal and Set all elements visible
         document.getElementById("warningModal").style.display = "none";
-        // document.body.style.display = null;
     }
-    // d3_components_resize();
 
 }
 
 function init(init_type) {
     init_type = init_type || 1;
 
-    // if(window.innerWidth <= MAX_WIDTH || window.innerHeight <= MAX_HEIGHT){
-    //     document.getElementById("warningModal").style.display = "block";
-    //     document.getElementById("loading").style.display = "none";
-    //     return;
-    // }
-
     document.getElementById("loading").style.display = "block";
+
+    if(window.innerWidth <= MIN_WIDTH || window.innerHeight <= MIN_HEIGHT){
+        document.getElementById("warningModal").style.display = "block";
+        // document.getElementById("loading").style.display = "none";
+    //     return;
+    }
+
+
 
     // variable for brush
     brush = d3.brushX()
@@ -374,7 +373,7 @@ function init_with_twoLaps() {
 
                     // -1.5, 0, 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑, 0인 경우 투명 컬러.
                     // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(0, 0, 0, 0.5)', 'green']);
-                    animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(255,255,0, 0.4)', 'green']);
+                    animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,0, 0.4)', 'green']);
 
 
 
@@ -494,6 +493,7 @@ function init_with_twoLaps() {
                         UpdateGuideComments(0);
 
 
+
                         // ********************* drawing radar chart ******************** //
                         // setting dummy data
                         var radar_data = [
@@ -524,13 +524,20 @@ function init_with_twoLaps() {
                             .append('svg')
                             .attr("width", radar_chart_width)
                             .attr("height", radar_chart_height);
+
+
+
+
+
+                        // d3.select("#track_nav_tab").classed("active", false);
+                        // d3.select("#radar_chart_tab").classed("active", true);
+                        // $("#radar_chart_tab").click();
                         
                     });
                 });
             });
         });
     });
-
 }
 
 
