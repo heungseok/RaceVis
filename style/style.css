@@ -48,8 +48,12 @@ nav {
     display: block;
     overflow-y: auto;
     overflow-x: hidden;
-
 }
+
+#split-table-container{
+    margin-left: 50px;
+}
+
 text.chart_label{
     color:white;
     fill:white;
@@ -149,6 +153,8 @@ rect.selection{
 #sector_btn_wrapper{
     position:relative;
 }
+
+
 
 g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
     display: None;

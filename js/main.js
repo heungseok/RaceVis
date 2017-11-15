@@ -6,6 +6,7 @@
 var MIN_WIDTH = 1000;
 var MIN_HEIGHT = 650;
 
+
 // ** main chart variables ** //
 var margin = {top: 5, right: 20, bottom: 20, left: 50},
     margin_for_plot_info = document.getElementById("canvas").offsetWidth*0.2,
@@ -73,7 +74,10 @@ var svg, zoom_svg,
 var all_features, ref_all_features, merged_all_features =[];
 var selected_features = [], ref_selected_features = [], merged_selected_features =[];
 var selected_feat_names = [];
+
 var root_x = "PositionIndex";
+
+
 
 // ************** track boundary variable and line function **************** //
 var track_data = [], ref_track_data =[], merged_track_data={ };
@@ -146,6 +150,10 @@ var trackZoom = d3.zoom()
 var current_zoomRange;
 var context;
 
+var lap_original=-1;
+var lap_reference=-1;
+var initialized = false;
+
 // *****************************  Global Color Variable ****************************** //
 var COLOR_POSITIVE = '#FF0000';
 var COLOR_NEGATIVE = '#00FF00';
@@ -189,7 +197,7 @@ function init(init_type) {
     if(window.innerWidth <= MIN_WIDTH || window.innerHeight <= MIN_HEIGHT){
         document.getElementById("warningModal").style.display = "block";
         // document.getElementById("loading").style.display = "none";
-    //     return;
+        //     return;
     }
 
 
@@ -213,8 +221,11 @@ function init(init_type) {
         init_with_twoLaps();
     }
 
+
+
 }
 function init_with_twoLaps() {
+    if(initialized) return;
     // d3.csv("./data/m4_KIC_SHORT.csv", type, function(data) {
     //     d3.csv("./data/moon_KIC_SHORT.csv", type, function (ref_data) {
     d3.csv("./data/1018-short/2lap-ex_up_std_oragi_kicshort_86_session-0.csv", type, function(data) {
@@ -273,12 +284,12 @@ function init_with_twoLaps() {
                             selected_feat_names.push(d.id);
                             $('.checkbox_wrapper').append("<li class ='checkbox'> " +
                                 "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
-                        // }else if(d.id == "RefinedPosLat"){
-                        //     temp_lat = _.pluck(d.values, 'feature_val');
-                        //     ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
-                        // }else if(d.id == "RefinedPosLon"){
-                        //     temp_long = _.pluck(d.values, 'feature_val');
-                        //     ref_temp_long = _.pluck(d.ref_values, 'feature_val');
+                            // }else if(d.id == "RefinedPosLat"){
+                            //     temp_lat = _.pluck(d.values, 'feature_val');
+                            //     ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
+                            // }else if(d.id == "RefinedPosLon"){
+                            //     temp_long = _.pluck(d.values, 'feature_val');
+                            //     ref_temp_long = _.pluck(d.ref_values, 'feature_val');
                         } else if (d.id == "PosLocalY") {
                             temp_lat = _.pluck(d.values, 'feature_val');
                             ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
@@ -427,27 +438,23 @@ function init_with_twoLaps() {
                         //         "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
                         // });
 
-
-                        $('#split-table-header').append('<th>' + '<button type="button" style="width:100%;" class="btn brush_control" value="' + split[0] + '-' + split[nSplits - 1] + '" onclick="setBrushRange(this,0)">' +
-                            'FULL' +
-                            '</button></th>');
-
-                        for (z = 0; z < nSplits - 1; z++) {
-                            $('#split-table-header').append('<th>' + '<button type="button" style="width:100%;" class="btn brush_control" value="' + split[z] + '-' + split[z + 1] + '" onclick="setBrushRange(this,' + (z + 1) + ')">' +
-                                'S' + (z + 1) +
-                                '</button></th>');
-                        }
-
-                        split_record = [];
-                        split_record_ref = [];
+                        btn_margin = 10;
+                        btn_width = Math.round(width-(nSplits-1)*btn_margin)/nSplits;
+                        tbl_width = Math.round(width)/nSplits;
+                        // btn_width -= btn_margin;
 
 
-                        for (z = 0; z < nSplits; z++) {
-                            if (z == 0) {
+
+                        split_record=[];
+                        split_record_ref=[];
+
+
+                        for(z=0; z<nSplits; z++){
+                            if(z==0){
                                 sector_name = 'FULL';
                             }
-                            else {
-                                sector_name = 'S' + z;
+                            else{
+                                sector_name = 'S'+z;
                             }
 
                             split_record[z] = track_info_data.sector_info[sector_name].Laptime_A;
@@ -463,34 +470,54 @@ function init_with_twoLaps() {
                         split_record_string = [];
                         split_record_string_ref = [];
 
-                        for (z = 0; z < nSplits; z++) {
+                        for(z=0; z<nSplits; z++){
                             split_record_diff[z] = split_record[z] - split_record_ref[z];
 
-                            if (z == 0) {
+                            if(z==0){
                                 split_record_string[z] = GetStringFromSec(split_record[z]);
                                 split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
                             }
-                            else {
-                                split_record_string[z] = GetStringFromSec(split_record[z], split_record_ref[z]);
+                            else{
+                                split_record_string[z] = GetStringFromSec(split_record[z],split_record_ref[z]);
                                 split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
                             }
                         }
 
-                        for (z = 0; z < nSplits; z++) {
-                            if (split_record_diff[z] <= 0)
-                                $('#split-table-contents').append('<td align="center" style="color:' + COLOR_NEGATIVE + ';">' + split_record_string[z] + '</td>');
+                        for(z=0; z<nSplits; z++){
+                            if(split_record_diff[z]<=0)
+                                $('#split-table-contents').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string[z]+'</td>');
                             else
-                                $('#split-table-contents').append('<td align="center" style="color:' + COLOR_POSITIVE + ';">' + split_record_string[z] + '</td>');
+                                $('#split-table-contents').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string[z]+'</td>');
                         }
 
-                        for (z = 0; z < nSplits; z++) {
-                            if (split_record_diff[z] > 0)
-                                $('#split-table-contents-ref').append('<td align="center" style="color:' + COLOR_NEGATIVE + ';">' + split_record_string_ref[z] + '</td>');
-                            else
-                                $('#split-table-contents-ref').append('<td align="center" style="color:' + COLOR_POSITIVE + ';">' + split_record_string_ref[z] + '</td>');
-                        }
+                        strClass = "btn ";
 
+                        if(split_record_diff[z]<=0) strClass ='btn btn-success';
+                        else strClass='btn btn-danger';
+
+                        $('#split-table-header').attr('width',Math.round(width));
+                        $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px;" class="'+strClass+'" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">' +
+                            'FULL' +
+                            '</button>');
+
+                        for(z=0; z<nSplits-1; z++){
+                            if(split_record_diff[z+1]<=0) strClass ='btn btn-success';
+                            else strClass='btn btn-danger';
+
+                            $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px; margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
+                                'S' +(z+1)+
+                                '</button>');
+                        }
+                        /*
+                         for(z=0; z<nSplits; z++){
+                         if(split_record_diff[z]>0)
+                         $('#split-table-contents-ref').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string_ref[z]+'</td>');
+                         else
+                         $('#split-table-contents-ref').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string_ref[z]+'</td>');
+                         }
+                         */
                         UpdateGuideComments(0);
+
 
 
 
@@ -525,19 +552,12 @@ function init_with_twoLaps() {
                             .attr("width", radar_chart_width)
                             .attr("height", radar_chart_height);
 
-
-
-
-
-                        // d3.select("#track_nav_tab").classed("active", false);
-                        // d3.select("#radar_chart_tab").classed("active", true);
-                        // $("#radar_chart_tab").click();
-                        
                     });
                 });
             });
         });
     });
+
 }
 
 
@@ -825,7 +845,7 @@ function drawing_animationPath() {
             .style("z-index", -1);
 
 
-    // Time Stamp 일 경우 animation path drawing (일반 path drawing)
+        // Time Stamp 일 경우 animation path drawing (일반 path drawing)
     }else if(root_x=="TimeStamp"){
 
         // time stamp가 축일 경우 centerline 으로 그리지 말고, 우선은 origin track 따라 그리기.
@@ -1004,6 +1024,7 @@ function setBrushRange(btn,split){
 
 
     // Update comment table
+
     UpdateGuideComments(split);
 
 }
@@ -1089,6 +1110,89 @@ function GetStringFromSec(sec, sec_ref)
     return ret;
 }
 
+$(".sel_track li a").click(function(){
+    selText = $(this).text();
+    console.log( selText);
+    if(!$(this).parent().hasClass("disabled")) {
+        $(this).parents('.dropdown').find('.dropdown-toggle').html(selText + '<span class="caret"></span>');
+        $("#sel_session").removeClass("hidden");
+    }
+
+});
+
+$(".sel_session li a").click(function(){
+    selText = $(this).text();
+    selText = selText.split('(');
+
+    //console.log(sessName);
+    if(!$(this).parent().hasClass("disabled")) {
+        $(this).parents('.dropdown').find('.dropdown-toggle').html(selText[0] + '<span class="caret"></span>');
+        $("#sel_lap").removeClass("hidden");
+        $("#sel_lap_ref").removeClass("hidden");
+
+        d3.json("./data/session_info/info_std_oragi_kicshort_86_session-0.json", function (error, session_info) {
+            console.log(session_info);
+
+            nLaps = session_info.total_laps;
+
+            for (lap = 0; lap < nLaps; lap++) {
+                _lap = lap + 1;
+                laptime = session_info.lap_info[lap].lapTime;
+
+                if (_lap == 2) {
+
+                    $("#sel_lap_list").append('<li id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                    $("#sel_lap_ref_list").append('<li class="disabled" id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                    //'<li><a href="#">1 Lap / 3:32:32 </a></li>'
+                }
+
+                else if (_lap == 5) {
+                    $("#sel_lap_list").append('<li class="disabled" id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                    $("#sel_lap_ref_list").append('<li id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                }
+
+                else {
+                    $("#sel_lap_list").append('<li class="disabled"  id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                    $("#sel_lap_ref_list").append('<li class="disabled"  id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                }
+            }
+
+
+        });
+    }
+
+});
+
+function SelectOriginLap(lap)
+{
+    if(lap==1) {
+        $("#sel_lap_list").parents('.dropdown').find('.dropdown-toggle').html((lap + 1) + ' Lap' + '<span class="caret"></span>');
+
+        lap_original = lap + 1;
+
+    }
+    if(lap_original ==2 && lap_reference == 5){
+        $("#finish_select").removeClass("hidden");
+        // init_with_twoLaps();
+    }
+}
+
+function SelectReferenceLap(lap)
+{
+    if(lap==4) {
+
+
+        $("#sel_lap_ref_list").parents('.dropdown').find('.dropdown-toggle').html((lap + 1) + ' Lap' + '<span class="caret"></span>');
+
+        lap_reference = lap + 1;
+    }
+
+    if(lap_original ==2 && lap_reference == 5){
+        $("#finish_select").removeClass("hidden");
+        ///init_with_twoLaps();
+    }
+
+}
 
 
 // ********** d3 components resize ************** //

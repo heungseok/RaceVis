@@ -13,9 +13,9 @@ var lap_btn = document.getElementById("select_laps");
 var lap_span = document.getElementsByClassName("lap_select.close");
 
 // When the user clicks the button, open the modal
-lap_btn.onclick = function () {
-    lap_modal.style.display = "block";
-}
+/*lap_btn.onclick = function () {
+ lap_modal.style.display = "block";
+ }*/
 
 // When the user clicks on <span> (x), close the modal
 lap_span.onclick = function () {
