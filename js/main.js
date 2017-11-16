@@ -14,7 +14,7 @@ var margin = {top: 5, right: 20, bottom: 20, left: 50},
     // height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
     height = window.innerHeight/8 - margin.bottom - margin.top;
 // additional margin to show min, max value next to the line chart
-var additional_margin = 40;
+var additional_margin = 20;
 
 
 // ** zoom component variables ** //
@@ -384,7 +384,8 @@ function init_with_twoLaps() {
 
                     // -1.5, 0, 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑, 0인 경우 투명 컬러.
                     // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(0, 0, 0, 0.5)', 'green']);
-                    animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,0, 0.4)', 'green']);
+                    // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,0, 0.4)', 'green']);
+                    animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
 
 
 
@@ -438,9 +439,19 @@ function init_with_twoLaps() {
                         //         "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
                         // });
 
+                        console.log(width);
+
+                        // window.innerWidth * 0.4 = 40vw
+                        width/window.innerWidth
                         btn_margin = 10;
                         btn_width = Math.round(width-(nSplits-1)*btn_margin)/nSplits;
                         tbl_width = Math.round(width)/nSplits;
+
+                        // btn_width = (Math.round(width)/nSplits) / window.innerWidth;
+                        // // tbl_width = (Math.round(width)/nSplits) / window.innerWidth;
+                        // tbl_width = (width/window.innerWidth)/nSplits;
+                        // btn_width = "10vw";
+
                         // btn_width -= btn_margin;
 
 
@@ -484,29 +495,35 @@ function init_with_twoLaps() {
                         }
 
                         for(z=0; z<nSplits; z++){
-                            if(split_record_diff[z]<=0)
-                                $('#split-table-contents').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string[z]+'</td>');
-                            else
-                                $('#split-table-contents').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string[z]+'</td>');
+                            $('#split-table-contents').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ GetValueColor(split_record_diff[z],-0.5,+0.5) + ';">'+split_record_string[z]+'</td>')
                         }
 
                         strClass = "btn ";
 
-                        if(split_record_diff[z]<=0) strClass ='btn btn-success';
-                        else strClass='btn btn-danger';
+                        if(split_record_diff[z]<=0) strClass ='btn btn-negative';
+                        else strClass='btn btn-positive';
 
                         $('#split-table-header').attr('width',Math.round(width));
                         $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px;" class="'+strClass+'" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">' +
                             'FULL' +
                             '</button>');
 
+                        // init FULL sector btn
+                        // $('#split-table-header').append('<button type="button" '+ ' class="'+strClass+'" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">' +
+                        //     'FULL' +
+                        //     '</button>');
+
                         for(z=0; z<nSplits-1; z++){
-                            if(split_record_diff[z+1]<=0) strClass ='btn btn-success';
-                            else strClass='btn btn-danger';
+                            if(split_record_diff[z+1]<=0) strClass ='btn btn-negative';
+                            else strClass='btn btn-positive';
 
                             $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px; margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
                                 'S' +(z+1)+
                                 '</button>');
+
+                            // $('#split-table-header').append('<button type="button" ' + ' margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
+                            //     'S' +(z+1)+
+                            //     '</button>');
                         }
                         /*
                          for(z=0; z<nSplits; z++){
@@ -772,10 +789,16 @@ function setMinMax_by_animationRange(){
         selected_features[i].ref_min = ref_extent[0];
 
         var id = "g#" + data.id.split(" ")[0];
-        d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3));
-        d3.select(id).select(".plot_info_focus_min").text(selected_features[i].origin_min.toFixed(3));
-        d3.select(id).select(".plot_info_focus_max-ref").text(selected_features[i].ref_max.toFixed(3));
-        d3.select(id).select(".plot_info_focus_min-ref").text(selected_features[i].ref_min.toFixed(3));
+        d3.select(id).select(".plot_info_focus_max").text('\ue093 '+selected_features[i].origin_max.toFixed(3));
+        d3.select(id).select(".plot_info_focus_min").text('\ue094 '+selected_features[i].origin_min.toFixed(3));
+        d3.select(id).select(".plot_info_focus_max-ref").text('\ue093 '+selected_features[i].ref_max.toFixed(3));
+        d3.select(id).select(".plot_info_focus_min-ref").text('\ue094 '+selected_features[i].ref_min.toFixed(3));
+
+        // var id = "g#" + data.id.split(" ")[0];
+        // d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3));
+        // d3.select(id).select(".plot_info_focus_min").text(selected_features[i].origin_min.toFixed(3));
+        // d3.select(id).select(".plot_info_focus_max-ref").text(selected_features[i].ref_max.toFixed(3));
+        // d3.select(id).select(".plot_info_focus_min-ref").text(selected_features[i].ref_min.toFixed(3));
 
     })
 }
@@ -1253,4 +1276,30 @@ function lineCharts_resize(){
     d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
     // d3.select("#canvas").selectAll("path.line.ref").attr("d", function(d) { return line.get(this)(d.ref_values); });
 
+}
+
+
+// Colorize value with difference.
+function GetValueColor(value, minus_threshold, plus_threshold)
+{
+    r = g = b = 255;
+    if(value <= minus_threshold){       // return green
+        r = b = 0;
+    }
+
+    else if(value >= plus_threshold){   // return red
+        g= b= 0;
+    }
+
+    else {
+        if (value < 0) {                // preserve green and increase b, r
+            b = r = 255-(Math.round(Math.abs(value) * 255 / Math.abs(minus_threshold))) ;
+        }
+
+        else{                           // preserve red and increase b, r
+            b = g = 255-(Math.round(Math.abs(value) * 255 / Math.abs(plus_threshold)));
+        }
+    }
+    ret = "rgb("+r+","+g+","+b+");"   // color(r,g,b);
+    return ret;
 }

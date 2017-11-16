@@ -99,3 +99,17 @@
     top: 10px;
     left: 0;
 }
+
+
+
+#split-container *{
+    /*margin-right: 10px;*/
+    min-width: 5vw;
+    /*width: 100%;*/
+}
+
+/*#split-table-container button{*/
+    /*margin-right: 10px;*/
+    /*min-width: 5vw;*/
+    /*!*width: 100%;*!*/
+/*}*/
