@@ -552,20 +552,20 @@ function init_with_twoLaps() {
                         // setting dummy data
                         var radar_data = [
                             [
-                                {"area": "Central ", "value": 80},
-                                {"area": "Kirkdale", "value": 40},
-                                {"area": "Kensington ", "value": 40},
-                                {"area": "Everton ", "value": 90},
-                                {"area": "Picton ", "value": 60},
-                                {"area": "Riverside ", "value": 80}
+                                {"area": "Speed", "value": 80},
+                                {"area": "BRAKE", "value": 40},
+                                {"area": "ACCEL", "value": 40},
+                                {"area": "RPM", "value": 90},
+                                {"area": "STEERING", "value": 60},
+                                {"area": "SLOPE", "value": 80}
                             ],
                             [
-                                {"area": "Central ", "value": 20},
-                                {"area": "Kirkdale", "value": 10},
-                                {"area": "Kensington ", "value": 30},
-                                {"area": "Everton ", "value": 30},
-                                {"area": "Picton ", "value": 20},
-                                {"area": "Riverside ", "value": 100}
+                                {"area": "Speed", "value": 20},
+                                {"area": "BRAKE", "value": 10},
+                                {"area": "ACCEL", "value": 30},
+                                {"area": "RPM", "value": 30},
+                                {"area": "STEERING", "value": 20},
+                                {"area": "SLOPE", "value": 100}
                             ]
                         ]
 
