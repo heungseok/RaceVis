@@ -219,8 +219,8 @@ path.line.boundary{
 }
 
 #track_canvas path.line.boundary{
-    stroke-width:1.2;
-    stroke-dasharray: .5; /* 값이 클수록 간격이 넒어짐 */
+    stroke-width:2;
+    //stroke-dasharray: .5; /* 값이 클수록 간격이 넒어짐 */
 }
 
 
@@ -536,4 +536,21 @@ div.table-responsive{
     border-color: #008800;
     font-weight:bolder;
     font-size:12px;
+}
+
+.btn-split {
+    height:40px;
+    color: #000;
+    font-weight:bolder;
+    font-size: 0.8vw;
+    font-family: Calibri;
+}
+
+.btn-features {
+    height:40px;
+    color: #fff;
+    background-color:buttonface;
+    font-weight:bolder;
+    font-size: 0.8vw;
+    font-family: Calibri;
 }

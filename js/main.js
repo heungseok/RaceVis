@@ -495,7 +495,17 @@ function init_with_twoLaps() {
                         }
 
                         for(z=0; z<nSplits; z++){
-                            $('#split-table-contents').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ GetValueColor(split_record_diff[z],-0.5,+0.5) + ';">'+split_record_string[z]+'</td>')
+
+                            if(z==0) {
+                                $('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; border:0px; padding:0px;" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">'+'<table width="100%" height="100%"><tr><td width="10%" style="background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'"></td><td>FULL: ' + split_record_string[0] +'</td></tr></table>'+'</button></td>');
+                            //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%;background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">FULL: ' + split_record_string[0] + '</button></td>');
+                            }else {
+                                $('#split-table-contents').append('<td align="center" width="10">&nbsp;</td>');
+                                //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; background-color:'+GetValueColor(split_record_diff[z],-0.1,0.1)+'" class="btn btn-split" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+z+')">S'+z+': ' + split_record_string[z] + '</button></td>');
+                                $('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; border:0px; padding:0px;" class="btn btn-split" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+z+')">'+'<table width="100%" height="100%"><tr><td width="10%" style="background-color:'+GetValueColor(split_record_diff[z],-0.1,0.1)+'"></td><td>S'+z+': ' + split_record_string[z] +'</td></tr></table>'+'</button></td>');
+                            }
+
+
                         }
 
                         strClass = "btn ";
@@ -504,8 +514,8 @@ function init_with_twoLaps() {
                         else strClass='btn btn-positive';
 
                         $('#split-table-header').attr('width',Math.round(width));
-                        $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px;" class="'+strClass+'" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">' +
-                            'FULL' +
+                        $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
+                            'S' +(z+1)+
                             '</button>');
 
                         // init FULL sector btn
@@ -517,8 +527,8 @@ function init_with_twoLaps() {
                             if(split_record_diff[z+1]<=0) strClass ='btn btn-negative';
                             else strClass='btn btn-positive';
 
-                            $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px; margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
-                                'S' +(z+1)+
+                            $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px; margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+(z)+')">' +
+                                'S' +(z)+
                                 '</button>');
 
                             // $('#split-table-header').append('<button type="button" ' + ' margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
@@ -1124,6 +1134,8 @@ function GetStringFromSec(sec, sec_ref)
         ret = new Date(value * 1000).toISOString().substr(17, 6);
     }
 
+    if(ret[0]='0') ret = ret.substr(1);
+
     if(is_positive == false){
         ret = '-'+ret;
     }else{
@@ -1301,5 +1313,7 @@ function GetValueColor(value, minus_threshold, plus_threshold)
         }
     }
     ret = "rgb("+r+","+g+","+b+");"   // color(r,g,b);
+    console.log(value);
+    console.log(ret);
     return ret;
 }
