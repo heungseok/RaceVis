@@ -4,7 +4,7 @@
 
 // ******************** Global Variable for drawing d3 objects (line graph, track, sub info, chart) ********************* //
 var MIN_WIDTH = 1000;
-var MIN_HEIGHT = 650;
+var MIN_HEIGHT = 700;
 
 
 // ** main chart variables ** //
@@ -877,6 +877,7 @@ function drawing_animationPath() {
             .style("fill-opacity", 0.4)
             .style("z-index", -1);
 
+        d3.select("#table_split_selector").attr("class","");
 
         // Time Stamp 일 경우 animation path drawing (일반 path drawing)
     }else if(root_x=="TimeStamp"){
@@ -897,6 +898,8 @@ function drawing_animationPath() {
             .style("stroke-dasharray", 2) /* 값이 클수록 간격이 넒어짐 */
             .style("animation", "dash 30s linear");
 
+            // Disable split selector
+        d3.select("#table_split_selector").attr("class","hidden");
     }
 
 
