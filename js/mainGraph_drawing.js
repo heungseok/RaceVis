@@ -305,7 +305,14 @@ function drawTrack_withTwoLaps(){
     var union_y0 = d3.extent(_.union(origin_y0, ref_y0, inline_y0, outline_y0, centerline_y0));
     console.log(union_y0);
     console.log(union_y0[1] - union_y0[0]);
+
     var abs_y_range = union_y0[1] - union_y0[0];
+    console.log(d3.extent(merged_track_data.centerline, function(d) { return d.x}));
+    // pidx_to_track_x = d3.scaleLinear().domain(d3.extent(merged_track_data.centerline, function(d) { return d.x}))
+    //     .range(union_x0);
+    // console.log(pidx_to_track_x);
+    // console.log(pidx_to_track_x(3000));
+    // pidx_to_track_y
 
     track_y = d3.scaleLinear().range([track_height, 0])
         .domain(union_y0);
@@ -431,14 +438,11 @@ function drawTrack(){
     var origin_y0 = d3.extent(merged_track_data.origin, function(d) { return d.lat; });
     var inline_y0 = d3.extent(merged_track_data.inline, function(d) { return d.lat; });
     var outline_y0 = d3.extent(merged_track_data.outline, function(d) { return d.lat; });
+    console.log(merged_track_data)
 
     var union_y0 = d3.extent(_.union(origin_y0, inline_y0, outline_y0));
 
 
-    track_x = d3.scaleLinear().range([0, track_width])
-        .domain(union_x0);
-    track_y = d3.scaleLinear().range([track_height, 0])
-        .domain(union_y0);
 
     // setting svg for drawing track
     track_svg = d3.select("#track_canvas").append("svg")

@@ -81,7 +81,7 @@ var root_x = "PositionIndex";
 
 // ************** track boundary variable and line function **************** //
 var track_data = [], ref_track_data =[], merged_track_data={ };
-var track_x, track_y, nav_track_x, nav_track_y,
+var track_x, track_y, nav_track_x, nav_track_y, pidx_to_track_x, pidx_to_track_y
     inline_track = [], outline_track = [], centerline_track = [];
 var track_delta = []; // position index 에 해당하는 delta 값 저장 array
 
@@ -343,6 +343,7 @@ function init_with_twoLaps() {
                     inline_track = [];
                     outline_track = [];
                     centerline_track = [];
+
 
                     track_boundary_data.forEach(function (d) {
 
@@ -1050,18 +1051,79 @@ function zoomReset() {
 function setBrushRange(btn,split){
     // 1. btn value를 split해서 brush 조정할 range값을 parsing
     var range = btn.value.split("-").map(Number);
+    var sector_type = 0;
 
     // define our brush extent to be begin and end
     // zoom_x(value) => 실제 값을 zoom_x의 scale값에 대응한 값으로 return해줌.
     current_zoomRange[0] = zoom_x(range[0]);
     current_zoomRange[1] = zoom_x(range[1]);
 
+
+
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
 
 
-    // Update comment table
+    if(btn.innerText.includes("FULL"))
+        sector_type = 1;
 
+    // zoom to specific track area
+    zoomTo(range, sector_type);
+    // Update comment table
     UpdateGuideComments(split);
+
+}
+function zoomTo(range, sector_type){
+
+    // **** ZOOM & PANNING to Track ****
+    // All that’s necessary for panning and zooming is a translation [tx, ty] and a scale factor k.
+    // When a zoom transform is applied to an element at position [x0, y0], its new position becomes [tx + k × x0, ty + k × y0].
+
+    // - Range 가 full 일 경우 if(sector_type==1)
+    // zoom reset 호출.
+    if(sector_type == 1){
+        d3.select("#track_canvas").call(trackZoom).transition()
+            .duration(300)
+            .call(trackZoom.transform, d3.zoomIdentity);
+        
+        // duration 없이
+        // trackZoom.transform(d3.select("#track_canvas"), d3.zoomIdentity); 
+        return;
+    }
+
+    // - Full이 아닐 경우. if(sector_type==0)
+
+    // 1) 먼저 pidx 값을 track range로 변환해야하는데, center_x, center_y 값이 리니어하지 않으므로, 직접 값을 iterate하면서 찾아야함.
+    var first_index, second_index, middle_index;
+    var count = 0;
+    // range의 시작점이 트랙의 시작점일 경우, 1을 더해서 track line과 매칭되도록 설정.
+    if(range[0]==0) range[0]++;
+
+    for(var i=0; i<merged_track_data.centerline.length; i++){
+
+        if(merged_track_data.centerline[i].x == Math.round(range[0])){
+            first_index = i;
+            count++;
+        }else if(merged_track_data.centerline[i].x == Math.round(range[1])){
+            second_index = i;
+            count++;
+        }
+
+        // 두 인덱스 모두 채웠을 경우 for loop exit
+        if(count==2) break;
+    }
+
+    // 2) calculate the target index (middle of first and second index)
+    middle_index = Math.round((first_index+second_index)/2);
+
+
+    // 3) Gratuitous zoom the area
+    d3.select("#track_canvas").call(trackZoom).transition()
+        .duration(400)
+        .call(trackZoom.transform, d3.zoomIdentity
+            .translate(track_width/2, track_height/2)
+            .scale(1.2)
+            .translate(-track_x(merged_track_data.centerline[middle_index].long),
+                -track_y(merged_track_data.centerline[middle_index].lat)))
 
 }
 
