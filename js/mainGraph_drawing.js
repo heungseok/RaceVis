@@ -1,9 +1,6 @@
 /**
  * Created by totor on 2017-06-11.
  */
-// draw_ref_LineGraph();
-// draw_ref_Track();
-// draw_ref_SubInfo();
 
 function drawLineGraph_withTwoLaps() {
     // console.log(merged_selected_features);
@@ -423,67 +420,6 @@ function drawTrack_withTwoLaps(){
 }
 
 
-
-function drawTrack(){
-
-    /*************************** DRAWING TRACK ******************************/
-    // range of track x, y (Longitude, Latitude) setting
-    var origin_x0 = d3.extent(merged_track_data.origin, function(d) { return d.long; });
-    var inline_x0 = d3.extent(merged_track_data.inline, function(d) { return d.long; });
-    var outline_x0 = d3.extent(merged_track_data.outline, function(d) { return d.long; });
-
-    var union_x0 = d3.extent(_.union(origin_x0, inline_x0, outline_x0));
-    console.log("union x0 " + union_x0[0] + ", " + union_x0[1]);
-
-    var origin_y0 = d3.extent(merged_track_data.origin, function(d) { return d.lat; });
-    var inline_y0 = d3.extent(merged_track_data.inline, function(d) { return d.lat; });
-    var outline_y0 = d3.extent(merged_track_data.outline, function(d) { return d.lat; });
-    console.log(merged_track_data)
-
-    var union_y0 = d3.extent(_.union(origin_y0, inline_y0, outline_y0));
-
-
-
-    // setting svg for drawing track
-    track_svg = d3.select("#track_canvas").append("svg")
-        .attr("width", track_width + track_margin.left + track_margin.right)
-        .attr("height", track_height + track_margin.top + track_margin.bottom)
-        .append("g")
-        .attr("transform",
-            "translate(" + track_margin.left + "," + track_margin.top + ")");
-
-
-    // *************** Append track line path :***************//
-
-    // draw inline, outline track boundary first
-    track_svg.append("path")
-        .data([merged_track_data.inline])
-        .attr("class", "line boundary inline")
-        .attr("d", track_line)
-
-    track_svg.append("path")
-        .data([merged_track_data.outline])
-        .attr("class", "line boundary outline")
-        .attr("d", track_line)
-
-    // draw track line
-    track_svg.append("path")
-        .data([merged_track_data.origin])
-        .attr("class", "line")
-        .attr("d", track_line)
-
-
-    // append track focus element (circle)
-    var track_focus = track_svg.append("g")
-        .attr("id", "track_focus1");
-    track_focus.append("circle")
-        .attr("r", 4.5);
-
-
-
-
-
-}
 
 function drawSubInfo_withTwoLaps() {
     console.log("draw subinfo");

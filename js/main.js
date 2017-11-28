@@ -1210,15 +1210,75 @@ function GetStringFromSec(sec, sec_ref)
     return ret;
 }
 
-$(".sel_track li a").click(function(){
+function track_selector(){
+    // track selector (button click listener of the top of the screen)
+    // css selector =>  .sel_track li a
+
     selText = $(this).text();
-    console.log( selText);
+    console.log(selText);
     if(!$(this).parent().hasClass("disabled")) {
         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText + '<span class="caret"></span>');
         $("#sel_session").removeClass("hidden");
     }
 
-});
+}
+// $(".sel_track li a").click(function(){
+//     selText = $(this).text();
+//     console.log( selText);
+//     if(!$(this).parent().hasClass("disabled")) {
+//         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText + '<span class="caret"></span>');
+//         $("#sel_session").removeClass("hidden");
+//     }
+//
+// });
+
+function session_selector(){
+
+    // session dropdown click listener
+    // when clicked, lap selectors of origin and reference are generated.
+    // css selector => .sel_session li a
+    console.log("session selector");
+
+
+    selText = $(this).text();
+    selText = selText.split('(');
+
+    //console.log(sessName);
+    if(!$(this).parent().hasClass("disabled")) {
+        $(this).parents('.dropdown').find('.dropdown-toggle').html(selText[0] + '<span class="caret"></span>');
+        $("#sel_lap").removeClass("hidden");
+        $("#sel_lap_ref").removeClass("hidden");
+
+        d3.json("./data/session_info/info_std_oragi_kicshort_86_session-0.json", function (error, session_info) {
+            console.log(session_info);
+
+            nLaps = session_info.total_laps;
+
+            for (lap = 0; lap < nLaps; lap++) {
+                _lap = lap + 1;
+                laptime = session_info.lap_info[lap].lapTime;
+
+                if (_lap == 2) {
+
+                    $("#sel_lap_list").append('<li id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                    $("#sel_lap_ref_list").append('<li class="disabled" id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                    //'<li><a href="#">1 Lap / 3:32:32 </a></li>'
+                }
+
+                else if (_lap == 5) {
+                    $("#sel_lap_list").append('<li class="disabled" id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                    $("#sel_lap_ref_list").append('<li id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                }
+
+                else {
+                    $("#sel_lap_list").append('<li class="disabled"  id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                    $("#sel_lap_ref_list").append('<li class="disabled"  id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+                }
+            }
+        });
+    }
+}
+/*
 
 $(".sel_session li a").click(function(){
     selText = $(this).text();
@@ -1262,6 +1322,7 @@ $(".sel_session li a").click(function(){
     }
 
 });
+*/
 
 function SelectOriginLap(lap)
 {
@@ -1291,67 +1352,6 @@ function SelectReferenceLap(lap)
         $("#finish_select").removeClass("hidden");
         ///init_with_twoLaps();
     }
-
-}
-
-
-// ********** d3 components resize ************** //
-function d3_components_resize(){
-
-    // lineCharts_resize();
-}
-
-function lineCharts_resize(){
-    // reset the width/height
-    width = document.getElementById("canvas").offsetWidth - margin.left - margin.right - margin_for_plot_info;
-    height = window.innerHeight/8 - margin.bottom - margin.top;
-
-    // update the range of the scale with new width/height
-    x = x.range([0, width]);
-
-    // **** update y scale **** //
-    d3.select("#canvas").selectAll("svg").select("g").each(function(d){
-        var origin_y0 = d3.extent(d.values, function(c) {
-            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
-        });
-        var ref_y0 = d3.extent(d.ref_values, function(c) {
-            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
-        });
-        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
-
-        var ty = y.set(this, d3.scaleLinear()
-            .range([height, 0]))
-            .domain(union_y0); // local feature에 대한 y range setting
-
-        line.set(this, d3.line().curve(d3.curveBasis)
-            .x(function(c){ return x(c.x);})
-            .y(function(c){ return ty(c.feature_val); }));
-
-    });
-
-    // **** update y axis **** //
-    for (var i=0; i<selected_features.length; i++){
-        var id = "g#" + selected_features[i].id.split(" ")[0];
-
-        var origin_y0 = d3.extent(selected_features[i].values, function(c) {
-            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
-        });
-        var ref_y0 = d3.extent(selected_features[i].ref_values, function(c) {
-            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
-        });
-        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
-        var y_range = d3.scaleLinear().range([height, 0]).domain(union_y0);
-
-        d3.select(id).select(".axis.axis--y").call(d3.axisLeft(y_range).ticks(3));
-    }
-
-    // update each svg of line charts
-    d3.select("#canvas").selectAll("svg")
-        .attr("transform", "translate(0, " + height + ")")
-
-    // update each line
-    d3.select("#canvas").selectAll("path.line").attr("d", function(d) { return line.get(this)(d.values)});
-    // d3.select("#canvas").selectAll("path.line.ref").attr("d", function(d) { return line.get(this)(d.ref_values); });
 
 }
 
