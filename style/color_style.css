@@ -24,5 +24,6 @@ g.focus-ref, g#track_focus1-ref{
 }
 
 path.line.boundary{
-    stroke: rgb(255,255,255);
+    /*stroke: rgb(255,255,255);*/
+    stroke: #444;
 }

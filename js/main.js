@@ -23,7 +23,7 @@ var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
     zoom_height = window.innerHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
 // ** track, navigation track variables ** //
-var track_margin = {top: 10, right: 30, bottom: 20, left: 50},
+var track_margin = {top: 10, right: 10, bottom: 20, left: 50},
     nav_track_margin = {top: 50, right: 10, bottom: 100, left: 100},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top,
@@ -31,7 +31,7 @@ var track_margin = {top: 10, right: 30, bottom: 20, left: 50},
     nav_track_height = document.getElementById("row-top container").offsetHeight - nav_track_margin.bottom - nav_track_margin.top;
 
 // ** sub-info components variables ** //
-var sub_margin = {top: 10, right: 20, bottom: 20, left: 20},
+var sub_margin = {top: 10, right: 20, bottom: 0, left: 20},
     sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
     // sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
     sub_height = document.getElementById("row-top container").offsetHeight - sub_margin.bottom - sub_margin.top;
@@ -381,12 +381,14 @@ function init_with_twoLaps() {
                     // : (-1.5~1.5까지 linear green to red) -1.5 이하는 green, 1.5이상은 red.
 
                     // -1.5 ~ 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑
-                    // animation_track_color = d3.scaleLinear().domain([-1.5, 1.5]).range(['red', 'green']);
+                    // animation_track_color = d3.scaleLinear().domain([-0.5, 0.5]).range(['red', 'green']);
 
                     // -1.5, 0, 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑, 0인 경우 투명 컬러.
                     // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(0, 0, 0, 0.5)', 'green']);
                     // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,0, 0.4)', 'green']);
                     animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
+                    // animation_track_color = d3.scaleLinear().domain([-1.1, 0, 0.1]).range(['red', 'rgba(255, 255, 0, 0.4)', 'green']);
+                    // animation_track_color = d3.scaleLinear().domain([-1.1, 0, 0.1]).range(['red', 'yellow', 'green']);
 
 
 
@@ -895,7 +897,7 @@ function drawing_animationPath() {
             .attr("d", track_line)
             .style("stroke", "#dfeb06")
             .style("stroke-width", 5)
-            .style("stroke-opacity", 0.4)
+            .style("stroke-opacity", 0.6)
             .style("stroke-dasharray", 2) /* 값이 클수록 간격이 넒어짐 */
             .style("animation", "dash 30s linear");
 

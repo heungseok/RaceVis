@@ -559,14 +559,14 @@ div.animation_track_controller_wrapper{
 }
 
 
-body > div.row, body > div.top {
-    border-style: solid;
-    border-color: #222;
-    border-style: solid;
-    border-width: 0.1px;
-}
+/*body > div.row, body > div.top {*/
+    /*border-style: solid;*/
+    /*border-color: #222;*/
+    /*border-style: solid;*/
+    /*border-width: 0.1px;*/
+/*}*/
 
-#top-left-components, #track_wrapper, #sub_canvas{
-    border-style: solid;
-    border-color: #333;
-}
+/*#top-left-components, #track_wrapper, #sub_canvas{*/
+    /*border-style: solid;*/
+    /*border-color: #333;*/
+/*}*/
