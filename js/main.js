@@ -71,8 +71,8 @@ var svg, zoom_svg,
     track_svg, sub_svg, nav_track_svg;
 
 
-var all_features, ref_all_features, merged_all_features =[];
-var selected_features = [], ref_selected_features = [], merged_selected_features =[];
+var all_features;
+var selected_features = [];
 var selected_feat_names = [];
 
 var root_x = "PositionIndex";
@@ -391,8 +391,6 @@ function init_with_twoLaps() {
                     // animation_track_color = d3.scaleLinear().domain([-1.1, 0, 0.1]).range(['red', 'yellow', 'green']);
 
 
-
-
                     console.log("finished merging all track data");
                     // animation_length = track_data.length;
 
@@ -416,54 +414,31 @@ function init_with_twoLaps() {
                     zoomReset();
                     document.getElementById("loading").style.display = "none";
 
-
-
                     //  ******* comment box contents ********* //
                     d3.json("./data/1018-short/2_5comparison-ex_up_std_oragi_kicshort_86_session-0.json", function(error, track_info_data) {
                         console.log(track_info_data);
 
-                        track_name = track_info_data.track_info.TrackName;
-                        split = track_info_data.track_info.Split;
-                        optimal_time = track_info_data.optimal_info;
+                        var track_name = track_info_data.track_info.TrackName;
+                        var split = track_info_data.track_info.Split;
+                        var optimal_time = track_info_data.optimal_info;
                         optimal_time = GetStringFromSec(optimal_time);
-                        nSplits = Object.keys(split).length;
-                        track_length = split[nSplits - 1];
+                        var nSplits = Object.keys(split).length;
+                        var track_length = split[nSplits - 1];
 
 
                         $('#sector_track_info').html('');
                         $('#sector_track_info').append('' + track_name + ', ' + track_length + 'm<br />Optimal: <span style="color:' + COLOR_NEGATIVE + '">' + optimal_time + '</span>');
 
-                        //console.log(split);
-                        //var comments = track_info_data.comments.overall;
-                        // console.log(comments);
-                        // console.log(Object.keys(comments).length);
-                        // Object.keys(comments).forEach(function(key){
-                        //     $('#comment-table-contents').append("<tr>" +
-                        //         "<td>" + key + "</td><td>" + comments[key][0] + "</td><td>" + comments[key][1] + "</td>");
-                        // });
 
-                        console.log(width);
+                        var btn_margin = 10;
+                        var btn_width = Math.round(width-(nSplits-1)*btn_margin)/nSplits;
 
-                        // window.innerWidth * 0.4 = 40vw
-                        width/window.innerWidth
-                        btn_margin = 10;
-                        btn_width = Math.round(width-(nSplits-1)*btn_margin)/nSplits;
-                        tbl_width = Math.round(width)/nSplits;
-
-                        // btn_width = (Math.round(width)/nSplits) / window.innerWidth;
-                        // // tbl_width = (Math.round(width)/nSplits) / window.innerWidth;
-                        // tbl_width = (width/window.innerWidth)/nSplits;
-                        // btn_width = "10vw";
-
-                        // btn_width -= btn_margin;
+                        var split_record=[];
+                        var split_record_ref=[];
+                        var sector_name='';
 
 
-
-                        split_record=[];
-                        split_record_ref=[];
-
-
-                        for(z=0; z<nSplits; z++){
+                        for(var z=0; z<nSplits; z++){
                             if(z==0){
                                 sector_name = 'FULL';
                             }
@@ -480,9 +455,9 @@ function init_with_twoLaps() {
 
                         //console.log(split_comments);
 
-                        split_record_diff = [];
-                        split_record_string = [];
-                        split_record_string_ref = [];
+                        var split_record_diff = [];
+                        var split_record_string = [];
+                        var split_record_string_ref = [];
 
                         for(z=0; z<nSplits; z++){
                             split_record_diff[z] = split_record[z] - split_record_ref[z];
@@ -501,7 +476,7 @@ function init_with_twoLaps() {
 
                             if(z==0) {
                                 $('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; border:0px; padding:0px;" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">'+'<table width="100%" height="100%"><tr><td width="10%" style="background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'"></td><td>FULL: ' + split_record_string[0] +'</td></tr></table>'+'</button></td>');
-                            //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%;background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">FULL: ' + split_record_string[0] + '</button></td>');
+                                //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%;background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">FULL: ' + split_record_string[0] + '</button></td>');
                             }else {
                                 $('#split-table-contents').append('<td align="center" width="10">&nbsp;</td>');
                                 //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; background-color:'+GetValueColor(split_record_diff[z],-0.1,0.1)+'" class="btn btn-split" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+z+')">S'+z+': ' + split_record_string[z] + '</button></td>');
@@ -511,7 +486,7 @@ function init_with_twoLaps() {
 
                         }
 
-                        strClass = "btn ";
+                        var strClass = "btn ";
 
                         if(split_record_diff[z]<=0) strClass ='btn btn-negative';
                         else strClass='btn btn-positive';
@@ -1000,29 +975,6 @@ function perp(p0, p1) {
 }
 
 // ********************** END of gradient color utility ****************************** //
-
-
-function drawing_animationPath_withOriginData() {
-    // clean previous animation path
-    track_svg.select("path.animation_path").remove();
-
-    // if animation is playing, force to stop
-    resume_flag = true;
-    resume();
-
-    animation_track_data = [];
-    for(var i=animation_range[0]; i<animation_range[1]; i++){
-        animation_track_data.push(track_data[i]);
-    }
-    console.log(animation_track_data);
-    // append path (drawing track)
-    track_svg.append("path")
-        .data([animation_track_data])
-        .attr("class", "animation_path")
-        .attr("d", track_line)
-        .style("z-index", -1);
-}
-
 function zoomed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     var t = d3.event.transform;
@@ -1083,12 +1035,7 @@ function zoomTo(range, sector_type){
     // - Range 가 full 일 경우 if(sector_type==1)
     // zoom reset 호출.
     if(sector_type == 1){
-        d3.select("#track_canvas").call(trackZoom).transition()
-            .duration(300)
-            .call(trackZoom.transform, d3.zoomIdentity);
-        
-        // duration 없이
-        // trackZoom.transform(d3.select("#track_canvas"), d3.zoomIdentity); 
+        track_zoomReset();
         return;
     }
 
@@ -1144,8 +1091,8 @@ function UpdateGuideComments(split)
     Object.keys(split_comments[split]).forEach(function(key){
 
         if(split_comments[split][key][0] <=0){
-            sign = "";
-            color = COLOR_NEGATIVE;
+            var sign = "";
+            var color = COLOR_NEGATIVE;
         }
         else{
             sign = "+";
@@ -1164,7 +1111,11 @@ function track_zoomed(){
     d3.select("#track_canvas").select("g").attr("transform", d3.event.transform);
 }
 function track_zoomReset(){
-    trackZoom.transform(d3.select("#track_canvas"), d3.zoomIdentity);
+    trackZoom.transform(d3.select("#track_canvas"), d3.zoomIdentity
+        .translate(track_width/4, 0));
+    // panning the track to 25% of the width
+    // d3.select("#track_canvas").call(trackZoom.transform, d3.zoomIdentity
+    //     .translate(track_width/4, 0));
 }
 function track_dragged(d){
     d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
@@ -1173,8 +1124,7 @@ function track_dragged(d){
 
 
 
-// ***************** yongseop *************** //
-
+// Transform the string to second //
 function GetStringFromSec(sec, sec_ref)
 {
     var mode = typeof sec_ref === 'undefined' ?  0 : 1;
@@ -1216,7 +1166,7 @@ function track_selector(){
     // track selector (button click listener of the top of the screen)
     // css selector =>  .sel_track li a
 
-    selText = $(this).text();
+    var selText = $(this).text();
     console.log(selText);
     if(!$(this).parent().hasClass("disabled")) {
         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText + '<span class="caret"></span>');
@@ -1224,15 +1174,6 @@ function track_selector(){
     }
 
 }
-// $(".sel_track li a").click(function(){
-//     selText = $(this).text();
-//     console.log( selText);
-//     if(!$(this).parent().hasClass("disabled")) {
-//         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText + '<span class="caret"></span>');
-//         $("#sel_session").removeClass("hidden");
-//     }
-//
-// });
 
 function session_selector(){
 
@@ -1242,7 +1183,7 @@ function session_selector(){
     console.log("session selector");
 
 
-    selText = $(this).text();
+    var selText = $(this).text();
     selText = selText.split('(');
 
     //console.log(sessName);
@@ -1254,11 +1195,11 @@ function session_selector(){
         d3.json("./data/session_info/info_std_oragi_kicshort_86_session-0.json", function (error, session_info) {
             console.log(session_info);
 
-            nLaps = session_info.total_laps;
+            var nLaps = session_info.total_laps;
 
-            for (lap = 0; lap < nLaps; lap++) {
-                _lap = lap + 1;
-                laptime = session_info.lap_info[lap].lapTime;
+            for (var lap = 0; lap < nLaps; lap++) {
+                var _lap = lap + 1;
+                var laptime = session_info.lap_info[lap].lapTime;
 
                 if (_lap == 2) {
 
@@ -1280,51 +1221,6 @@ function session_selector(){
         });
     }
 }
-/*
-
-$(".sel_session li a").click(function(){
-    selText = $(this).text();
-    selText = selText.split('(');
-
-    //console.log(sessName);
-    if(!$(this).parent().hasClass("disabled")) {
-        $(this).parents('.dropdown').find('.dropdown-toggle').html(selText[0] + '<span class="caret"></span>');
-        $("#sel_lap").removeClass("hidden");
-        $("#sel_lap_ref").removeClass("hidden");
-
-        d3.json("./data/session_info/info_std_oragi_kicshort_86_session-0.json", function (error, session_info) {
-            console.log(session_info);
-
-            nLaps = session_info.total_laps;
-
-            for (lap = 0; lap < nLaps; lap++) {
-                _lap = lap + 1;
-                laptime = session_info.lap_info[lap].lapTime;
-
-                if (_lap == 2) {
-
-                    $("#sel_lap_list").append('<li id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                    $("#sel_lap_ref_list").append('<li class="disabled" id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                    //'<li><a href="#">1 Lap / 3:32:32 </a></li>'
-                }
-
-                else if (_lap == 5) {
-                    $("#sel_lap_list").append('<li class="disabled" id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                    $("#sel_lap_ref_list").append('<li id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                }
-
-                else {
-                    $("#sel_lap_list").append('<li class="disabled"  id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                    $("#sel_lap_ref_list").append('<li class="disabled"  id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                }
-            }
-
-
-        });
-    }
-
-});
-*/
 
 function SelectOriginLap(lap)
 {
@@ -1361,7 +1257,7 @@ function SelectReferenceLap(lap)
 // Colorize value with difference.
 function GetValueColor(value, minus_threshold, plus_threshold)
 {
-    r = g = b = 255;
+    var r = 255, g = 255, b = 255;
     if(value <= minus_threshold){       // return green
         r = b = 0;
     }
@@ -1379,7 +1275,7 @@ function GetValueColor(value, minus_threshold, plus_threshold)
             b = g = 255-(Math.round(Math.abs(value) * 255 / Math.abs(plus_threshold)));
         }
     }
-    ret = "rgb("+r+","+g+","+b+");"   // color(r,g,b);
+    var ret = "rgb("+r+","+g+","+b+");"   // color(r,g,b);
     console.log(value);
     console.log(ret);
     return ret;

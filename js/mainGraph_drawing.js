@@ -379,6 +379,11 @@ function drawTrack_withTwoLaps(){
     // ********** Init track zoom ************ //
     d3.select("#track_canvas").call(trackZoom);
 
+    // panning the track to 25% of the width
+    d3.select("#track_canvas").call(trackZoom.transform, d3.zoomIdentity
+        .translate(track_width/4, 0));
+
+
     // *************************** Draw Navigation Track *************************** //
     var width_ratio = nav_track_width/track_width;
     nav_track_x = d3.scaleLinear().range([0, abs_x_range *(nav_track_height*width_ratio) / abs_y_range ])
@@ -1101,7 +1106,7 @@ function clearAllSVG_for_xAxis_switch() {
     animation_range = [];
     animation_index = 0;
     steer_data = [], brake_data = [], gas_data = [], gear_data = [];
-    track_data = [], inline_track = [], outline_track = [];
+    track_data = [];
     all_features= [], selected_features = [], animation_track_data = [], animation_time_delta=[];
 
     init(vis_type);
