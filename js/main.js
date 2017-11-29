@@ -23,8 +23,8 @@ var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
     zoom_height = window.innerHeight/10 - zoom_margin.bottom - zoom_margin.top;
 
 // ** track, navigation track variables ** //
-var track_margin = {top: 10, right: 30, bottom: 20, left: 30},
-    nav_track_margin = {top: 50, right: 10, bottom: 100, left: 30},
+var track_margin = {top: 10, right: 30, bottom: 20, left: 50},
+    nav_track_margin = {top: 50, right: 10, bottom: 100, left: 100},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top,
     nav_track_width = document.getElementById("track_nav_canvas").offsetWidth - track_margin.left - track_margin.right,
