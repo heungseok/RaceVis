@@ -108,15 +108,21 @@
 
         <div class="track_nav col-sm-3" id="top-left-components" style="position:relative;">
 
+            <nav class="navbar navbar-default" style="left:1vw; min-height:40px;">
+                <div class="container-fluid" style="height:40px; min-height:40px;">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="component title" href="#" style="top:12px;left:0px;">Driver's STATS</li>
+                    </ul>
+
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active" id="track_nav_tab"><a href="#nav_track_tab" data-toggle="tab" style="height:40px; min-height:40px; padding-top:12px;">Track</a></li>
+                        <li id="radar_chart_tab"><a href="#radar_tab" data-toggle="tab" style="height:40px; min-height:40px; padding-top:12px;">Radar</a></li>
+                    </ul>
+                </div>
+            </nav>
+
             <div style="position:relative;">
-                <ul  class="nav nav-pills">
-
-                    <li class="active" id="track_nav_tab"><a href="#nav_track_tab" data-toggle="tab">Track</a>
-                    </li>
-                    <li id="radar_chart_tab"><a href="#radar_tab" data-toggle="tab">Radar</a>
-                    </li>
-
-                </ul>
+                <ul class="nav nav-pills"></ul>
             </div>
 
             <div class="tab-content">
@@ -143,33 +149,39 @@
 
         </div>
 
-        <div class="track col-sm-7" id="track_wrapper">
-            <div id="track_canvas"></div>
-            <div class="animation_track_controller_wrapper">
-                <div class="playBtn">
-                    <button type="button" class="btn" id="button_play" onclick="playInput()">
-                        <span class="glyphicon glyphicon-play"></span>
-                    </button>
-                </div>
-                <div class="axisSwitchBtn">
-                    <button type="button" class="btn axis-switch" id="btn-type-dist" value="PositionIndex" onclick="axisSwitch(this)">Position</button>
-                    <button type="button" class="btn axis-switch" id="btn-type-time" value="TimeStamp" onclick="axisSwitch(this)">Time</button>
-                </div>
-                <div class="track_zoom">
-                    <button type="button" class="btn" id="track_zoom_reset" onclick="track_zoomReset()">
-                        <span class="glyphicon glyphicon-zoom-out"></span> Track Zoom-reset</button>
+        <div class="track col-sm-7">
+
+            <div id="track_wrapper">
+                <div class="component title" style="position:absolute; left:3vw; top:12px;">TRACK SIMULATION NAVIGATOR</div>
+                <div id="track_canvas"></div>
+                <div class="animation_track_controller_wrapper">
+                    <div class="playBtn">
+                        <button type="button" class="btn" id="button_play" onclick="playInput()">
+                            <span class="glyphicon glyphicon-play"></span>
+                        </button>
+                    </div>
+                    <div class="axisSwitchBtn">
+                        <button type="button" class="btn axis-switch" id="btn-type-dist" value="PositionIndex" onclick="axisSwitch(this)">Position</button>
+                        <button type="button" class="btn axis-switch" id="btn-type-time" value="TimeStamp" onclick="axisSwitch(this)">Time</button>
+                    </div>
+                    <div class="track_zoom">
+                        <button type="button" class="btn" id="track_zoom_reset" onclick="track_zoomReset()">
+                            <span class="glyphicon glyphicon-zoom-out"></span> Track Zoom-reset</button>
+                    </div>
+
+                    <div class="sel_box">
+                        <label for="sel_speed"></label>
+                        <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
+                            <option value="50">1x</option>
+                            <option value="100">0.5x</option>
+                            <option value="200">0.25x</option>
+                            <!--<option value="1">4x</option>-->
+                        </select>
+                    </div>
                 </div>
 
-                <div class="sel_box">
-                    <label for="sel_speed"></label>
-                    <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
-                        <option value="50">1x</option>
-                        <option value="100">0.5x</option>
-                        <option value="200">0.25x</option>
-                        <!--<option value="1">4x</option>-->
-                    </select>
-                </div>
             </div>
+
         </div>
 
         <div class="col-sm-2">
@@ -180,24 +192,20 @@
     </div>
 
     <div class="row bottom">
-        <div class="col-sm-3">
-            <div style="position:relative;">
+        <div class="col-sm-3" id="comment_wrapper">
+            <nav class="navbar navbar-default" style="left:1vw; min-height:40px;">
+                <div class="container-fluid" style="height:40px; min-height:40px;">
+                    <ul class="nav navbar-nav navbar-left">
+                        <li class="component title" id="split_name" href="#" style="top:12px;left:0px;">FULL</li>
+                    </ul>
 
-                <div id = "split_name" style="position:absolute; right:0%; top:30%; color:#ffffff; font-weight:700;">
-
-
-                </div>
-
-                <div style="position:relative;">
-                    <ul  class="nav nav-pills">
-                        <li class="active"><a href="#guide_tab" data-toggle="tab">Guide</a>
-                        </li>
-                        <li><a href="#comment_tab" data-toggle="tab">Comments</a>
-                        </li>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li class="active"><a href="#guide_tab" data-toggle="tab" style="height:40px; min-height:40px; padding-top:12px;">Guide</a></li>
+                        <li><a href="#comment_tab" data-toggle="tab" style="height:40px; min-height:40px; padding-top:12px;">Comments</a></li>
                     </ul>
                 </div>
+            </nav>
 
-            </div>
             <div class="tab-content">
                 <div class="tab-pane active table_summary" id="guide_tab">
                     <div>summary statistic</div>
@@ -222,69 +230,74 @@
         </div>
 
 
-        <div id="main_canvas_wrapper" class = "col-sm-9">
-            <div id="zoom_canvas" style="position:relative;">
-                <table width="100%" ><tr><td style="width:3.5%;"></td>
-                    <td width="75%">
+        <div class = "col-sm-9">
+            <div id="main_canvas_wrapper">
 
-                        <table id="table_split_selector" width="100%">
-                            <tr id="split-table-contents"></tr>
-                        </table>
+                <div id="zoom_canvas" style="position:relative;">
+                    <table width="100%" ><tr><td style="width:3.5%;"></td>
+                        <td width="75%">
 
-                    </td>
-                    <td width="4%">
+                            <table id="table_split_selector" width="100%">
+                                <tr id="split-table-contents"></tr>
+                            </table>
 
-                    </td>
-                    <td>
-                        <ul class="nav navbar-left btn-features">
-                            <li class="features dropdown">
-                                <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color:#000;">Channel
-                                    <span class="caret"></span></a>
-                                <ul class="features checkbox_wrapper dropdown-menu"></ul>
-                            </li>
-                        </ul>
-                    </td>
+                        </td>
+                        <td width="4%">
 
-                </tr></table>
+                        </td>
+                        <td>
+                            <ul class="nav navbar-left btn-features">
+                                <li class="features dropdown">
+                                    <a class="dropdown-toggle" data-toggle="dropdown" href="#" style="color:#000;">Channel
+                                        <span class="caret"></span></a>
+                                    <ul class="features checkbox_wrapper dropdown-menu"></ul>
+                                </li>
+                            </ul>
+                        </td>
 
-<!--                <div id="split-container">
-                    <div id ="split-table-header">
-                        <table>
-                            <tr id="split-table-contents"></tr>
-                        </table>
-                    </div>
-                </div>-->
+                    </tr></table>
 
-                <div style="position:absolute; width:10vw; right:1vw; top:8vh;">
-                <!--<div style="position:absolute; width:200px; right:0px; top:60px;">-->
-                    <!---->
-                    <!--<ul class="nav navbar-left btn-md btn-warning">-->
+                    <!--                <div id="split-container">
+                                        <div id ="split-table-header">
+                                            <table>
+                                                <tr id="split-table-contents"></tr>
+                                            </table>
+                                        </div>
+                                    </div>-->
+
+                    <div style="position:absolute; width:10vw; right:1vw; top:8vh;">
+                        <!--<div style="position:absolute; width:200px; right:0px; top:60px;">-->
+                        <!---->
+                        <!--<ul class="nav navbar-left btn-md btn-warning">-->
                         <!--<li class="features dropdown">-->
-                            <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">Features-->
-                                <!--<span class="caret"></span></a>-->
-                            <!--<ul class="features checkbox_wrapper dropdown-menu"></ul>-->
+                        <!--<a class="dropdown-toggle" data-toggle="dropdown" href="#">Features-->
+                        <!--<span class="caret"></span></a>-->
+                        <!--<ul class="features checkbox_wrapper dropdown-menu"></ul>-->
                         <!--</li>-->
-                    <!--</ul>-->
-                    <!---->
+                        <!--</ul>-->
+                        <!---->
+                    </div>
+
+
+
+                    <!--
+                    <button type="button" class="btn" id="zoom_reset" onclick="zoomReset()">
+                        <span class="glyphicon glyphicon-zoom-out"></span> Zoom-reset
+                    </button>
+                    <button type="button" class="btn" id="zoom_in" onclick="zoomIn()">
+                        <span class="glyphicon glyphicon-zoom-in"></span> Zoom-In
+                    </button>
+                    <button type="button" class="btn" id="zoom_out" onclick="zoomOut()">
+                        <span class="glyphicon glyphicon-zoom-out"></span> Zoom-Out
+                    </button>
+                    -->
                 </div>
+                <div id="canvas"></div>
 
-
-
-                <!--
-                <button type="button" class="btn" id="zoom_reset" onclick="zoomReset()">
-                    <span class="glyphicon glyphicon-zoom-out"></span> Zoom-reset
-                </button>
-                <button type="button" class="btn" id="zoom_in" onclick="zoomIn()">
-                    <span class="glyphicon glyphicon-zoom-in"></span> Zoom-In
-                </button>
-                <button type="button" class="btn" id="zoom_out" onclick="zoomOut()">
-                    <span class="glyphicon glyphicon-zoom-out"></span> Zoom-Out
-                </button>
-                -->
             </div>
-            <div id="canvas"></div>
 
-        </div>
+            </div>
+
 
     </div>
 

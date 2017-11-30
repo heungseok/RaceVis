@@ -13,6 +13,7 @@ var margin = {top: 5, right: 20, bottom: 20, left: 50},
     width = document.getElementById("canvas").offsetWidth - margin.left - margin.right - margin_for_plot_info,
     // height = document.getElementById("canvas").offsetHeight/5 - margin.bottom - margin.top;
     height = window.innerHeight/8 - margin.bottom - margin.top;
+
 // additional margin to show min, max value next to the line chart
 var additional_margin = 20;
 
@@ -20,27 +21,34 @@ var additional_margin = 20;
 // ** zoom component variables ** //
 var zoom_margin = {top: 20, right: 20, bottom: 20, left: 50},
     zoom_width = width, // line chart랑 같은 width
-    zoom_height = window.innerHeight/10 - zoom_margin.bottom - zoom_margin.top;
+    zoom_height = window.innerHeight/12 - zoom_margin.bottom - zoom_margin.top;
 
 // ** track, navigation track variables ** //
-var track_margin = {top: 10, right: 10, bottom: 20, left: 50},
-    nav_track_margin = {top: 50, right: 10, bottom: 100, left: 100},
+var track_margin = {top: 0, right: 10, bottom: 20, left: 50},
+    nav_track_margin = {top: 50, right: 50, bottom: 100, left: 50},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top,
+
     nav_track_width = document.getElementById("track_nav_canvas").offsetWidth - track_margin.left - track_margin.right,
-    nav_track_height = document.getElementById("row-top container").offsetHeight - nav_track_margin.bottom - nav_track_margin.top;
+    // nav_track_height = document.getElementById("row-top container").offsetHeight - nav_track_margin.bottom - nav_track_margin.top;
+    nav_track_height = document.getElementById("track_nav_canvas").offsetHeight - nav_track_margin.bottom - nav_track_margin.top;
+
 
 // ** sub-info components variables ** //
-var sub_margin = {top: 10, right: 20, bottom: 0, left: 20},
+var sub_margin = {top: 0, right: 20, bottom: 0, left: 20},
     sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
-    // sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
-    sub_height = document.getElementById("row-top container").offsetHeight - sub_margin.bottom - sub_margin.top;
+    sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+    // sub_height = document.getElementById("row-top container").offsetHeight - sub_margin.bottom - sub_margin.top;
 
 // ** radar chart variables ** //
 var radar_chart_margin = {top:100, right:100, bottom:100, left:100}
 // var radar_chart_width = document.getElementById("top-left-components").offsetWidth - radar_chart_margin.left - radar_chart_margin.right,
-var radar_chart_width = document.getElementById("top-left-components").offsetWidth/3,
-    radar_chart_height = radar_chart_width; // width와 동일하게.
+var radar_chart_height = document.getElementById("row-top container").offsetHeight - radar_chart_margin.bottom - radar_chart_margin.top,
+    radar_chart_width = radar_chart_height;
+
+// var radar_chart_width = document.getElementById("top-left-components").offsetWidth/3,
+//     radar_chart_height = radar_chart_width; // width와 동일하게.
+
 // Config for the Radar chart
 var radar_chart_config = {
     w: radar_chart_width,
@@ -60,7 +68,6 @@ var zoom_x = d3.scaleLinear().range([0, zoom_width]);
 var y = d3.local();
 
 var line = d3.local();
-var zoom_line = d3.local();
 var bisect = d3.bisector(function (d) { return d.x; }).left;
 var bisect_for_animation = d3.bisector(function (d) { return d; }).left;
 
@@ -81,7 +88,7 @@ var root_x = "PositionIndex";
 
 // ************** track boundary variable and line function **************** //
 var track_data = [], ref_track_data =[], merged_track_data={ };
-var track_x, track_y, nav_track_x, nav_track_y, pidx_to_track_x, pidx_to_track_y
+var track_x, track_y, nav_track_x, nav_track_y;
     inline_track = [], outline_track = [], centerline_track = [];
 var track_delta = []; // position index 에 해당하는 delta 값 저장 array
 
@@ -97,7 +104,6 @@ var nav_track_line = d3.line()
 
 // ************** track animation variable **************** //
 var animation_index =0,
-    animation_length,
     animation_range = [],
     ref_animation_index = 0,
     animation_flag = false,
@@ -106,7 +112,6 @@ var animation_index =0,
     animation_delay = 50, // default as 50 milliseconds.
     animation_track_data = [],
     animation_time_delta = [],
-    animation_color_domain,
     animation_track_color;
 var bisect_for_find_animatingPosition = d3.bisector(function (d) { return d.x; }).left;
 
@@ -167,7 +172,7 @@ var split_guides = [];
 
 
 
-/**************************** END of initializing Global variable *******************************************/
+// **************************** END of initializing Global variable ******************************************* //
 
 
 // document가 ready 되었을 때 chart initialization
@@ -410,8 +415,8 @@ function init_with_twoLaps() {
                     drawTrack_withTwoLaps();
                     drawSubInfo_withTwoLaps();
                     setBtnState();
-                    // setAnimationRange_fromZoom(current_zoomRange.map(zoom_x.invert, zoom_x))
                     zoomReset();
+                    track_zoomReset();
                     document.getElementById("loading").style.display = "none";
 
                     //  ******* comment box contents ********* //
@@ -1081,7 +1086,7 @@ function UpdateGuideComments(split)
     $('#split_name').html('');
 
     if(split ==0 ) $('#split_name').append('FULL');
-    else $('#split_name').append('S'+split);
+    else $('#split_name').append('SECTOR '+split);
 
     $('#guide_tab').html('');
     $('#guide_tab').append(split_guides[split]);
@@ -1111,11 +1116,19 @@ function track_zoomed(){
     d3.select("#track_canvas").select("g").attr("transform", d3.event.transform);
 }
 function track_zoomReset(){
-    trackZoom.transform(d3.select("#track_canvas"), d3.zoomIdentity
-        .translate(track_width/4, 0));
     // panning the track to 25% of the width
-    // d3.select("#track_canvas").call(trackZoom.transform, d3.zoomIdentity
+
+    // with transition time
+    d3.select("#track_canvas").call(trackZoom).transition()
+        .duration(200)
+        .call(trackZoom.transform, d3.zoomIdentity
+            .translate(track_width/4, 0));
+
+    // without transition time
+    // trackZoom.transform(d3.select("#track_canvas"), d3.zoomIdentity
     //     .translate(track_width/4, 0));
+
+
 }
 function track_dragged(d){
     d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);

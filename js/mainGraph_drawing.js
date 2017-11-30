@@ -288,7 +288,6 @@ function drawTrack_withTwoLaps(){
     var centerline_x0 = d3.extent(merged_track_data.centerline, function(d) { return d.long; });
 
     var union_x0 = d3.extent(_.union(origin_x0, ref_x0, inline_x0, outline_x0, centerline_x0));
-    // var union_x0 = d3.extent(_.union(origin_x0, ref_x0));
     console.log(union_x0);
     console.log(union_x0[1] - union_x0[0]);
     var abs_x_range = union_x0[1] - union_x0[0];
@@ -304,12 +303,6 @@ function drawTrack_withTwoLaps(){
     console.log(union_y0[1] - union_y0[0]);
 
     var abs_y_range = union_y0[1] - union_y0[0];
-    console.log(d3.extent(merged_track_data.centerline, function(d) { return d.x}));
-    // pidx_to_track_x = d3.scaleLinear().domain(d3.extent(merged_track_data.centerline, function(d) { return d.x}))
-    //     .range(union_x0);
-    // console.log(pidx_to_track_x);
-    // console.log(pidx_to_track_x(3000));
-    // pidx_to_track_y
 
     track_y = d3.scaleLinear().range([track_height, 0])
         .domain(union_y0);
@@ -325,11 +318,11 @@ function drawTrack_withTwoLaps(){
         .attr("viewBox", "0 0 " + (track_width + track_margin.left + track_margin.right)
             + " " + (track_height + track_margin.top + track_margin.bottom))
         .classed("svg-content-responsive", true)
+        .attr("transform",
+            "translate(" + track_margin.left + "," + track_margin.top + ")")
         // .attr("width", track_width + track_margin.left + track_margin.right)
         // .attr("height", track_height + track_margin.top + track_margin.bottom)
-        .append("g")
-        .attr("transform",
-            "translate(" + track_margin.left + "," + track_margin.top + ")");
+        .append("g");
 
 
     // *************** Append track line path :***************//
@@ -380,8 +373,8 @@ function drawTrack_withTwoLaps(){
     d3.select("#track_canvas").call(trackZoom);
 
     // panning the track to 25% of the width
-    d3.select("#track_canvas").call(trackZoom.transform, d3.zoomIdentity
-        .translate(track_width/4, 0));
+    // d3.select("#track_canvas").call(trackZoom.transform, d3.zoomIdentity
+    //     .translate(track_width/4, 0));
 
 
     // *************************** Draw Navigation Track *************************** //
@@ -406,7 +399,7 @@ function drawTrack_withTwoLaps(){
         .append("g")
         .attr("transform",
             // "translate(" + track_margin.left + "," + track_margin.top + ")");
-            "translate(" + nav_track_width/4 + "," + nav_track_height/4 + ")");
+            "translate(" + nav_track_width/4 + "," + nav_track_height/4 + ") scale(1.5)");
 
 
     // *************** Append track line path :***************//
