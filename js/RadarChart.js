@@ -14,8 +14,8 @@ var RadarChart = {
             radians: 2 * Math.PI,
             opacityArea: 0.5,
             ToRight: 5,
-            TranslateX: 80,
-            TranslateY: 30,
+            TranslateX: 60,
+            TranslateY: 20,
             ExtraWidthX: 100,
             ExtraWidthY: 100,
             color: d3.scaleOrdinal().range([COLOR_ORIGIN, COLOR_REF])
