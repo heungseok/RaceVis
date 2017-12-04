@@ -41,9 +41,8 @@ var sub_margin = {top: 0, right: 20, bottom: 0, left: 20},
     // sub_height = document.getElementById("row-top container").offsetHeight - sub_margin.bottom - sub_margin.top;
 
 // ** radar chart variables ** //
-var radar_chart_margin = {top:100, right:100, bottom:100, left:100}
-// var radar_chart_width = document.getElementById("top-left-components").offsetWidth - radar_chart_margin.left - radar_chart_margin.right,
-var radar_chart_height = document.getElementById("row-top container").offsetHeight - radar_chart_margin.bottom - radar_chart_margin.top,
+var radar_chart_height = document.getElementById("row-top container").offsetHeight*.5;
+// radar_chart_margin.bottom - radar_chart_margin.top,
     radar_chart_width = radar_chart_height;
 
 // var radar_chart_width = document.getElementById("top-left-components").offsetWidth/3,
