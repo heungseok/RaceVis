@@ -399,7 +399,7 @@ function drawTrack_withTwoLaps(){
         .append("g")
         .attr("transform",
             // "translate(" + track_margin.left + "," + track_margin.top + ")");
-            "translate(" + nav_track_width/4 + "," + nav_track_height/4 + ") scale(1.5)");
+            "translate(" + nav_track_width*0.1 + "," + nav_track_height/5 + ") scale(1.5)");
 
 
     // *************** Append track line path :***************//

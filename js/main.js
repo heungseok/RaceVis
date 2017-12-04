@@ -29,7 +29,7 @@ var track_margin = {top: 0, right: 10, bottom: 20, left: 50},
     track_width = document.getElementById("track_canvas").offsetWidth - track_margin.left - track_margin.right,
     track_height = document.getElementById("track_canvas").offsetHeight - track_margin.bottom - track_margin.top,
 
-    nav_track_width = document.getElementById("track_nav_canvas").offsetWidth - track_margin.left - track_margin.right,
+    nav_track_width = document.getElementById("track_nav_canvas").offsetWidth - nav_track_margin.left - nav_track_margin.right,
     // nav_track_height = document.getElementById("row-top container").offsetHeight - nav_track_margin.bottom - nav_track_margin.top;
     nav_track_height = document.getElementById("track_nav_canvas").offsetHeight - nav_track_margin.bottom - nav_track_margin.top;
 
