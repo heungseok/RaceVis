@@ -18,7 +18,7 @@ var RadarChart = {
             TranslateY: 20,
             ExtraWidthX: 100,
             ExtraWidthY: 100,
-            color: d3.scaleOrdinal().range([COLOR_ORIGIN, COLOR_REF])
+            color: d3.scaleOrdinal().range([COLOR_REF, COLOR_ORIGIN])
         };
 
         if('undefined' !== typeof options){
@@ -42,7 +42,7 @@ var RadarChart = {
             .append("div").classed("svg-container.line-chart", true) // container class to make it responsive
             .append("svg")
             .attr("preserveAspectRatio", "xMinYMin meet") // responsive SVG needs these 2 attributes and no width and height attr
-            .attr("viewBox","0 0 " + (cfg.w+cfg.ExtraWidthX)
+            .attr("viewBox","0 -10 " + (cfg.w+cfg.ExtraWidthX)          // Yongseop: to avoid barrier of 0th legend.
                 + " " + (cfg.h+cfg.ExtraWidthY))
             .classed("svg-content-responsive", true) // class to make it responsive
             // For non-responsive radar chart //

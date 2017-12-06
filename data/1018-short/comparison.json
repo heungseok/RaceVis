@@ -1,0 +1,317 @@
+{
+	"optimal_info": 95.067, 
+    "sector_info": {
+        "FULL": {
+            "Laptime_A": 102.559, 
+            "Laptime_B": 102.841, 
+            "brakingDistance_A": 0, 
+            "brakingDistance_B": 0, 
+            "comments": {
+                "ACCEL": [
+                    52.100, 
+                    "m", 
+                    "풀스로틀 구간이 더 깁니다.<br />일반적으로 드라이버가 차량을 편안하게 느낄수록 풀스로틀 구간이 늘어납니다."
+                ], 
+                "BRAKING": [
+                    0.000, 
+                    "m", 
+                    "유효한 브레이크 정보가 없습니다."
+                ], 
+                "DISTANCE": [
+                    -8.400, 
+                    "m", 
+                    "전체 주행거리가 더 짧습니다. <br />짧은 주행거리의 라인 선택은 기록 단축에 효과적이지만, 코너링 스피드가 떨어질 수 있으므로 분석을 통해 판단해야 합니다."
+                ], 
+                "ENGINE": [
+                    -0.100, 
+                    "%", 
+                    "유의미한 출력 차이가 없습니다."
+                ]
+            }, 
+            "driver_score_A": {
+                "ACCEL": 52.826, 
+                "BRAKING": 50, 
+                "DISTANCE": 42.987, 
+                "EDGE": 50, 
+                "LINE": 56.203, 
+                "STEERING": 49.045
+            }, 
+            "driver_score_B": {
+                "ACCEL": 50, 
+                "BRAKING": 50, 
+                "DISTANCE": 50, 
+                "EDGE": 50, 
+                "LINE": 50, 
+                "STEERING": 50
+            }, 
+            "enginePower_A": 105.574, 
+            "enginePower_B": 105.646, 
+            "guides": "영암 상설 코스는 속도의 변화 폭이 크고, 연속된 코너가 많기 때문에 차량의 균형 유지에 신경써야 합니다.", 
+            "throttleDistance_A": 1431.882, 
+            "throttleDistance_B": 1379.791, 
+            "totalDistance_A": 2990.058, 
+            "totalDistance_B": 2998.470
+        }, 
+        "S1": {
+            "Laptime_A": 36.109, 
+            "Laptime_B": 35.879, 
+            "brakingDistance_A": 0, 
+            "brakingDistance_B": 0, 
+            "comments": {
+                "ACCEL": [
+                    16.800, 
+                    "m", 
+                    "풀스로틀 구간이 더 깁니다.<br />일반적으로 드라이버가 차량을 편안하게 느낄수록 풀스로틀 구간이 늘어납니다."
+                ], 
+                "BRAKING": [
+                    0.000, 
+                    "m", 
+                    "유효한 브레이크 정보가 없습니다."
+                ], 
+                "DISTANCE": [
+                    -1.400, 
+                    "m", 
+                    "전체 주행거리가 더 짧습니다. <br />짧은 주행거리의 라인 선택은 기록 단축에 효과적이지만, 코너링 스피드가 떨어질 수 있으므로 분석을 통해 판단해야 합니다."
+                ], 
+                "ENGINE": [
+                    0, 
+                    "%", 
+                    "출력 비교는 FULL 섹터에서만 가능합니다."
+                ]
+            }, 
+            "driver_score_A": {
+                "ACCEL": 54.498, 
+                "BRAKING": 50, 
+                "DISTANCE": 46.435, 
+                "EDGE": 50, 
+                "LINE": 63.155, 
+                "STEERING": 49.789
+            }, 
+            "driver_score_B": {
+                "ACCEL": 50, 
+                "BRAKING": 50, 
+                "DISTANCE": 50, 
+                "EDGE": 50, 
+                "LINE": 50, 
+                "STEERING": 50
+            }, 
+            "guides": "첫 번째 섹터는 코너 사이의 거리가 짧으므로, 코너를 탈출할 때 다음 코너의 진입 라인을 염두에 둬야 합니다. <br /> T1 은 아웃라인에서 한계 브레이킹을 하되 과욕은 금물입니다. 차량이 선회하는 동안 브레이킹이 일정량 남아있을 수 있도록 브레이크를 떼는 포인트(Releasing Point)에 신경쓰세요.", 
+            "sectorLength": 960, 
+            "throttleDistance_A": 502.692, 
+            "throttleDistance_B": 485.912, 
+            "totalDistance_A": 947.244, 
+            "totalDistance_B": 948.596
+        }, 
+        "S2": {
+            "Laptime_A": 15.953, 
+            "Laptime_B": 15.746, 
+            "brakingDistance_A": 0, 
+            "brakingDistance_B": 0, 
+            "comments": {
+                "ACCEL": [
+                    -30.800, 
+                    "m", 
+                    "풀스로틀 구간이 더 짧습니다.<br />일반적으로 코너 중 가속구간에서 불안함을 느낄수록 풀스로틀 구간이 짧습니다."
+                ], 
+                "BRAKING": [
+                    0.000, 
+                    "m", 
+                    "유효한 브레이크 정보가 없습니다."
+                ], 
+                "DISTANCE": [
+                    -1.400, 
+                    "m", 
+                    "전체 주행거리가 더 짧습니다. <br />짧은 주행거리의 라인 선택은 기록 단축에 효과적이지만, 코너링 스피드가 떨어질 수 있으므로 분석을 통해 판단해야 합니다."
+                ], 
+                "ENGINE": [
+                    0, 
+                    "%", 
+                    "출력 비교는 FULL 섹터에서만 가능합니다."
+                ]
+            }, 
+            "driver_score_A": {
+                "ACCEL": 42.791, 
+                "BRAKING": 50, 
+                "DISTANCE": 43.906, 
+                "EDGE": 50, 
+                "LINE": 47.513, 
+                "STEERING": 41.964
+            }, 
+            "driver_score_B": {
+                "ACCEL": 50, 
+                "BRAKING": 50, 
+                "DISTANCE": 50, 
+                "EDGE": 50, 
+                "LINE": 50, 
+                "STEERING": 50
+            }, 
+            "guides": "고속 코너들로 이루어져 기록 단축에 매우 중요한 섹터입니다. <br /> T5 에서 최대의 가속을 할 수 있도록, 주행 라인을 넓게 쓰고 스티어링 양을 줄여 보세요.", 
+            "sectorLength": 590, 
+            "throttleDistance_A": 284.648, 
+            "throttleDistance_B": 315.490, 
+            "totalDistance_A": 580.916, 
+            "totalDistance_B": 582.336
+        }, 
+        "S3": {
+            "Laptime_A": 17.978, 
+            "Laptime_B": 17.753, 
+            "brakingDistance_A": 0, 
+            "brakingDistance_B": 0, 
+            "comments": {
+                "ACCEL": [
+                    -24.700, 
+                    "m", 
+                    "풀스로틀 구간이 더 짧습니다.<br />일반적으로 코너 중 가속구간에서 불안함을 느낄수록 풀스로틀 구간이 짧습니다."
+                ], 
+                "BRAKING": [
+                    0.000, 
+                    "m", 
+                    "유효한 브레이크 정보가 없습니다."
+                ], 
+                "DISTANCE": [
+                    2.600, 
+                    "m", 
+                    "전체 주행거리가 더 깁니다. <br />긴 주행거리의 라인 선택은 코너링 스피드를 높게 가져갈 수 있지만, 주파 시간이 증가할 수 있으므로 분석을 통해 판단해야 합니다."
+                ], 
+                "ENGINE": [
+                    0, 
+                    "%", 
+                    "출력 비교는 FULL 섹터에서만 가능합니다."
+                ]
+            }, 
+            "driver_score_A": {
+                "ACCEL": 37.739, 
+                "BRAKING": 50, 
+                "DISTANCE": 63.885, 
+                "EDGE": 50, 
+                "LINE": 42.866, 
+                "STEERING": 52.435
+            }, 
+            "driver_score_B": {
+                "ACCEL": 50, 
+                "BRAKING": 50, 
+                "DISTANCE": 50, 
+                "EDGE": 50, 
+                "LINE": 50, 
+                "STEERING": 50
+            }, 
+            "guides": "여긴 대충<br />타셈", 
+            "sectorLength": 485, 
+            "throttleDistance_A": 199.386, 
+            "throttleDistance_B": 224.044, 
+            "totalDistance_A": 479.589, 
+            "totalDistance_B": 476.940
+        }, 
+        "S4": {
+            "Laptime_A": 16.850, 
+            "Laptime_B": 17.108, 
+            "brakingDistance_A": 0, 
+            "brakingDistance_B": 0, 
+            "comments": {
+                "ACCEL": [
+                    81.700, 
+                    "m", 
+                    "풀스로틀 구간이 더 깁니다.<br />일반적으로 드라이버가 차량을 편안하게 느낄수록 풀스로틀 구간이 늘어납니다."
+                ], 
+                "BRAKING": [
+                    0.000, 
+                    "m", 
+                    "유효한 브레이크 정보가 없습니다."
+                ], 
+                "DISTANCE": [
+                    -4.400, 
+                    "m", 
+                    "전체 주행거리가 더 짧습니다. <br />짧은 주행거리의 라인 선택은 기록 단축에 효과적이지만, 코너링 스피드가 떨어질 수 있으므로 분석을 통해 판단해야 합니다."
+                ], 
+                "ENGINE": [
+                    0, 
+                    "%", 
+                    "출력 비교는 FULL 섹터에서만 가능합니다."
+                ]
+            }, 
+            "driver_score_A": {
+                "ACCEL": 77.949, 
+                "BRAKING": 50, 
+                "DISTANCE": 28.470, 
+                "EDGE": 50, 
+                "LINE": 50.859, 
+                "STEERING": 46.667
+            }, 
+            "driver_score_B": {
+                "ACCEL": 50, 
+                "BRAKING": 50, 
+                "DISTANCE": 50, 
+                "EDGE": 50, 
+                "LINE": 50, 
+                "STEERING": 50
+            }, 
+            "guides": "여긴<br />대충 타셈", 
+            "sectorLength": 525, 
+            "throttleDistance_A": 247.249, 
+            "throttleDistance_B": 165.586, 
+            "totalDistance_A": 511.964, 
+            "totalDistance_B": 516.411
+        }, 
+        "S5": {
+            "Laptime_A": 15.669, 
+            "Laptime_B": 16.354, 
+            "brakingDistance_A": 0, 
+            "brakingDistance_B": 0, 
+            "comments": {
+                "ACCEL": [
+                    9.100, 
+                    "m", 
+                    "풀스로틀 구간이 더 깁니다.<br />일반적으로 드라이버가 차량을 편안하게 느낄수록 풀스로틀 구간이 늘어납니다."
+                ], 
+                "BRAKING": [
+                    0.000, 
+                    "m", 
+                    "유효한 브레이크 정보가 없습니다."
+                ], 
+                "DISTANCE": [
+                    -3.800, 
+                    "m", 
+                    "전체 주행거리가 더 짧습니다. <br />짧은 주행거리의 라인 선택은 기록 단축에 효과적이지만, 코너링 스피드가 떨어질 수 있으므로 분석을 통해 판단해야 합니다."
+                ], 
+                "ENGINE": [
+                    0, 
+                    "%", 
+                    "출력 비교는 FULL 섹터에서만 가능합니다."
+                ]
+            }, 
+            "driver_score_A": {
+                "ACCEL": 54.759, 
+                "BRAKING": 50, 
+                "DISTANCE": 29.804, 
+                "EDGE": 50, 
+                "LINE": 39.503, 
+                "STEERING": 54.737
+            }, 
+            "driver_score_B": {
+                "ACCEL": 50, 
+                "BRAKING": 50, 
+                "DISTANCE": 50, 
+                "EDGE": 50, 
+                "LINE": 50, 
+                "STEERING": 50
+            }, 
+            "guides": "여긴 존나 대충 타셈", 
+            "sectorLength": 474.273, 
+            "throttleDistance_A": 192.885, 
+            "throttleDistance_B": 183.736, 
+            "totalDistance_A": 463.306, 
+            "totalDistance_B": 467.079
+        }
+    }, 
+    "track_info": {
+        "Split": [
+            0, 
+            960, 
+            1550, 
+            2035, 
+            2560, 
+            3034.273
+        ], 
+        "TrackName": "KIC_SHORT"
+    }
+}

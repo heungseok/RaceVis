@@ -154,6 +154,15 @@ var trackZoom = d3.zoom()
 var current_zoomRange;
 var context;
 
+
+
+// Track, Session, Lap variables for top navigation bar
+
+var name_track;
+
+var session_original;
+var session_reference;
+
 var lap_original=-1;
 var lap_reference=-1;
 var initialized = false;
@@ -419,7 +428,7 @@ function init_with_twoLaps() {
                     document.getElementById("loading").style.display = "none";
 
                     //  ******* comment box contents ********* //
-                    d3.json("./data/1018-short/2_5comparison-ex_up_std_oragi_kicshort_86_session-0.json", function(error, track_info_data) {
+                    d3.json("./data/1018-short/comparison.json", function(error, track_info_data) {
                         console.log(track_info_data);
 
                         var track_name = track_info_data.track_info.TrackName;
@@ -466,14 +475,14 @@ function init_with_twoLaps() {
                         for(z=0; z<nSplits; z++){
                             split_record_diff[z] = split_record[z] - split_record_ref[z];
 
-                            if(z==0){
+                            /*if(z==0){
                                 split_record_string[z] = GetStringFromSec(split_record[z]);
                                 split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
                             }
-                            else{
+                            else{*/
                                 split_record_string[z] = GetStringFromSec(split_record[z],split_record_ref[z]);
                                 split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
-                            }
+                            //}
                         }
 
                         for(z=0; z<nSplits; z++){
@@ -529,25 +538,24 @@ function init_with_twoLaps() {
 
 
 
-
                         // ********************* drawing radar chart ******************** //
                         // setting dummy data
                         var radar_data = [
                             [
-                                {"area": "Speed", "value": 80},
-                                {"area": "BRAKE", "value": 40},
-                                {"area": "ACCEL", "value": 40},
-                                {"area": "RPM", "value": 90},
-                                {"area": "STEERING", "value": 60},
-                                {"area": "SLOPE", "value": 80}
+                                {"area": "ACCEL", "value": track_info_data.sector_info['FULL'].driver_score_B.ACCEL},
+                                {"area": "BRAKING", "value": track_info_data.sector_info['FULL'].driver_score_B.BRAKING},
+                                {"area": "DISTANCE", "value": track_info_data.sector_info['FULL'].driver_score_B.DISTANCE},
+                                {"area": "EDGE", "value": track_info_data.sector_info['FULL'].driver_score_B.EDGE},
+                                {"area": "LINE", "value": track_info_data.sector_info['FULL'].driver_score_B.LINE},
+                                {"area": "STEERING", "value": track_info_data.sector_info['FULL'].driver_score_B.STEERING}
                             ],
                             [
-                                {"area": "Speed", "value": 20},
-                                {"area": "BRAKE", "value": 10},
-                                {"area": "ACCEL", "value": 30},
-                                {"area": "RPM", "value": 30},
-                                {"area": "STEERING", "value": 20},
-                                {"area": "SLOPE", "value": 100}
+                                {"area": "ACCEL", "value": track_info_data.sector_info['FULL'].driver_score_A.ACCEL},
+                                {"area": "BRAKING", "value": track_info_data.sector_info['FULL'].driver_score_A.BRAKING},
+                                {"area": "DISTANCE", "value": track_info_data.sector_info['FULL'].driver_score_A.DISTANCE},
+                                {"area": "EDGE", "value": track_info_data.sector_info['FULL'].driver_score_A.EDGE},
+                                {"area": "LINE", "value": track_info_data.sector_info['FULL'].driver_score_A.LINE},
+                                {"area": "STEERING", "value": track_info_data.sector_info['FULL'].driver_score_A.STEERING}
                             ]
                         ]
 
@@ -1198,10 +1206,41 @@ function session_selector(){
     var selText = $(this).text();
     selText = selText.split('(');
 
-    //console.log(sessName);
     if(!$(this).parent().hasClass("disabled")) {
         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText[0] + '<span class="caret"></span>');
         $("#sel_lap").removeClass("hidden");
+
+        d3.json("./data/session_info/info_std_oragi_kicshort_86_session-0.json", function (error, session_info) {
+            console.log(session_info);
+
+            var nLaps = session_info.total_laps;
+
+            $("#sel_lap_list").html('<li class="dropdown-header">Lap</li>');
+            for (var lap = 0; lap < nLaps; lap++) {
+                var _lap = lap + 1;
+                var laptime = session_info.lap_info[lap].lapTime;
+
+                $("#sel_lap_list").append('<li id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ','+laptime+');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
+
+            }
+        });
+    }
+}
+
+function reference_session_selector(){
+
+    // session dropdown click listener
+    // when clicked, lap selectors of origin and reference are generated.
+    // css selector => .sel_session li a
+    console.log("reference session selector");
+
+
+    var selText = $(this).text();
+    selText = selText.split('(');
+
+    //console.log(sessName);
+    if(!$(this).parent().hasClass("disabled")) {
+        $(this).parents('.dropdown').find('.dropdown-toggle').html(selText[0] + '<span class="caret"></span>');
         $("#sel_lap_ref").removeClass("hidden");
 
         d3.json("./data/session_info/info_std_oragi_kicshort_86_session-0.json", function (error, session_info) {
@@ -1209,59 +1248,42 @@ function session_selector(){
 
             var nLaps = session_info.total_laps;
 
+            $("#sel_lap_ref_list").html('<li class="dropdown-header">Lap</li>');
             for (var lap = 0; lap < nLaps; lap++) {
                 var _lap = lap + 1;
                 var laptime = session_info.lap_info[lap].lapTime;
 
-                if (_lap == 2) {
+                $("#sel_lap_ref_list").append('<li id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ','+laptime+');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
 
-                    $("#sel_lap_list").append('<li id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                    $("#sel_lap_ref_list").append('<li class="disabled" id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                    //'<li><a href="#">1 Lap / 3:32:32 </a></li>'
-                }
-
-                else if (_lap == 5) {
-                    $("#sel_lap_list").append('<li class="disabled" id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                    $("#sel_lap_ref_list").append('<li id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                }
-
-                else {
-                    $("#sel_lap_list").append('<li class="disabled"  id="sel_lap_list_' + lap + '"><a href="#" onClick="SelectOriginLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                    $("#sel_lap_ref_list").append('<li class="disabled"  id="sel_lap_list_ref_' + lap + '"><a href="#" onClick="SelectReferenceLap(' + lap + ');">' + (lap + 1) + ' Lap / ' + GetStringFromSec(laptime) + ' </a></li>');
-                }
             }
         });
     }
 }
 
-function SelectOriginLap(lap)
+function SelectOriginLap(lap,laptime)
 {
-    if(lap==1) {
-        $("#sel_lap_list").parents('.dropdown').find('.dropdown-toggle').html((lap + 1) + ' Lap' + '<span class="caret"></span>');
 
-        lap_original = lap + 1;
+    $("#sel_lap_list").parents('.dropdown').find('.dropdown-toggle').html((lap + 1) + ' Lap (' + GetStringFromSec(laptime)+') <span class="caret"></span>');
 
-    }
-    if(lap_original ==2 && lap_reference == 5){
-        $("#finish_select").removeClass("hidden");
-        // init_with_twoLaps();
-    }
+    lap_original = lap + 1;
+    $("#sel_session_ref").removeClass("hidden");
 }
 
-function SelectReferenceLap(lap)
+function SelectReferenceLap(lap,laptime)
 {
-    if(lap==4) {
 
+    $("#sel_lap_ref_list").parents('.dropdown').find('.dropdown-toggle').html((lap + 1) + ' Lap (' + GetStringFromSec(laptime)+') <span class="caret"></span>');
 
-        $("#sel_lap_ref_list").parents('.dropdown').find('.dropdown-toggle').html((lap + 1) + ' Lap' + '<span class="caret"></span>');
+    lap_reference = lap + 1;
 
-        lap_reference = lap + 1;
-    }
+    $("#finish_select").removeClass("hidden");
 
-    if(lap_original ==2 && lap_reference == 5){
-        $("#finish_select").removeClass("hidden");
-        ///init_with_twoLaps();
-    }
+}
+
+function FinishSelect()
+{
+    console.log("Original Lap:"+lap_original+", Reference Lap:"+lap_reference);
+
 
 }
 

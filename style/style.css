@@ -136,7 +136,7 @@ rect.selection{
 /* right checkbox */
 .checkbox_wrapper{
     /*width: 27vw;*/
-    height: 20vh;
+    height: 30vh;
     overflow-y: scroll;
     background-color: #101010;
 
@@ -594,6 +594,7 @@ div.animation_track_controller_wrapper{
     height:40px;
     min-height:40px;
     border:0px;
+    z-index: auto;
 }
 
 #container ul.nav.navbar-nav.navbar-right{
