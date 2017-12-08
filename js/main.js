@@ -177,7 +177,7 @@ var COLOR_REF = '#00adeb';
 // *****************************  Comments and Guide variables ****************************** //
 var split_comments= [];
 var split_guides = [];
-
+var split_scores= [];
 
 
 // **************************** END of initializing Global variable ******************************************* //
@@ -464,6 +464,25 @@ function init_with_twoLaps() {
 
                             split_comments[z] = track_info_data.sector_info[sector_name].comments;
                             split_guides[z] = track_info_data.sector_info[sector_name].guides;
+
+                            split_scores[z] = [
+                                [
+                                    {"area": "ACCEL", "value": track_info_data.sector_info[sector_name].driver_score_B.ACCEL},
+                                    {"area": "BRAKING", "value": track_info_data.sector_info[sector_name].driver_score_B.BRAKING},
+                                    {"area": "DISTANCE", "value": track_info_data.sector_info[sector_name].driver_score_B.DISTANCE},
+                                    {"area": "EDGE", "value": track_info_data.sector_info[sector_name].driver_score_B.EDGE},
+                                    {"area": "LINE", "value": track_info_data.sector_info[sector_name].driver_score_B.LINE},
+                                    {"area": "STEERING", "value": track_info_data.sector_info[sector_name].driver_score_B.STEERING}
+                                ],
+                                [
+                                    {"area": "ACCEL", "value": track_info_data.sector_info[sector_name].driver_score_A.ACCEL},
+                                    {"area": "BRAKING", "value": track_info_data.sector_info[sector_name].driver_score_A.BRAKING},
+                                    {"area": "DISTANCE", "value": track_info_data.sector_info[sector_name].driver_score_A.DISTANCE},
+                                    {"area": "EDGE", "value": track_info_data.sector_info[sector_name].driver_score_A.EDGE},
+                                    {"area": "LINE", "value": track_info_data.sector_info[sector_name].driver_score_A.LINE},
+                                    {"area": "STEERING", "value": track_info_data.sector_info[sector_name].driver_score_A.STEERING}
+                                ]
+                            ];
                         }
 
                         //console.log(split_comments);
@@ -534,41 +553,21 @@ function init_with_twoLaps() {
                          $('#split-table-contents-ref').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string_ref[z]+'</td>');
                          }
                          */
-                        UpdateGuideComments(0);
+                        UpdateRadarGuideComments(0);
 
 
 
                         // ********************* drawing radar chart ******************** //
                         // setting dummy data
-                        var radar_data = [
-                            [
-                                {"area": "ACCEL", "value": track_info_data.sector_info['FULL'].driver_score_B.ACCEL},
-                                {"area": "BRAKING", "value": track_info_data.sector_info['FULL'].driver_score_B.BRAKING},
-                                {"area": "DISTANCE", "value": track_info_data.sector_info['FULL'].driver_score_B.DISTANCE},
-                                {"area": "EDGE", "value": track_info_data.sector_info['FULL'].driver_score_B.EDGE},
-                                {"area": "LINE", "value": track_info_data.sector_info['FULL'].driver_score_B.LINE},
-                                {"area": "STEERING", "value": track_info_data.sector_info['FULL'].driver_score_B.STEERING}
-                            ],
-                            [
-                                {"area": "ACCEL", "value": track_info_data.sector_info['FULL'].driver_score_A.ACCEL},
-                                {"area": "BRAKING", "value": track_info_data.sector_info['FULL'].driver_score_A.BRAKING},
-                                {"area": "DISTANCE", "value": track_info_data.sector_info['FULL'].driver_score_A.DISTANCE},
-                                {"area": "EDGE", "value": track_info_data.sector_info['FULL'].driver_score_A.EDGE},
-                                {"area": "LINE", "value": track_info_data.sector_info['FULL'].driver_score_A.LINE},
-                                {"area": "STEERING", "value": track_info_data.sector_info['FULL'].driver_score_A.STEERING}
-                            ]
-                        ]
 
 
                         // drawing radar chart
-                        RadarChart.draw("#radar_chart", radar_data, radar_chart_config)
 
                         d3.select('#radar_chart')
                             .selectAll('svg')
                             .append('svg')
                             .attr("width", radar_chart_width)
                             .attr("height", radar_chart_height);
-
                     });
                 });
             });
@@ -1035,7 +1034,7 @@ function setBrushRange(btn,split){
     // zoom to specific track area
     zoomTo(range, sector_type);
     // Update comment table
-    UpdateGuideComments(split);
+    UpdateRadarGuideComments(split);
 
 }
 function zoomTo(range, sector_type){
@@ -1088,7 +1087,7 @@ function zoomTo(range, sector_type){
 
 }
 
-function UpdateGuideComments(split)
+function UpdateRadarGuideComments(split)
 {
     $('#split_name').html('');
 
@@ -1114,6 +1113,9 @@ function UpdateGuideComments(split)
         $('#comment-table-contents').append("<tr>" +
             "<td>" + key + '</td><td><span style="color:'+color+'">' + sign+split_comments[split][key][0] + split_comments[split][key][1] +"</span></td><td>" + split_comments[split][key][2] + "</td>");
     });
+
+
+    RadarChart.draw("#radar_chart", split_scores[split], radar_chart_config);
 
 }
 
