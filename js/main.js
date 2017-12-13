@@ -91,6 +91,7 @@ var track_data = [], ref_track_data =[], merged_track_data={ };
 var track_x, track_y, nav_track_x, nav_track_y;
     inline_track = [], outline_track = [], centerline_track = [];
 var track_delta = []; // position index 에 해당하는 delta 값 저장 array
+var delta_value_option = "DeltaTimeDelta"; // DeltaTimeDelta, DeltaGPS_Speed, OFF
 
 
 // var track_line = d3.line().curve(d3.curveBasis)
@@ -387,7 +388,8 @@ function init_with_twoLaps() {
                     track_delta = track_delta_data.map(function(data){
                         return{
                             x: parseInt(data["PositionIndex"]), // x is pidx
-                            TimeDelta: parseFloat(data["DeltaTimeDelta"]) // 일단 소수점 3자리로 round
+                            TimeDelta: parseFloat(data["DeltaTimeDelta"]), // 일단 소수점 3자리로 round
+                            SpeedDelta: parseFloat(data["DeltaGPS_Speed"])
                         }
                     });
 
@@ -843,7 +845,10 @@ function updateTimeDelta(start, end){
     */
 }
 
-
+function setDeltaOption(){
+    delta_value_option = document.getElementById("delta_option").value;
+    drawing_animationPath();
+}
 
 function drawing_animationPath() {
     // clean previous animation path
@@ -860,10 +865,8 @@ function drawing_animationPath() {
 
     var position_indices = _.pluck(selected_features[0].values, "x");
 
-
-
     // Position Index일 경우 animation path drawing (uniformly sample path length && split those to draw with gradient color)
-    if(root_x=="PositionIndex"){
+    if(root_x=="PositionIndex" && delta_value_option != "OFF"){
 
         // ***************** animation_range의 start value & end value 값을 찾아야함. => axis 바꾼뒤에 여기서 start index, end index를 못찾는 경우가 생김. *************** //
         var centerLine_start_index = bisect_for_find_animatingPosition(merged_track_data.centerline,
@@ -880,7 +883,11 @@ function drawing_animationPath() {
                 'lat': merged_track_data.centerline[i].lat,
                 'x': merged_track_data.centerline[i].x
             });
-            animation_time_delta.push(track_delta[i].TimeDelta);
+
+            if(delta_value_option == "DeltaGPS_Speed")
+                animation_time_delta.push(track_delta[i].SpeedDelta);
+            else if(delta_value_option == "DeltaTimeDelta")
+                animation_time_delta.push(track_delta[i].TimeDelta);
         }
 
         // setting the time delta color palette (지금은 안씀. 이 코드는 매번 선택된 레인지에 따라서 변화할 때만 사용.
@@ -910,7 +917,8 @@ function drawing_animationPath() {
         d3.select("#table_split_selector").attr("class","");
 
         // Time Stamp 일 경우 animation path drawing (일반 path drawing)
-    }else if(root_x=="TimeStamp"){
+    }else{
+    // else if(root_x=="TimeStamp"){
 
         // time stamp가 축일 경우 centerline 으로 그리지 말고, 우선은 origin track 따라 그리기.
         // 센터라인에 큰 의미가 있다면 바꿀수 있겠으나 추가 연산이 필요함.
@@ -922,14 +930,15 @@ function drawing_animationPath() {
             .data([animation_track_data])
             .attr("class", "animation_path")
             .attr("d", track_line)
-            .style("stroke", "#dfeb06")
-            .style("stroke-width", 5)
-            .style("stroke-opacity", 0.6)
+            .style("stroke", "#FFF")
+            .style("stroke-width", 7)
+            .style("stroke-opacity", 0.4)
             .style("stroke-dasharray", 2) /* 값이 클수록 간격이 넒어짐 */
             .style("animation", "dash 30s linear");
 
-            // Disable split selector
-        d3.select("#table_split_selector").attr("class","hidden");
+        // Disable split selector if root_x is TimeStamp
+        if(root_x=="TimeStamp")
+            d3.select("#table_split_selector").attr("class","hidden");
     }
 
 
@@ -1360,3 +1369,5 @@ function GetValueColor(value, minus_threshold, plus_threshold)
     console.log(ret);
     return ret;
 }
+
+

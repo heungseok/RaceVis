@@ -7,7 +7,6 @@ function setPlaySpeed(){
     animation_delay = Number(document.getElementById("sel_speed").value);
 }
 
-
 // play button click event
 function playInput(){
 

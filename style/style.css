@@ -182,8 +182,8 @@ g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
     margin-left: 2px;
     float: left;
 }
-#sel_speed{
-    max-width: 20%;
+.sel_box *{
+    max-width: 10%;
     float: right;
     font-size: 10px;
 }
