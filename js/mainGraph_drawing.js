@@ -941,12 +941,7 @@ function addChart_withTwoLaps(id) {
         .attr("class", "axis axis--x")
         .attr("transform", "translate(" + 0 + "," + height + ")");
 
-    // 마지막 line x-axis에 맞추기.
-    var foc_lines = document.getElementsByClassName("tooltip_line");
-    for (var i =0; i<foc_lines.length-1; i++){
-        foc_lines[i].setAttribute("y2", height);
-    }
-    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
+
 
     // ***  chart title ***
     svg.append("text").attr("class", "chart_label")
@@ -999,6 +994,14 @@ function addChart_withTwoLaps(id) {
         .text("nothing");
 
 
+    // focus line을 마지막 line x-axis에 맞추기.
+    var foc_lines = document.getElementsByClassName("tooltip_line");
+    for (var i =0; i<foc_lines.length-1; i++){
+        foc_lines[i].setAttribute("y2", height);
+    }
+    foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
+
+
     // **************** Init mouse event, zoom brush, zoom brush on Chart ********** //
     // append the rectangle to capture mouse
     svg.append("rect")
@@ -1037,7 +1040,7 @@ function removeChart(id, index) {
     
     // svg 제거 (g+id)의 parent => SVG
     d3.select(target_id)
-        .select(function() { return this.parentNode; })
+        .select(function() { return this.parentNode.parentNode; })
         .remove();
 
     // 만약 제거하려는 차트가 마지막 index의 svg일 경우 차트 없앤 뒤에 새로운 x axis생성

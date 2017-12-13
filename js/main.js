@@ -824,6 +824,12 @@ function updateTimeDelta(start, end){
 
     // extract timeDelta object from the list of all features
     var delta_array = _.pluck(_.where(all_features, {id:"timeDelta"})[0].values, "feature_val");
+    var delta_value = delta_array[end] - delta_array[start];
+    d3.select("#time-delta-value")
+        .text("Time Delta: " + delta_value.toFixed(3));
+
+    /*
+    // If use the value of time delta as average value
     // slice array from the index of the start and the end
     delta_array = delta_array.slice(start, end);
 
@@ -834,7 +840,7 @@ function updateTimeDelta(start, end){
     // update text
     d3.select("#time-delta-value")
         .text("Avg. Time delta: " + delta_avg.toFixed(3));
-
+    */
 }
 
 
