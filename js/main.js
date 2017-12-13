@@ -65,6 +65,7 @@ var vis_type = 2; // 1: one lap, 2: two laps
 var x = d3.scaleLinear().range([0, width]);
 var zoom_x = d3.scaleLinear().range([0, zoom_width]);
 var y = d3.local();
+var zoom_limit = 15; // zoom region limit as 15m
 
 var line = d3.local();
 var bisect = d3.bisector(function (d) { return d.x; }).left;
@@ -597,6 +598,15 @@ function brushedOnChart(){
         // zoomReset();
         // 지금은 !s일 경우 do nothing
     }else{
+        console.log(s);
+
+        // limit zoom range
+        var temp = s.map(x.invert, x);
+        if(temp[1]-temp[0] < zoom_limit){
+            d3.select("#canvas").selectAll(".chartBrush").call(brush_onChart.move, null);
+            return;
+        }
+
         console.log("brushed on chart!");
         console.log("current x domain is (before change from brush): " + x.domain());
         // 이미 정의한 brush함수를 호출하는 것은 적절치 않음. 그래서 재구현함.
@@ -635,6 +645,14 @@ function brushed(){
     current_zoomRange = s;
     // console.log(s);
     // current_zoomRange = s.map(zoom_x.invert, zoom_x);
+    console.log(current_zoomRange);
+    console.log(s.map(zoom_x.invert, zoom_x));
+
+    // limit zoom range
+    var temp = s.map(zoom_x.invert, zoom_x);
+    if(temp[1]-temp[0] < zoom_limit){
+        return;
+    }
 
     // update x domain by zoom range
     x.domain(s.map(zoom_x.invert, zoom_x));

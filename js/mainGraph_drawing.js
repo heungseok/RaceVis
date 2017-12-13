@@ -266,14 +266,24 @@ function drawLineGraph_withTwoLaps() {
 
     context.append("g")
         .attr("class", "brush")
+        .attr("id", "overall_brush")
         .call(brush)
         .call(brush.move, x.range()); // 이걸로 초기 zoom range를 x.range()로 setting함. 없애면 brush 안보임.
+
+    context.append("text")
+        .attr("id", "time-delta-value")
+        .attr("x", 0)
+        .attr("y", zoom_height/2)
+        .attr("dy", ".35em")
+        .style("fill", "white")
+        .text("Time delta");
+
+
 
     // 마지막으로 mouse over effect 활성, 마지막에 선언함으로서 chart위에 brush와 겹치면서 잘 동작될 수 있음.
     d3.select("#canvas").selectAll(".overlay")
         .on("mouseover", function() { focus.style("display", null); })
         .on("mousemove", mousemove_twoLaps);
-
 
 }
 
