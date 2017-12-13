@@ -820,6 +820,23 @@ function setMinMax_by_animationRange(){
     })
 }
 
+function updateTimeDelta(start, end){
+
+    // extract timeDelta object from the list of all features
+    var delta_array = _.pluck(_.where(all_features, {id:"timeDelta"})[0].values, "feature_val");
+    // slice array from the index of the start and the end
+    delta_array = delta_array.slice(start, end);
+
+    // calculate delta_sum and delta_avg
+    var delta_sum = delta_array.reduce(function(a, b) { return a+b});
+    var delta_avg = delta_sum / delta_array.length;
+
+    // update text
+    d3.select("#time-delta-value")
+        .text("Avg. Time delta: " + delta_avg.toFixed(3));
+
+}
+
 
 
 function drawing_animationPath() {
@@ -839,7 +856,7 @@ function drawing_animationPath() {
 
 
 
-    // Position Index일 경우 animation path drawing (uniformly sample path legnth && split those to draw with gradient color)
+    // Position Index일 경우 animation path drawing (uniformly sample path length && split those to draw with gradient color)
     if(root_x=="PositionIndex"){
 
         // ***************** animation_range의 start value & end value 값을 찾아야함. => axis 바꾼뒤에 여기서 start index, end index를 못찾는 경우가 생김. *************** //
@@ -918,6 +935,9 @@ function drawing_animationPath() {
         .style("stroke", "#dfeb06")
         .style("stroke-width", 4)
         .style("stroke-opacity", 0.8);
+
+    // update time delta
+    updateTimeDelta(animation_range[0], animation_range[1]);
 
 }
 
