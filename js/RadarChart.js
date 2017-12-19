@@ -51,8 +51,6 @@ var RadarChart = {
             .append("g")
             .attr("transform", "translate(" + cfg.TranslateX + "," + cfg.TranslateY + ")");
 
-        var tooltip;
-
         //Circular segments
         for(var j=0; j<cfg.levels; j++){
             var levelFactor = cfg.factor*radius*((j+1)/cfg.levels);
@@ -106,16 +104,42 @@ var RadarChart = {
             .style("stroke-width", "1px");
 
         axis.append("text")
-            .attr("class", "legend")
+            .attr("class", "legend-Axis")
             .text(function(d){return d})
             .style("font-family", "sans-serif")
             .style("font-size", "11px")
+            .style("cursor", "default")
             .attr("text-anchor", "middle")
             .attr("dy", "1.5em")
             .attr("transform", function(d, i){return "translate(0, -10)"})
             .attr("x", function(d, i){return cfg.w/2*(1-cfg.factorLegend*Math.sin(i*cfg.radians/total))-60*Math.sin(i*cfg.radians/total);})
             .attr("y", function(d, i){return cfg.h/2*(1-Math.cos(i*cfg.radians/total))-20*Math.cos(i*cfg.radians/total);});
 
+
+        //var HTMLmouseTip = d3.select("div.mouse.tooltip");
+
+        axis.selectAll("text")
+            .on("mouseover", function (d) {
+                console.log(d);
+
+                var HTMLmouseTip = d3.select("div.mouse.tooltip."+d);
+                HTMLmouseTip.style("opacity", "1");
+
+
+                //HTMLmouseTip.style("background-color", "red" );
+
+            })
+
+            .on("mousemove", function (d) {
+                var HTMLmouseTip = d3.select("div.mouse.tooltip."+d);
+                HTMLmouseTip
+                    .style("left", Math.max(0, d3.event.pageX+10) + "px")
+                    .style("top", (d3.event.pageY - 40) + "px");
+            })
+            .on("mouseout", function (d) {
+                var HTMLmouseTip = d3.select("div.mouse.tooltip."+d);
+                return HTMLmouseTip.style("opacity", "0");
+            });
 
         d.forEach(function(y, x){
             dataValues = [];
