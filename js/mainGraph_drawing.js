@@ -370,7 +370,7 @@ function drawTrack_withTwoLaps(){
         .attr("id", "track_focus1");
     track_focus.append("circle")
         .attr("r", 4.5);
-    
+
     // ********** Init track zoom ************ //
     d3.select("#track_canvas").call(trackZoom);
 
