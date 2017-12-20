@@ -45,6 +45,7 @@ nav {
     border-right-style: solid;
     border-right-width: 5px;
     border-right-color: #333;
+    padding-bottom:1vw;
 
 }
 
@@ -156,9 +157,9 @@ rect.selection{
 }
 #sub_canvas{
     width: 28vw;
-    height: auto;
+    height: 40vh;
 }
-#track_canvas, #track_nav_canvas, #sub_canvas{
+#track_canvas, #track_nav_canvas{
     height: 35vh;
 }
 
@@ -183,22 +184,25 @@ g.focus > circle.chart_tooltip, g.focus-ref > circle.chart_tooltip-ref{
     padding-right:30px;
 }
 /* axis type button */
+.track_ctrl{
+    max-height:52px;
+    margin-top:18px;
+    margin-bottom:8px;
+}
 .axisSwitchBtn{
-    margin-left: 2px;
     float: left;
 }
 .sel_box *{
     max-width: 10%;
     float: right;
-    font-size: 10px;
 }
-.playBtn, .track_zoom{
+.playBtn_left{
     float:left;
-    padding-left: 5px;
+    margin-right: 10px;
 }
-.btn{
-    font-size: 10px;
-
+.playBtn_right{
+    margin-left:10px;
+    float:right;
 }
 
 
@@ -238,7 +242,6 @@ path.line.boundary{
 /* Table */
 div.tab-content{
     margin-left:2vw;
-    margin-top:1vw;
 }
 div.table-responsive{
     height: 35vh;
@@ -247,8 +250,6 @@ div.table-responsive{
 
 div.animation_track_controller_wrapper{
     margin-left:50px;
-    /*margin-bottom:50px;*/
-    padding-bottom:52px;
 
 }
 
@@ -562,7 +563,7 @@ div.animation_track_controller_wrapper{
     color: #000;
     font-weight:bolder;
     font-size: 0.8vw;
-    font-family: Calibri;
+
 }
 
 .btn-features {
@@ -571,7 +572,6 @@ div.animation_track_controller_wrapper{
     background-color:buttonface;
     font-weight:bolder;
     font-size: 0.8vw;
-    font-family: Calibri;
 }
 
 #comment_wrapper{

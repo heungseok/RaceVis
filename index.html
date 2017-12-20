@@ -124,7 +124,7 @@
 
                     </div>
 
-                    <div id="sector_btn_wrapper" style="position:absolute; top:70%; width: 80%; left:5%;">
+                    <div id="sector_btn_wrapper" style="position:absolute; top:70%; width: 80%;">
                         <div id="sector_track_info" style="font-size:14px; font-weight:500; color:#ffffff"></div>
 
                     </div>
@@ -151,40 +151,47 @@
             <div id="track_wrapper">
                 <div class="component title" style="position:absolute; left:3vw; top:12px;">TRACK SIMULATION NAVIGATOR</div>
                 <div id="track_canvas"></div>
-                <div class="animation_track_controller_wrapper">
-                    <div class="playBtn">
-                        <button type="button" class="btn" id="button_play" onclick="playInput()">
-                            <span class="glyphicon glyphicon-play"></span>
-                        </button>
-                    </div>
-                    <div class="axisSwitchBtn">
-                        <button type="button" class="btn axis-switch" id="btn-type-dist" value="PositionIndex" onclick="axisSwitch(this)">Position</button>
-                        <button type="button" class="btn axis-switch" id="btn-type-time" value="TimeStamp" onclick="axisSwitch(this)">Time</button>
-                    </div>
-                    <div class="track_zoom">
-                        <button type="button" class="btn" id="track_zoom_reset" onclick="track_zoomReset()">
-                            <span class="glyphicon glyphicon-zoom-out"></span> Track Zoom-reset</button>
-                    </div>
 
-                    <div class="sel_box">
-                        <label for="sel_speed"></label>
-                        <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
-                            <option value="50">1x</option>
-                            <option value="100">0.5x</option>
-                            <option value="200">0.25x</option>
-                            <!--<option value="1">4x</option>-->
-                        </select>
-                    </div>
+            </div>
 
-                    <div class="sel_box">
-                        <label for="delta_option"></label>
-                        <select class="form-control" id="delta_option" onchange="setDeltaOption()">
-                            <option value="DeltaTimeDelta">TImeDelta</option>
-                            <option value="DeltaGPS_Speed">SpeedDelta</option>
-                            <option value="OFF">OFF</option>
-                        </select>
-                    </div>
+            <div class="animation_track_controller_wrapper">
 
+                <div class="playBtn_left">
+                    <button type="button" class="btn track_ctrl" id="button_play" onclick="playInput()">
+                        <span class="glyphicon glyphicon-play"></span>
+                    </button>
+                </div>
+                <div class="playBtn_left">
+                    <label for="sel_speed"></label>
+                    <select class="form-control" id="sel_speed" onchange="setPlaySpeed()">
+                        <option value="50">1x</option>
+                        <option value="100">0.5x</option>
+                        <option value="200">0.25x</option>
+                        <!--<option value="1">4x</option>-->
+                    </select>
+
+                </div>
+                <div class="playBtn_left">
+                    <button type="button" class="btn track_ctrl" id="btn-type-dist" value="PositionIndex" onclick="axisSwitch(this)">Position</button>
+                </div>
+                <div class="playBtn_left">
+                    <button type="button" class="btn track_ctrl" id="btn-type-time" value="TimeStamp" onclick="axisSwitch(this)">Time</button>
+                </div>
+
+                <div class="playBtn_left">
+                    <button type="button" class="btn track_ctrl" id="track_zoom_reset" onclick="track_zoomReset()">
+                        <span class="glyphicon glyphicon-zoom-out"></span> Track Zoom-reset</button>
+                </div>
+
+
+
+                <div class="playBtn_right">
+                    <label for="delta_option"></label>
+                    <select class="form-control" id="delta_option" onchange="setDeltaOption()">
+                        <option value="DeltaTimeDelta">ΔTime</option>
+                        <option value="DeltaGPS_Speed">ΔSpeed</option>
+                        <option value="OFF">OFF</option>
+                    </select>
                 </div>
 
             </div>

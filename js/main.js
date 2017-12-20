@@ -36,8 +36,8 @@ var track_margin = {top: 0, right: 10, bottom: 20, left: 50},
 
 // ** sub-info components variables ** //
 var sub_margin = {top: 0, right: 20, bottom: 0, left: 20},
-    sub_width = document.getElementById("sub_canvas").offsetWidth - track_margin.left - track_margin.right,
-    sub_height = document.getElementById("sub_canvas").offsetHeight - track_margin.bottom - track_margin.top;
+    sub_width = document.getElementById("sub_canvas").offsetWidth - sub_margin.left - sub_margin.right,
+    sub_height = document.getElementById("sub_canvas").offsetHeight - sub_margin.bottom - sub_margin.top;
     // sub_height = document.getElementById("row-top container").offsetHeight - sub_margin.bottom - sub_margin.top;
 
 // ** radar chart variables ** //
@@ -170,8 +170,11 @@ var lap_reference=-1;
 var initialized = false;
 
 // *****************************  Global Color Variable ****************************** //
-var COLOR_POSITIVE = '#FF0000';
-var COLOR_NEGATIVE = '#00FF00';
+// var COLOR_POSITIVE = '#FF0000';
+// var COLOR_NEGATIVE = '#00FF00';
+// pastel tone color (red, green)
+var COLOR_POSITIVE = '#ff6961';
+var COLOR_NEGATIVE = '#61ff69';
 
 var COLOR_ORIGIN = '#ee337d';
 var COLOR_REF = '#00adeb';

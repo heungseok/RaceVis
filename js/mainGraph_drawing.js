@@ -450,23 +450,23 @@ function drawSubInfo_withTwoLaps() {
         .attr("class", "steer")
         .attr("height", 80).attr("width", 80)
         .attr("xlink:href", "./img/steer_origin.png")
-        .attr("transform", "scale(0.5), translate(150, 80)")
+        .attr("transform", "scale(0.5), translate(150, 50)")
 
 
     steering_focus.append("image")
         .attr("class", "steer-ref")
         .attr("height", 80).attr("width", 80)
         .attr("xlink:href", "./img/steer_ref.png")
-        .attr("transform", "scale(0.5), translate(250, 80)")
+        .attr("transform", "scale(0.5), translate(250, 50)")
 
 
     steering_focus.append("text")
         .attr("x", 5)
-        .attr("y", 60)
+        .attr("y", 40)
         .style("font-size", "20px")
         .text("STR");
     steering_focus.append("text").attr("class", "steer_value")
-        .attr("x", 5).attr("y", 80)
+        .attr("x", 5).attr("y", 60)
         .style("font-size", "20px")
         .style("fill", COLOR_NEGATIVE)
         .text("0.00");
@@ -479,7 +479,7 @@ function drawSubInfo_withTwoLaps() {
     brake_focus.append("rect")
         .attr("class", "background")
         .attr("x", 70)
-        .attr("y", 110)
+        .attr("y", 90)
         .attr("transform", "rotate(0)")
         .attr("width", 105)
         .attr("height", 20)
@@ -488,7 +488,7 @@ function drawSubInfo_withTwoLaps() {
     brake_focus.append("rect")
         .attr("class", "value")
         .attr("x", 70)
-        .attr("y", 112)
+        .attr("y", 92)
         .attr("transform", "rotate(0)")
         .attr("width", 2)
         .attr("height", 15)
@@ -497,7 +497,7 @@ function drawSubInfo_withTwoLaps() {
     brake_focus.append("rect")
         .attr("class", "background")
         .attr("x", 70)
-        .attr("y", 140)
+        .attr("y", 120)
         .attr("transform", "rotate(0)")
         .attr("width", 105)
         .attr("height", 20)
@@ -506,7 +506,7 @@ function drawSubInfo_withTwoLaps() {
     brake_focus.append("rect")
         .attr("class", "value-ref")
         .attr("x", 70)
-        .attr("y", 142)
+        .attr("y", 122)
         .attr("transform", "rotate(0)")
         .attr("width", 2)
         .attr("height", 15)
@@ -514,11 +514,11 @@ function drawSubInfo_withTwoLaps() {
 
     brake_focus.append("text")
         .attr("x", 5)
-        .attr("y", 125)
+        .attr("y", 105)
         .style("font-size", "20px")
         .text("BRK");
     brake_focus.append("text").attr("class", "brake_value")
-        .attr("x", 5).attr("y", 145)
+        .attr("x", 5).attr("y", 125)
         .style("font-size", "20px")
         .style("fill", COLOR_NEGATIVE)
         .text("0.00");
@@ -530,7 +530,7 @@ function drawSubInfo_withTwoLaps() {
     gas_focus.append("rect")
         .attr("class", "background")
         .attr("x", 70)
-        .attr("y", 185)
+        .attr("y", 165)
         .attr("transform", "rotate(0)")
         .attr("width", 105)
         .attr("height", 20)
@@ -539,7 +539,7 @@ function drawSubInfo_withTwoLaps() {
     gas_focus.append("rect")
         .attr("class", "value")
         .attr("x", 70)
-        .attr("y", 187)
+        .attr("y", 167)
         .attr("transform", "rotate(0)")
         .attr("width", 1)
         .attr("height", 15)
@@ -548,7 +548,7 @@ function drawSubInfo_withTwoLaps() {
     gas_focus.append("rect")
         .attr("class", "background")
         .attr("x", 70)
-        .attr("y", 215)
+        .attr("y", 195)
         .attr("transform", "rotate(0)")
         .attr("width", 105)
         .attr("height", 20)
@@ -557,7 +557,7 @@ function drawSubInfo_withTwoLaps() {
     gas_focus.append("rect")
         .attr("class", "value-ref")
         .attr("x", 70)
-        .attr("y", 217)
+        .attr("y", 197)
         .attr("transform", "rotate(0)")
         .attr("width", 1)
         .attr("height", 15)
@@ -565,11 +565,11 @@ function drawSubInfo_withTwoLaps() {
 
     gas_focus.append("text")
         .attr("x", 5)
-        .attr("y", 200)
+        .attr("y", 180)
         .style("font-size", "20px")
         .text("ACC");
     gas_focus.append("text").attr("class", "gas_value")
-        .attr("x", 5).attr("y", 220)
+        .attr("x", 5).attr("y", 200)
         .style("font-size", "20px")
         .style("fill", COLOR_NEGATIVE)
         .text("0.00");
@@ -583,7 +583,7 @@ function drawSubInfo_withTwoLaps() {
     gear_focus.append("text")
         .attr("class", "value")
         .attr("x", 100)
-        .attr("y", 280)
+        .attr("y", 260)
         .style("font-size", "25px")
         .style("fill", COLOR_ORIGIN)
         .text("0");
@@ -591,16 +591,44 @@ function drawSubInfo_withTwoLaps() {
     gear_focus.append("text")
         .attr("class", "value-ref")
         .attr("x", 130)
-        .attr("y", 280)
+        .attr("y", 260)
         .style("font-size", "25px")
         .style("fill", COLOR_REF)
         .text("0");
 
     gear_focus.append("text")
         .attr("x", 5)
-        .attr("y", 280)
+        .attr("y", 260)
         .style("font-size", "20px")
         .text("GEAR");
+
+
+    // ******** RPM ******** //
+    var rpm_focus = sub_svg.append("g")
+        .attr("id", "rpm_focus1")
+    // .attr("transform", "translate(360, 0)");
+
+    rpm_focus.append("text")
+        .attr("class", "value")
+        .attr("x", 100)
+        .attr("y", 300)
+        .style("font-size", "25px")
+        .style("fill", COLOR_ORIGIN)
+        .text("0");
+
+    rpm_focus.append("text")
+        .attr("class", "value-ref")
+        .attr("x", 130)
+        .attr("y", 300)
+        .style("font-size", "25px")
+        .style("fill", COLOR_REF)
+        .text("0");
+
+    rpm_focus.append("text")
+        .attr("x", 5)
+        .attr("y", 300)
+        .style("font-size", "20px")
+        .text("RPM");
 
 }
 
@@ -675,9 +703,9 @@ function mousemove_twoLaps() {
     // rotate by steering value
     var steer_focus = d3.select("#steer_focus1");
     steer_focus.select("image.steer")
-        .attr("transform", "scale(0.5), translate(150, 80), rotate(" + steer_data[index] + ", 35, 35)")
+        .attr("transform", "scale(0.5), translate(150, 50), rotate(" + steer_data[index] + ", 35, 35)")
     steer_focus.select("image.steer-ref")
-        .attr("transform", "scale(0.5), translate(250, 80), rotate(" + ref_steer_data[ref_index] + ", 35, 35)")
+        .attr("transform", "scale(0.5), translate(250, 50), rotate(" + ref_steer_data[ref_index] + ", 35, 35)")
 
     var steer_diff = steer_data[index] - ref_steer_data[ref_index];
     steer_focus.select("text.steer_value")
@@ -1092,6 +1120,7 @@ function clearAllSVG_for_xAxis_switch() {
     d3.select("#track_canvas").selectAll("div").remove();
     d3.select("#track_nav_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
+    d3.select("#sub_canvas").selectAll("div").remove();
 
     // remove section split buttons & info
     //var temp_node = document.getElementById("split-table-header");
@@ -1120,6 +1149,7 @@ function clearAllSVG() {
     d3.select("#track_canvas").selectAll("div").remove();
     d3.select("#track_nav_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
+    d3.select("#sub_canvas").selectAll("div").remove();
 
     // remove section split buttons & info
     var temp_node = document.getElementById("split-table-header");
