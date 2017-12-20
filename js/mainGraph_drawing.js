@@ -350,35 +350,27 @@ function drawTrack_withTwoLaps(){
         .attr("d", track_line);
 
 
-    // draw track line, ref line
+    // draw track line, ref line & focus element (circle)
     track_svg.append("path")
         .data([merged_track_data.ref])
         .attr("class", "line ref")
         .attr("d", track_line);
+
+    var ref_track_focus = track_svg.append("g")
+        .attr("id", "track_focus1-ref");
+    ref_track_focus.append("circle")
+        .attr("r", 4.5);
 
     track_svg.append("path")
         .data([merged_track_data.origin])
         .attr("class", "line")
         .attr("d", track_line);
 
-    // ********* Append track focus element (circle) *********** //
     var track_focus = track_svg.append("g")
         .attr("id", "track_focus1");
-
     track_focus.append("circle")
         .attr("r", 4.5);
-    // track_focus.append("text")
-    //     .text("test");
-
-
-    var ref_track_focus = track_svg.append("g")
-        .attr("id", "track_focus1-ref");
-
-    ref_track_focus.append("circle")
-        .attr("r", 4.5);
-    // ref_track_focus.append("text")
-    //     .text("test");
-
+    
     // ********** Init track zoom ************ //
     d3.select("#track_canvas").call(trackZoom);
 
@@ -1097,6 +1089,7 @@ function clearAllSVG_for_xAxis_switch() {
     d3.select("#zoom_canvas").select("svg").remove();
     d3.select("#canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
+    d3.select("#track_canvas").selectAll("div").remove();
     d3.select("#track_nav_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
 
@@ -1124,6 +1117,7 @@ function clearAllSVG() {
     d3.select("#zoom_canvas").select("svg").remove();
     d3.select("#canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
+    d3.select("#track_canvas").selectAll("div").remove();
     d3.select("#track_nav_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
 

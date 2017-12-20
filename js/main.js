@@ -854,6 +854,8 @@ function drawing_animationPath() {
     // clean previous animation path
     d3.selectAll("path.animation_path").remove();
     d3.selectAll("path.nav_animation_path").remove();
+    d3.select("#animation_path_wrapper").remove();
+
 
     // if animation is playing, force to stop
     resume_flag = true;
@@ -899,8 +901,10 @@ function drawing_animationPath() {
         // 1. draw animation path to main track line
         var sample_precision = 0.79;
         // 0.79로 했을 때 가장 근사치가 나오긴하는데 (현재 가진 animation point array length랑 내부적으로 생성하는 패쓰를 uniformly 0.79로 샘플 했을 때 가장 근사함.. 나중에 문제 있을듯)
-        var animation_path_width = 7;
-        d3.select("#track_canvas").select("svg").select("g").selectAll("path")
+        var animation_path_width = 4;
+        d3.select("#track_canvas").select("svg").select("g")
+            .append("g").attr("id", "animation_path_wrapper")
+            .selectAll("path")
             .data(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)))
             .enter().append("path")
             .attr("class", "animation_path")
@@ -926,12 +930,14 @@ function drawing_animationPath() {
             animation_track_data.push(track_data[i]);
         }
 
-        d3.select("#track_canvas").select("svg").select("g").append("path")
+        d3.select("#track_canvas").select("svg").select("g")
+            .append("g").attr("id", "animation_path_wrapper")
+            .append("path")
             .data([animation_track_data])
             .attr("class", "animation_path")
             .attr("d", track_line)
             .style("stroke", "#FFF")
-            .style("stroke-width", 7)
+            .style("stroke-width", 4)
             .style("stroke-opacity", 0.4)
             .style("stroke-dasharray", 2) /* 값이 클수록 간격이 넒어짐 */
             .style("animation", "dash 30s linear");
@@ -951,10 +957,23 @@ function drawing_animationPath() {
         .style("stroke-width", 4)
         .style("stroke-opacity", 0.8);
 
+    // switch the order of html elements
+    switchTrackElementsOrder();
+
     // update time delta
     updateTimeDelta(animation_range[0], animation_range[1]);
 
 }
+
+function switchTrackElementsOrder() {
+    try {
+        var track_parentNode = document.getElementById("animation_path_wrapper").parentNode;
+        track_parentNode.insertBefore(track_parentNode.lastChild, track_parentNode.firstChild);
+    } catch (e){
+        console.log("There is no animation range, thus no animation path wrapper element")
+    }
+}
+
 
 // ********************** Gradient color utility ****************************** //
 
