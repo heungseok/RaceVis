@@ -586,7 +586,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("y", 260)
         .style("font-size", "25px")
         .style("fill", COLOR_ORIGIN)
-        .text("0");
+        .text("");
 
     gear_focus.append("text")
         .attr("class", "value-ref")
@@ -594,7 +594,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("y", 260)
         .style("font-size", "25px")
         .style("fill", COLOR_REF)
-        .text("0");
+        .text("");
 
     gear_focus.append("text")
         .attr("x", 5)
@@ -610,19 +610,19 @@ function drawSubInfo_withTwoLaps() {
 
     rpm_focus.append("text")
         .attr("class", "value")
-        .attr("x", 100)
+        .attr("x", 70)
         .attr("y", 300)
         .style("font-size", "25px")
         .style("fill", COLOR_ORIGIN)
-        .text("0");
+        .text("");
 
     rpm_focus.append("text")
         .attr("class", "value-ref")
-        .attr("x", 130)
+        .attr("x", 140)
         .attr("y", 300)
         .style("font-size", "25px")
         .style("fill", COLOR_REF)
-        .text("0");
+        .text("");
 
     rpm_focus.append("text")
         .attr("x", 5)
@@ -699,7 +699,7 @@ function mousemove_twoLaps() {
     var ref_track_focus = d3.select("#track_focus1-ref");
     ref_track_focus .attr("transform", "translate(" + track_x(merged_track_data.ref[ref_index].long) + "," + track_y(merged_track_data.ref[ref_index].lat) + ")");
 
-    // ****************** handle Steering, Brake, Gas, Gear ****************//
+    // ****************** handle Steering, Brake, Gas, Gear, RPM ****************//
     // rotate by steering value
     var steer_focus = d3.select("#steer_focus1");
     steer_focus.select("image.steer")
@@ -750,6 +750,13 @@ function mousemove_twoLaps() {
         .text(gear_data[index])
     gear_focus.select("text.value-ref")
         .text(ref_gear_data[ref_index]);
+
+    var rpm_focus = d3.select("#rpm_focus1");
+    rpm_focus.select("text.value")
+        .text(Math.round(rpm_data[index]))
+    rpm_focus.select("text.value-ref")
+        .text(Math.round(ref_rpm_data[ref_index]));
+
 
 }
 

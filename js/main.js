@@ -127,12 +127,15 @@ var steer_data =[],
     brake_data = [],
     gas_data = [],
     gear_data = [],
+    rpm_data = [],
     timeDelta_data = [];
 
 var ref_steer_data = [],
     ref_brake_data = [],
     ref_gas_data = [],
-    ref_gear_data = [];
+    ref_gear_data = [],
+    ref_rpm_data = [];
+
 
 
 /* *************  BRUSH ON CHART (차트위에서 드래그 줌인) variable  ******************/
@@ -308,6 +311,11 @@ function init_with_twoLaps() {
                             // }else if(d.id == "RefinedPosLon"){
                             //     temp_long = _.pluck(d.values, 'feature_val');
                             //     ref_temp_long = _.pluck(d.ref_values, 'feature_val');
+                            if (d.id == "RPM"){
+                                rpm_data = _.pluck(d.values, 'feature_val');
+                                ref_rpm_data = _.pluck(d.ref_values, 'feature_val');
+                            }
+
                         } else if (d.id == "PosLocalY") {
                             temp_lat = _.pluck(d.values, 'feature_val');
                             ref_temp_lat = _.pluck(d.ref_values, 'feature_val');

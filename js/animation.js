@@ -166,6 +166,12 @@ function trackAnimation_withTwoLaps(){
         gear_focus.select("text.value-ref")
             .text(ref_gear_data[ref_animation_index]);
 
+        var rpm_focus = d3.select("#rpm_focus1");
+        rpm_focus.select("text.value")
+            .text(Math.round(rpm_data[animation_index]));
+        rpm_focus.select("text.value-ref")
+            .text(Math.round(ref_rpm_data[ref_animation_index]));
+
 
         // ************** END of animation code *************** //
         animation_index++;
