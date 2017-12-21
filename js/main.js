@@ -92,6 +92,9 @@ var track_x, track_y, nav_track_x, nav_track_y;
     inline_track = [], outline_track = [], centerline_track = [];
 var track_delta = []; // position index 에 해당하는 delta 값 저장 array
 var delta_value_option = "DeltaTimeDelta"; // DeltaTimeDelta, DeltaGPS_Speed, OFF
+var delta_MAX_threshold = 1.5;
+var delta_MIN_threshold = -1.5;
+
 
 
 // var track_line = d3.line().curve(d3.curveBasis)
@@ -112,7 +115,7 @@ var animation_index =0,
     animation_state = "play",
     animation_delay = 50, // default as 50 milliseconds.
     animation_track_data = [],
-    animation_time_delta = [],
+    animation_delta_data = [],
     animation_track_color;
 var bisect_for_find_animatingPosition = d3.bisector(function (d) { return d.x; }).left;
 
@@ -403,6 +406,7 @@ function init_with_twoLaps() {
                             SpeedDelta: parseFloat(data["DeltaGPS_Speed"])
                         }
                     });
+                    console.log(track_delta);
 
                     // animation color setting by overall delta data
                     // : (-1.5~1.5까지 linear green to red) -1.5 이하는 green, 1.5이상은 red.
@@ -413,7 +417,8 @@ function init_with_twoLaps() {
                     // -1.5, 0, 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑, 0인 경우 투명 컬러.
                     // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(0, 0, 0, 0.5)', 'green']);
                     // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,0, 0.4)', 'green']);
-                    animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
+                    setDeltaColorRange(delta_value_option);
+
                     // animation_track_color = d3.scaleLinear().domain([-1.1, 0, 0.1]).range(['red', 'rgba(255, 255, 0, 0.4)', 'green']);
                     // animation_track_color = d3.scaleLinear().domain([-1.1, 0, 0.1]).range(['red', 'yellow', 'green']);
 
@@ -856,10 +861,6 @@ function updateTimeDelta(start, end){
     */
 }
 
-function setDeltaOption(){
-    delta_value_option = document.getElementById("delta_option").value;
-    drawing_animationPath();
-}
 
 function drawing_animationPath() {
     // clean previous animation path
@@ -874,9 +875,9 @@ function drawing_animationPath() {
 
     // reset animation track_data
     animation_track_data = [];
-    animation_time_delta = [];
+    animation_delta_data = [];
 
-    var position_indices = _.pluck(selected_features[0].values, "x");
+    // var position_indices = _.pluck(selected_features[0].values, "x");
 
     // Position Index일 경우 animation path drawing (uniformly sample path length && split those to draw with gradient color)
     if(root_x=="PositionIndex" && delta_value_option != "OFF"){
@@ -898,16 +899,16 @@ function drawing_animationPath() {
             });
 
             if(delta_value_option == "DeltaGPS_Speed")
-                animation_time_delta.push(track_delta[i].SpeedDelta);
+                animation_delta_data.push(track_delta[i].SpeedDelta);
             else if(delta_value_option == "DeltaTimeDelta")
-                animation_time_delta.push(track_delta[i].TimeDelta);
+                animation_delta_data.push(track_delta[i].TimeDelta);
         }
 
         // setting the time delta color palette (지금은 안씀. 이 코드는 매번 선택된 레인지에 따라서 변화할 때만 사용.
-        // animation_color_domain = d3.extent(animation_time_delta);
+        // animation_color_domain = d3.extent(animation_delta_data);
         // animation_track_color = d3.scaleLinear().domain(animation_color_domain).range(['red', 'green']);
 
-        // console.log(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)));
+        // console.log(quads(samples(track_line(animation_track_data), sample_precision, animation_delta_data)));
         // drawing animation path.
         // 1. draw animation path to main track line
         var sample_precision = 0.79;
@@ -916,12 +917,12 @@ function drawing_animationPath() {
         d3.select("#track_canvas").select("svg").select("g")
             .append("g").attr("id", "animation_path_wrapper")
             .selectAll("path")
-            .data(quads(samples(track_line(animation_track_data), sample_precision, animation_time_delta)))
+            .data(quads(samples(track_line(animation_track_data), sample_precision, animation_delta_data)))
             .enter().append("path")
             .attr("class", "animation_path")
             .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], animation_path_width)})
-            .style("fill", function(d) { return animation_track_color(d.timeDelta)})
-            .style("stroke", function(d) { return animation_track_color(d.timeDelta)})
+            .style("fill", function(d) { return animation_track_color(d.delta)})
+            .style("stroke", function(d) { return animation_track_color(d.delta)})
             // .style("fill-opacity", function(d) {
             //     if (d.timeDelta > -1 && d.timeDelta < 1) return 0.5;
             //     else return 1;
@@ -990,14 +991,14 @@ function switchTrackElementsOrder() {
 
 // Sample the SVG path uniformly with the specified precision. (precision이 낮을 수록 더 잘게 쪼개고 resolution이 높아짐)
 function samples(d, precision) {
-    console.log(animation_time_delta);
+    console.log(animation_delta_data);
     var path = document.createElementNS(d3.namespaces.svg, "path");
     path.setAttribute("d", d);
 
     var n = path.getTotalLength(), t = [0], i = 0, dt = precision;
     console.log(n);
     // calculate our custom precsion (lap 길이와 동일한 path length를 만들기 위해)
-    var custom_precision = n / animation_time_delta.length;
+    var custom_precision = n / animation_delta_data.length;
     console.log(custom_precision);
     // while ((i += dt) < n) {
     while ((i += custom_precision) < n) {
@@ -1007,10 +1008,10 @@ function samples(d, precision) {
 
     return t.map(function(t) {
         // console.log(t);
-        // console.log(animation_time_delta[Math.round(t)]);
+        // console.log(animation_delta_data_delta[Math.round(t)]);
         var p = path.getPointAtLength(t), a = [p.x, p.y];
         a.t = t / n;
-        // a.timeDelta = animation_time_delta[Math.round(t)];
+        // a.timeDelta = animation_delta_data[Math.round(t)];
         return a;
     });
 }
@@ -1024,7 +1025,15 @@ function quads(points) {
         // a.timeDelta = Math.random() * (animation_color_domain[1] - animation_color_domain[0]) + animation_color_domain[0];
 
         // proxy of time delta
-        a.timeDelta = animation_time_delta[i];
+        if(animation_delta_data[i] > delta_MAX_threshold)
+            a.delta = delta_MAX_threshold;
+        else if(animation_delta_data[i] < delta_MIN_threshold)
+            a.delta = delta_MIN_threshold;
+        else
+            a.delta = animation_delta_data[i];
+
+
+
         return a;
     });
 }
@@ -1401,3 +1410,19 @@ function GetValueColor(value, minus_threshold, plus_threshold)
 }
 
 
+function setDeltaOption(){
+    delta_value_option = document.getElementById("delta_option").value;
+    setDeltaColorRange(delta_value_option);
+    drawing_animationPath();
+}
+
+// set domain/range according to delta value (animation color pallete)
+function setDeltaColorRange(delta_option){
+
+    if(delta_option == "DeltaTimeDelta" || delta_option == "DeltaGPS_Speed"){
+        animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold, 0, delta_MAX_threshold]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
+    }else if(delta_option == "OFF"){
+        // nothing;
+    }
+
+}
