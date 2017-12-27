@@ -113,9 +113,9 @@ function trackAnimation_withTwoLaps(){
         // rotate by steering value
         var steer_focus = d3.select("#steer_focus1");
         steer_focus.select("image.steer")
-            .attr("transform", "scale(0.5), translate(150, 50), rotate(" + steer_data[animation_index] + ", 35, 35)");
+            .attr("transform", "scale(0.5), translate(150, 50), rotate(" + steer_data[animation_index] + ", 40, 40)");
         steer_focus.select("image.steer-ref")
-            .attr("transform", "scale(0.5), translate(250, 50), rotate(" + ref_steer_data[ref_animation_index] + ", 35, 35)");
+            .attr("transform", "scale(0.5), translate(250, 50), rotate(" + ref_steer_data[ref_animation_index] + ", 40, 40)");
 
         // steer_focus.select("text.steer_value")
         //     .text(steer_data[animation_index].toFixed(3));
@@ -199,7 +199,7 @@ function trackAnimation(){
         // rotate by steering value
         var steer_focus = d3.select("#steer_focus1");
         steer_focus.select("image")
-            .attr("transform", "translate(0, 25), rotate(" + steer_data[animation_index] + ", 35, 35)");
+            .attr("transform", "translate(0, 25), rotate(" + steer_data[animation_index] + ", 40, 40)");
         steer_focus.select("text")
             .text("Steering degree: " + steer_data[animation_index]);
 

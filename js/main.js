@@ -1392,7 +1392,7 @@ function setDeltaOption(){
     drawing_animationPath();
 }
 
-// set domain/range according to delta value (animation color pallete)
+// set domain/range according to delta value (animation color palette)
 function setDeltaColorRange(delta_option){
 
     if(delta_option == "DeltaTimeDelta"){

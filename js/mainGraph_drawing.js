@@ -703,9 +703,9 @@ function mousemove_twoLaps() {
     // rotate by steering value
     var steer_focus = d3.select("#steer_focus1");
     steer_focus.select("image.steer")
-        .attr("transform", "scale(0.5), translate(150, 50), rotate(" + steer_data[index] + ", 35, 35)")
+        .attr("transform", "scale(0.5), translate(150, 50), rotate(" + steer_data[index] + ", 40, 40)")
     steer_focus.select("image.steer-ref")
-        .attr("transform", "scale(0.5), translate(250, 50), rotate(" + ref_steer_data[ref_index] + ", 35, 35)")
+        .attr("transform", "scale(0.5), translate(250, 50), rotate(" + ref_steer_data[ref_index] + ", 40, 40)")
 
     var steer_diff = steer_data[index] - ref_steer_data[ref_index];
     steer_focus.select("text.steer_value")
