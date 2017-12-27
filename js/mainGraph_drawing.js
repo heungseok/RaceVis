@@ -593,7 +593,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("x", 130)
         .attr("y", 260)
         .style("font-size", "25px")
-        .style("fill", "WhiteSmoke")
+        .style("fill", COLOR_REF)
         .text("");
 
     gear_focus.append("text")
