@@ -162,10 +162,7 @@ var trackZoom = d3.zoom()
 var current_zoomRange;
 var context;
 
-
-
-// Track, Session, Lap variables for top navigation bar
-
+// ************* Track, Session, Lap variables for top navigation bar ************* //
 var name_track;
 
 var session_original;
@@ -250,15 +247,13 @@ function init(init_type) {
 }
 function init_with_twoLaps() {
     if(initialized) return;
-    // d3.csv("./data/m4_KIC_SHORT.csv", type, function(data) {
-    //     d3.csv("./data/moon_KIC_SHORT.csv", type, function (ref_data) {
-    d3.csv("./data/1018-short/2lap-ex_up_std_oragi_kicshort_86_session-0.csv", type, function(data) {
-        d3.csv("./data/1018-short/5lap-ex_up_std_oragi_kicshort_86_session-0.csv", type, function (ref_data) {
-            // d3.csv("./data/track_boundary/kic_short_meter_boundary_sampled.csv", function(error, track_boundary_data) {
+
+    d3.csv("./data/A-comparison.csv", type, function(data) {
+        d3.csv("./data/B-comparison.csv", type, function (ref_data) {
             d3.csv("./data/track_boundary/kic_short.csv", function(error, track_boundary_data) {
 
                 // ******* time delta data load ********* //
-                d3.csv("./data/delta_data/delta_2lap-ex_up_std_oragi_kicshort_86_session-0.csv_5lap-ex_up_std_oragi_kicshort_86_session-0.csv", function(error, track_delta_data){
+                d3.csv("./data/comparison.csv", function(error, track_delta_data){
 
                     // 먼저 origin data parsing 한 뒤 merged_all_features에 push
                     all_features = data.columns.slice(0).map(function (id) {
@@ -303,22 +298,15 @@ function init_with_twoLaps() {
                          }
                          */
                         // default feature로 GPS_Speed, RPM 을 plotting.
-                        if (d.id == "GPS_Speed" || d.id == "RPM") {
+                        if (d.id == "GPS_Speed" || d.id == "GripUsage") {
                             selected_features.push(d)
                             selected_feat_names.push(d.id);
                             $('.checkbox_wrapper').append("<li class ='checkbox'> " +
                                 "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
-                            // }else if(d.id == "RefinedPosLat"){
-                            //     temp_lat = _.pluck(d.values, 'feature_val');
-                            //     ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
-                            // }else if(d.id == "RefinedPosLon"){
-                            //     temp_long = _.pluck(d.values, 'feature_val');
-                            //     ref_temp_long = _.pluck(d.ref_values, 'feature_val');
-                            if (d.id == "RPM"){
-                                rpm_data = _.pluck(d.values, 'feature_val');
-                                ref_rpm_data = _.pluck(d.ref_values, 'feature_val');
-                            }
 
+                        } else if (d.id == "RPM"){
+                            rpm_data = _.pluck(d.values, 'feature_val');
+                            ref_rpm_data = _.pluck(d.ref_values, 'feature_val');
                         } else if (d.id == "PosLocalY") {
                             temp_lat = _.pluck(d.values, 'feature_val');
                             ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
@@ -407,20 +395,8 @@ function init_with_twoLaps() {
                         }
                     });
                     console.log(track_delta);
-
-                    // animation color setting by overall delta data
-                    // : (-1.5~1.5까지 linear green to red) -1.5 이하는 green, 1.5이상은 red.
-
-                    // -1.5 ~ 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑
-                    // animation_track_color = d3.scaleLinear().domain([-0.5, 0.5]).range(['red', 'green']);
-
-                    // -1.5, 0, 1.5 까지 linear transform, 범위 벗어난 값은 양 끝의 color로 매핑, 0인 경우 투명 컬러.
-                    // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 1.5]).range(['red', 'rgba(0, 0, 0, 0.5)', 'green']);
-                    // animation_track_color = d3.scaleLinear().domain([-1.5, 0, 0.5]).range(['red', 'rgba(255,255,0, 0.4)', 'green']);
                     setDeltaColorRange(delta_value_option);
 
-                    // animation_track_color = d3.scaleLinear().domain([-1.1, 0, 0.1]).range(['red', 'rgba(255, 255, 0, 0.4)', 'green']);
-                    // animation_track_color = d3.scaleLinear().domain([-1.1, 0, 0.1]).range(['red', 'yellow', 'green']);
 
 
                     console.log("finished merging all track data");
@@ -447,7 +423,7 @@ function init_with_twoLaps() {
                     document.getElementById("loading").style.display = "none";
 
                     //  ******* comment box contents ********* //
-                    d3.json("./data/1018-short/comparison.json", function(error, track_info_data) {
+                    d3.json("./data/comparison.json", function(error, track_info_data) {
                         console.log(track_info_data);
 
                         var track_name = track_info_data.track_info.TrackName;
@@ -1419,7 +1395,13 @@ function setDeltaOption(){
 // set domain/range according to delta value (animation color pallete)
 function setDeltaColorRange(delta_option){
 
-    if(delta_option == "DeltaTimeDelta" || delta_option == "DeltaGPS_Speed"){
+    if(delta_option == "DeltaTimeDelta"){
+        delta_MIN_threshold = -0.05;
+        delta_MAX_threshold = 0.05;
+        animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold , 0, delta_MAX_threshold]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
+    }else if(delta_option == "DeltaGPS_Speed"){
+        delta_MIN_threshold = -5;
+        delta_MAX_threshold = 5;
         animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold, 0, delta_MAX_threshold]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
     }else if(delta_option == "OFF"){
         // nothing;
