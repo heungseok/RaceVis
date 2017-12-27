@@ -121,13 +121,13 @@ function trackAnimation_withTwoLaps(){
         //     .text(steer_data[animation_index].toFixed(3));
         // steer_focus.select("text.steer-ref_value")
         //     .text(ref_steer_data[ref_animation_index].toFixed(3));
-        var steer_diff = steer_data[animation_index] - ref_steer_data[ref_animation_index];
+        var steer_diff = Math.abs(steer_data[animation_index]) - Math.abs(ref_steer_data[ref_animation_index]);
         steer_focus.select("text.steer_value")
-            .text(steer_diff.toFixed(2))
-            .style("fill", function() {
-                if(steer_diff > 0) return COLOR_POSITIVE;
-                else return COLOR_NEGATIVE;
-            });
+            .text(function(){
+                if(steer_diff >= 0) return "+"+steer_diff.toFixed(2);
+                else return steer_diff.toFixed(2);
+            })
+            .style("fill", "WhiteSmoke");
 
 
         var brake_focus = d3.select("#brake_focus1");
@@ -138,11 +138,11 @@ function trackAnimation_withTwoLaps(){
 
         var brake_diff = brake_data[animation_index] - ref_brake_data[ref_animation_index];
         brake_focus.select("text.brake_value")
-            .text(brake_diff.toFixed(2))
-            .style("fill", function() {
-                if(brake_diff > 0) return COLOR_POSITIVE;
-                else return COLOR_NEGATIVE;
-            });
+            .text(function(){
+                if(brake_diff >= 0) return "+"+brake_diff.toFixed(2);
+                else return brake_diff.toFixed(2);
+            })
+            .style("fill", "WhiteSmoke");
 
 
         var gas_focus = d3.select("#gas_focus1");
@@ -153,11 +153,11 @@ function trackAnimation_withTwoLaps(){
 
         var gas_diff = gas_data[animation_index] - ref_gas_data[ref_animation_index];
         gas_focus.select("text.gas_value")
-            .text(gas_diff.toFixed(2))
-            .style("fill", function() {
-                if(gas_diff > 0) return COLOR_POSITIVE;
-                else return COLOR_NEGATIVE;
-            });
+            .text(function(){
+                if(gas_diff >= 0) return "+"+gas_diff.toFixed(2);
+                else return gas_diff.toFixed(2);
+            })
+            .style("fill", "WhiteSmoke");
 
 
         var gear_focus = d3.select("#gear_focus1");
@@ -184,81 +184,6 @@ function trackAnimation_withTwoLaps(){
         }
     },animation_delay) // change this time (in milliseconds) to delay
 }
-
-
-
-function trackAnimation(){
-    setTimeout(function () {
-        // resume 버튼 클릭되었을 경우 애니메이션 정지
-        if(resume_flag) return;
-
-        // ************** block for animation things *************** //
-        var track_focus = d3.select("#track_focus1");
-        track_focus.attr("transform", "translate(" + track_x(track_data[animation_index].long) + "," + track_y(track_data[animation_index].lat) + ")");
-
-        // rotate by steering value
-        var steer_focus = d3.select("#steer_focus1");
-        steer_focus.select("image")
-            .attr("transform", "translate(0, 25), rotate(" + steer_data[animation_index] + ", 40, 40)");
-        steer_focus.select("text")
-            .text("Steering degree: " + steer_data[animation_index]);
-
-        var brake_focus = d3.select("#brake_focus1");
-        brake_focus.select("rect.value")
-            .attr("height", 1+ brake_data[animation_index]);
-        brake_focus.select("text")
-            .text("Brake: " + brake_data[animation_index]);
-
-        var gas_focus = d3.select("#gas_focus1");
-        gas_focus.select("rect.value")
-            .attr("height", 1+gas_data[animation_index]);
-        gas_focus.select("text")
-            .text("Gas: " + gas_data[animation_index]);
-
-
-        var gear_focus = d3.select("#gear_focus1");
-        gear_focus.select("text.value")
-            .text(gear_data[animation_index]);
-
-        var gas_focus = d3.select("#gas_focus1");
-        gas_focus.select("text")
-            .text("Gas: " + gas_data[animation_index]);
-
-        // animation for line chart
-        var focuses = d3.select("#canvas").selectAll("svg")
-            .selectAll(".focus");
-
-        // set all focus elements' style to display
-        focuses.style("display", null);
-
-        focuses.selectAll(".chart_tooltip").attr("transform", function(d){
-            var ty = y.get(this);
-
-            return "translate(" + x(d.values[animation_index].x) + "," + ty(d.values[animation_index].feature_val) + ")";
-
-        });
-
-        focuses.selectAll("text")
-            .text( function (d) { return + d.values[animation_index].feature_val.toFixed(3); });
-
-        focuses.selectAll("line.tooltip_line").attr("transform", function(d){
-
-            return "translate(" + x(d.values[animation_index].x) + "," + height +")";
-
-        });
-
-        // ************** END of animation code *************** //
-        animation_index++;
-        // if ( animation_index < animation_length){ => origin ver.
-        if ( animation_index < animation_range[1]){ // => coordinated by zoomed range
-            trackAnimation();
-        }else{
-            animation_index = animation_range[0] // => coordinated by zoomed range
-            resetPlay()
-        }
-    },animation_delay) // change this time (in milliseconds) to delay
-}
-
 
 function resetPlay(){
     animation_flag = false;

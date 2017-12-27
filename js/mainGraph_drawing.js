@@ -468,7 +468,7 @@ function drawSubInfo_withTwoLaps() {
     steering_focus.append("text").attr("class", "steer_value")
         .attr("x", 5).attr("y", 60)
         .style("font-size", "20px")
-        .style("fill", COLOR_NEGATIVE)
+        .style("fill", "WhiteSmoke")
         .text("0.00");
 
     // ******** Brake ********* //
@@ -520,7 +520,7 @@ function drawSubInfo_withTwoLaps() {
     brake_focus.append("text").attr("class", "brake_value")
         .attr("x", 5).attr("y", 125)
         .style("font-size", "20px")
-        .style("fill", COLOR_NEGATIVE)
+        .style("fill", "WhiteSmoke")
         .text("0.00");
 
     // ******** Gas ******** //
@@ -571,7 +571,7 @@ function drawSubInfo_withTwoLaps() {
     gas_focus.append("text").attr("class", "gas_value")
         .attr("x", 5).attr("y", 200)
         .style("font-size", "20px")
-        .style("fill", COLOR_NEGATIVE)
+        .style("fill", "WhiteSmoke")
         .text("0.00");
 
 
@@ -593,7 +593,7 @@ function drawSubInfo_withTwoLaps() {
         .attr("x", 130)
         .attr("y", 260)
         .style("font-size", "25px")
-        .style("fill", COLOR_REF)
+        .style("fill", "WhiteSmoke")
         .text("");
 
     gear_focus.append("text")
@@ -707,13 +707,13 @@ function mousemove_twoLaps() {
     steer_focus.select("image.steer-ref")
         .attr("transform", "scale(0.5), translate(250, 50), rotate(" + ref_steer_data[ref_index] + ", 40, 40)")
 
-    var steer_diff = steer_data[index] - ref_steer_data[ref_index];
+    var steer_diff = Math.abs(steer_data[index]) - Math.abs(ref_steer_data[ref_index]);
     steer_focus.select("text.steer_value")
-        .text(steer_diff.toFixed(2))
-        .style("fill", function() {
-            if(steer_diff > 0) return COLOR_POSITIVE;
-            else return COLOR_NEGATIVE;
-        });
+        .text(function(){
+            if(steer_diff >= 0) return "+"+steer_diff.toFixed(2);
+            else return steer_diff.toFixed(2);
+        })
+        .style("fill", "WhiteSmoke");
 
 
     var brake_focus = d3.select("#brake_focus1");
@@ -724,11 +724,11 @@ function mousemove_twoLaps() {
 
     var brake_diff = brake_data[index] - ref_brake_data[ref_index];
     brake_focus.select("text.brake_value")
-        .text(brake_diff.toFixed(2))
-        .style("fill", function() {
-            if(brake_diff > 0) return COLOR_POSITIVE;
-            else return COLOR_NEGATIVE;
-        });
+        .text(function(){
+            if(brake_diff >= 0) return "+"+brake_diff.toFixed(2);
+            else return brake_diff.toFixed(2);
+        })
+        .style("fill", "WhiteSmoke");
 
     var gas_focus = d3.select("#gas_focus1");
     gas_focus.select("rect.value")
@@ -738,11 +738,16 @@ function mousemove_twoLaps() {
 
     var gas_diff = gas_data[index] - ref_gas_data[ref_index];
     gas_focus.select("text.gas_value")
-        .text(gas_diff.toFixed(2))
-        .style("fill", function() {
-            if(gas_diff > 0) return COLOR_POSITIVE;
-            else return COLOR_NEGATIVE;
-        });
+        .text(function(){
+            if(gas_diff >= 0) return "+"+gas_diff.toFixed(2);
+            else return gas_diff.toFixed(2);
+        })
+        .style("fill", "WhiteSmoke");
+
+        // .style("fill", function() {
+        //     if(gas_diff > 0) return COLOR_POSITIVE;
+        //     else return COLOR_NEGATIVE;
+        // });
 
 
     var gear_focus = d3.select("#gear_focus1");
@@ -1123,9 +1128,11 @@ function clearAllSVG_for_xAxis_switch() {
     d3.selectAll("path.animation_path").remove(); // animation path remove
     d3.select("#zoom_canvas").select("svg").remove();
     d3.select("#canvas").selectAll("svg").remove();
+    d3.select("#canvas").selectAll("div").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("div").remove();
     d3.select("#track_nav_canvas").selectAll("svg").remove();
+    d3.select("#track_nav_canvas").selectAll("div").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("div").remove();
 

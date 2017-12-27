@@ -41,12 +41,9 @@ var sub_margin = {top: 0, right: 20, bottom: 0, left: 20},
     // sub_height = document.getElementById("row-top container").offsetHeight - sub_margin.bottom - sub_margin.top;
 
 // ** radar chart variables ** //
-var radar_chart_height = document.getElementById("row-top container").offsetHeight*.5;
-// radar_chart_margin.bottom - radar_chart_margin.top,
+var radar_chart_height = document.getElementById("row-top container").offsetHeight*.5,
     radar_chart_width = radar_chart_height;
 
-// var radar_chart_width = document.getElementById("top-left-components").offsetWidth/3,
-//     radar_chart_height = radar_chart_width; // width와 동일하게.
 
 // Config for the Radar chart
 var radar_chart_config = {
@@ -391,7 +388,9 @@ function init_with_twoLaps() {
                         return{
                             x: parseInt(data["PositionIndex"]), // x is pidx
                             TimeDelta: parseFloat(data["DeltaTimeDelta"]), // 일단 소수점 3자리로 round
-                            SpeedDelta: parseFloat(data["DeltaGPS_Speed"])
+                            SpeedDelta: parseFloat(data["DeltaGPS_Speed"]),
+                            GripA: parseFloat(data["GripUsageA"]),
+                            GripB: parseFloat(data["GripUsageB"])
                         }
                     });
                     console.log(track_delta);
@@ -878,6 +877,10 @@ function drawing_animationPath() {
                 animation_delta_data.push(track_delta[i].SpeedDelta);
             else if(delta_value_option == "DeltaTimeDelta")
                 animation_delta_data.push(track_delta[i].TimeDelta);
+            else if(delta_value_option == "GripUsageA")
+                animation_delta_data.push(track_delta[i].GripA);
+            else if(delta_value_option == "GripUsageB")
+                animation_delta_data.push(track_delta[i].GripB);
         }
 
         // setting the time delta color palette (지금은 안씀. 이 코드는 매번 선택된 레인지에 따라서 변화할 때만 사용.
@@ -1399,11 +1402,17 @@ function setDeltaColorRange(delta_option){
         delta_MIN_threshold = -0.05;
         delta_MAX_threshold = 0.05;
         animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold , 0, delta_MAX_threshold]).range(['green', 'rgba(255,255,255, 0.7)', 'red']);
+
     }else if(delta_option == "DeltaGPS_Speed"){
         delta_MIN_threshold = -5;
         delta_MAX_threshold = 5;
         animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold, 0, delta_MAX_threshold]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
-    }else if(delta_option == "OFF"){
+    }else if(delta_option == "GripUsageA" || delta_option == "GripUsageB"){
+        delta_MIN_threshold = 0;
+        delta_MAX_threshold = 100;
+        animation_track_color = d3.scaleLinear().domain([0, 100]).range(['WhiteSmoke', 'red']);
+    }
+    else if(delta_option == "OFF"){
         // nothing;
     }
 
