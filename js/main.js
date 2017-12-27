@@ -941,7 +941,7 @@ function drawing_animationPath() {
         .data([animation_track_data])
         .attr("class", "nav_animation_path")
         .attr("d", nav_track_line)
-        .style("stroke", "#dfeb06")
+        .style("stroke", "#D41313")
         .style("stroke-width", 4)
         .style("stroke-opacity", 0.8);
 
@@ -1398,7 +1398,7 @@ function setDeltaColorRange(delta_option){
     if(delta_option == "DeltaTimeDelta"){
         delta_MIN_threshold = -0.05;
         delta_MAX_threshold = 0.05;
-        animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold , 0, delta_MAX_threshold]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
+        animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold , 0, delta_MAX_threshold]).range(['green', 'rgba(255,255,255, 0.7)', 'red']);
     }else if(delta_option == "DeltaGPS_Speed"){
         delta_MIN_threshold = -5;
         delta_MAX_threshold = 5;
