@@ -1345,7 +1345,7 @@ function SelectOriginLap(lap,laptime)
 function SelectReferenceLap(lap,laptime)
 {
 
-    $("#sel_lap_ref_list").parents('.dropdown').find('.dropdown-toggle').html((lap + 1) + ' Lap (' + GetStringFromSec(laptime)+') <span class="caret"></span>');
+    $("#sel_lap_ref_list").parents('.dropdown').find('.dropdown-toggle').html('<font color="'+COLOR_REF+'">'+(lap + 1) + ' Lap (' + GetStringFromSec(laptime)+')</font> <span class="caret"></span>');
 
     lap_reference = lap + 1;
 
