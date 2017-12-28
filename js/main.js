@@ -52,7 +52,7 @@ var radar_chart_config = {
     maxValue: 100,
     levels: 5,
     ExtraWidthX: 300
-}
+};
 
 // ************** selected lap, reference lap variable **************** //
 var selected_lap=1, selected_ref_lap=1;
@@ -114,6 +114,7 @@ var animation_index =0,
     animation_track_data = [],
     animation_delta_data = [],
     animation_track_color;
+var gradient_track_width = {"INJE_FULL": 2, "INJE_SHORT": 2, "KIC_FULL": 4, "KIC_SHORT": 4};
 var bisect_for_find_animatingPosition = d3.bisector(function (d) { return d.x; }).left;
 
 var animation_path = d3.line()
@@ -160,8 +161,7 @@ var current_zoomRange;
 var context;
 
 // ************* Track, Session, Lap variables for top navigation bar ************* //
-var name_track;
-
+var TRACK_TYPE = "INJE_FULL"; //
 var session_original;
 var session_reference;
 
@@ -218,8 +218,6 @@ function init(init_type) {
         //     return;
     }
 
-
-
     // variable for brush
     brush = d3.brushX()
         .extent([[0,0], [zoom_width, zoom_height]])
@@ -247,7 +245,7 @@ function init_with_twoLaps() {
 
     d3.csv("./data/A-comparison.csv", type, function(data) {
         d3.csv("./data/B-comparison.csv", type, function (ref_data) {
-            d3.csv("./data/track_boundary/kic_short.csv", function(error, track_boundary_data) {
+            d3.csv("./data/track_boundary/"+ TRACK_TYPE.toLowerCase() + ".csv", function(error, track_boundary_data) {
 
                 // ******* time delta data load ********* //
                 d3.csv("./data/comparison.csv", function(error, track_delta_data){
@@ -552,11 +550,7 @@ function init_with_twoLaps() {
 
 
                         // ********************* drawing radar chart ******************** //
-                        // setting dummy data
-
-
                         // drawing radar chart
-
                         d3.select('#radar_chart')
                             .selectAll('svg')
                             .append('svg')
@@ -892,14 +886,13 @@ function drawing_animationPath() {
         // 1. draw animation path to main track line
         var sample_precision = 0.79;
         // 0.79로 했을 때 가장 근사치가 나오긴하는데 (현재 가진 animation point array length랑 내부적으로 생성하는 패쓰를 uniformly 0.79로 샘플 했을 때 가장 근사함.. 나중에 문제 있을듯)
-        var animation_path_width = 4;
         d3.select("#track_canvas").select("svg").select("g")
             .append("g").attr("id", "animation_path_wrapper")
             .selectAll("path")
             .data(quads(samples(track_line(animation_track_data), sample_precision, animation_delta_data)))
             .enter().append("path")
             .attr("class", "animation_path")
-            .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], animation_path_width)})
+            .attr("d", function(d) { return lineJoin(d[0], d[1], d[2], d[3], gradient_track_width[TRACK_TYPE])})
             .style("fill", function(d) { return animation_track_color(d.delta)})
             .style("stroke", function(d) { return animation_track_color(d.delta)})
             // .style("fill-opacity", function(d) {
@@ -1255,17 +1248,30 @@ function GetStringFromSec(sec, sec_ref)
     return ret;
 }
 
-function track_selector(){
+function track_selector(element){
     // track selector (button click listener of the top of the screen)
     // css selector =>  .sel_track li a
 
+    // trackType change
+    set_trackType(element.innerText);
+
+    // ??? 용섭씨코드
     var selText = $(this).text();
     console.log(selText);
     if(!$(this).parent().hasClass("disabled")) {
         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText + '<span class="caret"></span>');
         $("#sel_session").removeClass("hidden");
     }
+}
 
+function set_trackType(selected_track){
+    // INJE (full, short)
+    // KIC (full, short)
+    if(selected_track === TRACK_TYPE){
+        // nothing
+    }else {
+        TRACK_TYPE = selected_track;
+    }
 }
 
 function session_selector(){
