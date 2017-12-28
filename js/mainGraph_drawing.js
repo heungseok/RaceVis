@@ -332,7 +332,9 @@ function drawTrack_withTwoLaps(){
             "translate(" + track_margin.left + "," + track_margin.top + ")")
         // .attr("width", track_width + track_margin.left + track_margin.right)
         // .attr("height", track_height + track_margin.top + track_margin.bottom)
-        .append("g");
+        .append("g")
+        .attr("id", "main_track_lines_wrapper")
+        .attr("transform", transform_track_byTrackType);
 
 
     // *************** Append track line path :***************//
@@ -398,10 +400,11 @@ function drawTrack_withTwoLaps(){
         // .append("svg")
         // .attr("width", nav_track_width + nav_track_margin.left + nav_track_margin.right)
         // .attr("height", nav_track_height + nav_track_margin.top + nav_track_margin.bottom)
+        .attr("transform", "translate(" + nav_track_width*0.1 + "," + nav_track_height/5 + ") scale(1.5)")
         .append("g")
-        .attr("transform",
-            // "translate(" + track_margin.left + "," + track_margin.top + ")");
-            "translate(" + nav_track_width*0.1 + "," + nav_track_height/5 + ") scale(1.5)");
+        .attr("transform", transform_nav_track_byTrackType);
+
+
 
 
     // *************** Append track line path :***************//
@@ -1180,3 +1183,24 @@ function clearAllSVG() {
     track_data = [], inline_track = [], outline_track = [];
     all_features= [], selected_features = [], animation_track_data = [], animation_time_delta=[];
 }
+
+// working..
+function transform_track_byTrackType(){
+    console.log("trackType setting");
+    if(TRACK_TYPE.includes("INJE"))
+        return;
+        // return "translate(" + track_width/2 + ", " + track_height/4 + ") rotate(90)";
+    else
+        return;
+}
+
+// working..
+function transform_nav_track_byTrackType(){
+    if(TRACK_TYPE.includes("INJE"))
+        // return;
+        // return "translate(" + nav_track_width/2 + ", " + nav_track_height/4 + ") rotate(90)";
+        return "translate(" + nav_track_width/4 + ", " + nav_track_height/4 + ")";
+    else
+        return;
+}
+

@@ -1187,6 +1187,12 @@ function UpdateRadarGuideComments(split)
 function track_zoomed(){
     if (d3.event.sourceEvent && d3.event.sourceEvent.type === "brush") return; // ignore zoom-by-brush
     d3.select("#track_canvas").select("g").attr("transform", d3.event.transform);
+
+
+    // console.log(d3.event.transform);
+    // d3.select("#main_track_lines_wrapper").
+    //     attr("transform", transform_track_byTrackType_inTrack_zoomed);
+
 }
 function track_zoomReset(){
     // panning the track to 25% of the width
@@ -1194,6 +1200,7 @@ function track_zoomReset(){
     // with transition time
     d3.select("#track_canvas").call(trackZoom).transition()
         .duration(200)
+        // .attr("transform", transform_track_byTrackType_inZoomReset)
         .call(trackZoom.transform, d3.zoomIdentity
             .translate(track_width/4, 0));
 
@@ -1201,10 +1208,25 @@ function track_zoomReset(){
     // trackZoom.transform(d3.select("#track_canvas"), d3.zoomIdentity
     //     .translate(track_width/4, 0));
 
+    // d3.select("#main_track_lines_wrapper").
+    //     attr("transform", transform_track_byTrackType);
 
 }
 function track_dragged(d){
     d3.select(this).attr("cx", d.x = d3.event.x).attr("cy", d.y = d3.event.y);
+}
+function transform_track_byTrackType_inZoomReset(){
+    if(TRACK_TYPE.includes("INJE"))
+        return "translate(" + track_width/2 + ",0) rotate(90)";
+    else
+        return "translate(" + track_width/4 + ",0)";
+}
+
+function transform_track_byTrackType_inTrack_zoomed(event){
+    if(TRACK_TYPE.includes("INJE"))
+        return "rotate(90)";
+    else
+        return;
 }
 
 
