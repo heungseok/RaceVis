@@ -1379,7 +1379,7 @@ function reference_session_selector(){
 function SelectOriginLap(lap,laptime)
 {
 
-    $("#sel_lap_list").parents('.dropdown').find('.dropdown-toggle').html((lap + 1) + ' Lap (' + GetStringFromSec(laptime)+') <span class="caret"></span>');
+    $("#sel_lap_list").parents('.dropdown').find('.dropdown-toggle').html('<font color="'+COLOR_ORIGIN+'">' + (lap + 1) + ' Lap (' + GetStringFromSec(laptime)+') <span class="caret"></span>');
 
     lap_original = lap + 1;
     $("#sel_session_ref").removeClass("hidden");
