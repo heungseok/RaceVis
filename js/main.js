@@ -75,7 +75,7 @@ var svg, zoom_svg,
     track_svg, sub_svg, nav_track_svg;
 
 
-var all_features;
+var all_features=[];
 var selected_features = [];
 var selected_feat_names = [];
 
@@ -285,6 +285,8 @@ function init_with_twoLaps() {
                     console.log("generating check box by each features, and assign track_data, gas, and etc.");
 
                     // 다음으로 origin data를 기준으로 check box 형성
+
+                    $('.checkbox_wrapper').html('');
                     all_features.forEach(function (d) {
                         /*
                          // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
@@ -1251,6 +1253,8 @@ function GetStringFromSec(sec, sec_ref)
         is_positive = false;
     }
 
+    console.log(new Date(value * 1000).toISOString());
+
     if(value>=3600.0){
         ret = new Date(value * 1000).toISOString().substr(11, 12);
     }else if(value>=60.0){
@@ -1259,7 +1263,11 @@ function GetStringFromSec(sec, sec_ref)
         ret = new Date(value * 1000).toISOString().substr(17, 6);
     }
 
-    if(ret[0]='0') ret = ret.substr(1);
+    //console.log(ret);
+
+    if(ret[0]=='0') ret = ret.substr(1);
+
+    console.log(ret);
 
     if(is_positive == false){
         ret = '-'+ret;
