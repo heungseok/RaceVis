@@ -114,7 +114,9 @@ var animation_index =0,
     animation_track_data = [],
     animation_delta_data = [],
     animation_track_color;
-var gradient_track_width = {"INJE_FULL": 2, "INJE_SHORT": 2, "KIC_FULL": 4, "KIC_SHORT": 4};
+var gradient_track_width = {"INJE_FULL": 1, "INJE_SHORT": 2, "KIC_FULL": 1, "KIC_SHORT": 4};
+var track_boundary_width = {"INJE_FULL": 1, "INJE_SHORT": 2, "KIC_FULL": 1, "KIC_SHORT": 2};
+var track_line_width = {"INJE_FULL": 0.5, "INJE_SHORT": 1, "KIC_FULL": 0.5, "KIC_SHORT": 1};
 var bisect_for_find_animatingPosition = d3.bisector(function (d) { return d.x; }).left;
 
 var animation_path = d3.line()
@@ -161,7 +163,7 @@ var current_zoomRange;
 var context;
 
 // ************* Track, Session, Lap variables for top navigation bar ************* //
-var TRACK_TYPE = "INJE_FULL"; //
+var TRACK_TYPE = "KIC_SHORT"; //
 var session_original;
 var session_reference;
 
@@ -234,6 +236,7 @@ function init(init_type) {
         init_with_originLap();
     }else{
         // init type이 1이 아닌 경우: input이 2개.
+        init_summaryInfo();
         init_with_twoLaps();
     }
 
@@ -421,144 +424,7 @@ function init_with_twoLaps() {
                     track_zoomReset();
                     document.getElementById("loading").style.display = "none";
 
-                    //  ******* comment box contents ********* //
-                    d3.json("./data/comparison.json", function(error, track_info_data) {
-                        console.log(track_info_data);
 
-                        var track_name = track_info_data.track_info.TrackName;
-                        var split = track_info_data.track_info.Split;
-                        var optimal_time = track_info_data.optimal_info;
-                        optimal_time = GetStringFromSec(optimal_time);
-                        var nSplits = Object.keys(split).length;
-                        var track_length = split[nSplits - 1];
-
-
-                        $('#sector_track_info').html('');
-                        $('#sector_track_info').append('' + track_name + ', ' + track_length + 'm<br />Optimal: <span style="color:' + COLOR_NEGATIVE + '">' + optimal_time + '</span>');
-
-
-                        var btn_margin = 10;
-                        var btn_width = Math.round(width-(nSplits-1)*btn_margin)/nSplits;
-
-                        var split_record=[];
-                        var split_record_ref=[];
-                        var sector_name='';
-
-
-                        for(var z=0; z<nSplits; z++){
-                            if(z==0){
-                                sector_name = 'FULL';
-                            }
-                            else{
-                                sector_name = 'S'+z;
-                            }
-
-                            split_record[z] = track_info_data.sector_info[sector_name].Laptime_A;
-                            split_record_ref[z] = track_info_data.sector_info[sector_name].Laptime_B;
-
-                            split_comments[z] = track_info_data.sector_info[sector_name].comments;
-                            split_guides[z] = track_info_data.sector_info[sector_name].guides;
-
-                            split_scores[z] = [
-                                [
-                                    {"area": "ACCEL", "value": track_info_data.sector_info[sector_name].driver_score_B.ACCEL},
-                                    {"area": "BRAKING", "value": track_info_data.sector_info[sector_name].driver_score_B.BRAKING},
-                                    {"area": "DISTANCE", "value": track_info_data.sector_info[sector_name].driver_score_B.DISTANCE},
-                                    {"area": "EDGE", "value": track_info_data.sector_info[sector_name].driver_score_B.EDGE},
-                                    {"area": "LINE", "value": track_info_data.sector_info[sector_name].driver_score_B.LINE},
-                                    {"area": "STEERING", "value": track_info_data.sector_info[sector_name].driver_score_B.STEERING}
-                                ],
-                                [
-                                    {"area": "ACCEL", "value": track_info_data.sector_info[sector_name].driver_score_A.ACCEL},
-                                    {"area": "BRAKING", "value": track_info_data.sector_info[sector_name].driver_score_A.BRAKING},
-                                    {"area": "DISTANCE", "value": track_info_data.sector_info[sector_name].driver_score_A.DISTANCE},
-                                    {"area": "EDGE", "value": track_info_data.sector_info[sector_name].driver_score_A.EDGE},
-                                    {"area": "LINE", "value": track_info_data.sector_info[sector_name].driver_score_A.LINE},
-                                    {"area": "STEERING", "value": track_info_data.sector_info[sector_name].driver_score_A.STEERING}
-                                ]
-                            ];
-                        }
-
-                        //console.log(split_comments);
-
-                        var split_record_diff = [];
-                        var split_record_string = [];
-                        var split_record_string_ref = [];
-
-                        for(z=0; z<nSplits; z++){
-                            split_record_diff[z] = split_record[z] - split_record_ref[z];
-
-                            /*if(z==0){
-                                split_record_string[z] = GetStringFromSec(split_record[z]);
-                                split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
-                            }
-                            else{*/
-                                split_record_string[z] = GetStringFromSec(split_record[z],split_record_ref[z]);
-                                split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
-                            //}
-                        }
-
-                        for(z=0; z<nSplits; z++){
-
-                            if(z==0) {
-                                $('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; border:0px; padding:0px;" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">'+'<table width="100%" height="100%"><tr><td width="10%" style="background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'"></td><td>FULL: ' + split_record_string[0] +'</td></tr></table>'+'</button></td>');
-                                //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%;background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">FULL: ' + split_record_string[0] + '</button></td>');
-                            }else {
-                                $('#split-table-contents').append('<td align="center" width="10">&nbsp;</td>');
-                                //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; background-color:'+GetValueColor(split_record_diff[z],-0.1,0.1)+'" class="btn btn-split" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+z+')">S'+z+': ' + split_record_string[z] + '</button></td>');
-                                $('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; border:0px; padding:0px;" class="btn btn-split" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+z+')">'+'<table width="100%" height="100%"><tr><td width="10%" style="background-color:'+GetValueColor(split_record_diff[z],-0.1,0.1)+'"></td><td>S'+z+': ' + split_record_string[z] +'</td></tr></table>'+'</button></td>');
-                            }
-
-
-                        }
-
-                        var strClass = "btn ";
-
-                        if(split_record_diff[z]<=0) strClass ='btn btn-negative';
-                        else strClass='btn btn-positive';
-
-                        $('#split-table-header').attr('width',Math.round(width));
-                        $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
-                            'S' +(z+1)+
-                            '</button>');
-
-                        // init FULL sector btn
-                        // $('#split-table-header').append('<button type="button" '+ ' class="'+strClass+'" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">' +
-                        //     'FULL' +
-                        //     '</button>');
-
-                        for(z=0; z<nSplits-1; z++){
-                            if(split_record_diff[z+1]<=0) strClass ='btn btn-negative';
-                            else strClass='btn btn-positive';
-
-                            $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px; margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+(z)+')">' +
-                                'S' +(z)+
-                                '</button>');
-
-                            // $('#split-table-header').append('<button type="button" ' + ' margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
-                            //     'S' +(z+1)+
-                            //     '</button>');
-                        }
-                        /*
-                         for(z=0; z<nSplits; z++){
-                         if(split_record_diff[z]>0)
-                         $('#split-table-contents-ref').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string_ref[z]+'</td>');
-                         else
-                         $('#split-table-contents-ref').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string_ref[z]+'</td>');
-                         }
-                         */
-                        UpdateRadarGuideComments(0);
-
-
-
-                        // ********************* drawing radar chart ******************** //
-                        // drawing radar chart
-                        d3.select('#radar_chart')
-                            .selectAll('svg')
-                            .append('svg')
-                            .attr("width", radar_chart_width)
-                            .attr("height", radar_chart_height);
-                    });
                 });
             });
         });
@@ -566,6 +432,147 @@ function init_with_twoLaps() {
 
 }
 
+
+function init_summaryInfo(){
+    //  ******* comment box contents ********* //
+    d3.json("./data/comparison.json", function(error, track_info_data) {
+        console.log(track_info_data);
+
+
+        var track_name = track_info_data.track_info.TrackName;
+        set_trackType(track_name); // set global trackType
+        var split = track_info_data.track_info.Split;
+        var optimal_time = track_info_data.optimal_info;
+        optimal_time = GetStringFromSec(optimal_time);
+        var nSplits = Object.keys(split).length;
+        var track_length = split[nSplits - 1];
+
+
+        $('#sector_track_info').html('');
+        $('#sector_track_info').append('' + track_name + ', ' + track_length + 'm<br />Optimal: <span style="color:' + COLOR_NEGATIVE + '">' + optimal_time + '</span>');
+
+
+        var btn_margin = 10;
+        var btn_width = Math.round(width-(nSplits-1)*btn_margin)/nSplits;
+
+        var split_record=[];
+        var split_record_ref=[];
+        var sector_name='';
+
+
+        for(var z=0; z<nSplits; z++){
+            if(z==0){
+                sector_name = 'FULL';
+            }
+            else{
+                sector_name = 'S'+z;
+            }
+
+            split_record[z] = track_info_data.sector_info[sector_name].Laptime_A;
+            split_record_ref[z] = track_info_data.sector_info[sector_name].Laptime_B;
+
+            split_comments[z] = track_info_data.sector_info[sector_name].comments;
+            split_guides[z] = track_info_data.sector_info[sector_name].guides;
+
+            split_scores[z] = [
+                [
+                    {"area": "ACCEL", "value": track_info_data.sector_info[sector_name].driver_score_B.ACCEL},
+                    {"area": "BRAKING", "value": track_info_data.sector_info[sector_name].driver_score_B.BRAKING},
+                    {"area": "DISTANCE", "value": track_info_data.sector_info[sector_name].driver_score_B.DISTANCE},
+                    {"area": "EDGE", "value": track_info_data.sector_info[sector_name].driver_score_B.EDGE},
+                    {"area": "LINE", "value": track_info_data.sector_info[sector_name].driver_score_B.LINE},
+                    {"area": "STEERING", "value": track_info_data.sector_info[sector_name].driver_score_B.STEERING}
+                ],
+                [
+                    {"area": "ACCEL", "value": track_info_data.sector_info[sector_name].driver_score_A.ACCEL},
+                    {"area": "BRAKING", "value": track_info_data.sector_info[sector_name].driver_score_A.BRAKING},
+                    {"area": "DISTANCE", "value": track_info_data.sector_info[sector_name].driver_score_A.DISTANCE},
+                    {"area": "EDGE", "value": track_info_data.sector_info[sector_name].driver_score_A.EDGE},
+                    {"area": "LINE", "value": track_info_data.sector_info[sector_name].driver_score_A.LINE},
+                    {"area": "STEERING", "value": track_info_data.sector_info[sector_name].driver_score_A.STEERING}
+                ]
+            ];
+        }
+
+        //console.log(split_comments);
+
+        var split_record_diff = [];
+        var split_record_string = [];
+        var split_record_string_ref = [];
+
+        for(z=0; z<nSplits; z++){
+            split_record_diff[z] = split_record[z] - split_record_ref[z];
+
+            /*if(z==0){
+             split_record_string[z] = GetStringFromSec(split_record[z]);
+             split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+             }
+             else{*/
+            split_record_string[z] = GetStringFromSec(split_record[z],split_record_ref[z]);
+            split_record_string_ref[z] = GetStringFromSec(split_record_ref[z]);
+            //}
+        }
+
+        for(z=0; z<nSplits; z++){
+
+            if(z==0) {
+                $('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; border:0px; padding:0px;" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">'+'<table width="100%" height="100%"><tr><td width="10%" style="background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'"></td><td>FULL: ' + split_record_string[0] +'</td></tr></table>'+'</button></td>');
+                //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%;background-color:'+GetValueColor(split_record_diff[z],-0.5,0.5)+'" class="btn btn-split" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">FULL: ' + split_record_string[0] + '</button></td>');
+            }else {
+                $('#split-table-contents').append('<td align="center" width="10">&nbsp;</td>');
+                //$('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; background-color:'+GetValueColor(split_record_diff[z],-0.1,0.1)+'" class="btn btn-split" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+z+')">S'+z+': ' + split_record_string[z] + '</button></td>');
+                $('#split-table-contents').append('<td width="500" align="center"><button type="button"  style="width:100%; border:0px; padding:0px;" class="btn btn-split" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+z+')">'+'<table width="100%" height="100%"><tr><td width="10%" style="background-color:'+GetValueColor(split_record_diff[z],-0.1,0.1)+'"></td><td>S'+z+': ' + split_record_string[z] +'</td></tr></table>'+'</button></td>');
+            }
+
+
+        }
+
+        var strClass = "btn ";
+
+        if(split_record_diff[z]<=0) strClass ='btn btn-negative';
+        else strClass='btn btn-positive';
+
+        $('#split-table-header').attr('width',Math.round(width));
+        $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
+            'S' +(z+1)+
+            '</button>');
+
+        // init FULL sector btn
+        // $('#split-table-header').append('<button type="button" '+ ' class="'+strClass+'" value="'+split[0]+'-'+split[nSplits-1]+'" onclick="setBrushRange(this,0)">' +
+        //     'FULL' +
+        //     '</button>');
+
+        for(z=0; z<nSplits-1; z++){
+            if(split_record_diff[z+1]<=0) strClass ='btn btn-negative';
+            else strClass='btn btn-positive';
+
+            $('#split-table-header').append('<button type="button"  style="width:'+btn_width+'px; margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z-1]+'-'+split[z]+'" onclick="setBrushRange(this,'+(z)+')">' +
+                'S' +(z)+
+                '</button>');
+
+            // $('#split-table-header').append('<button type="button" ' + ' margin-left:'+btn_margin+'px;" class="'+strClass+'" value="'+split[z]+'-'+split[z+1]+'" onclick="setBrushRange(this,'+(z+1)+')">' +
+            //     'S' +(z+1)+
+            //     '</button>');
+        }
+        /*
+         for(z=0; z<nSplits; z++){
+         if(split_record_diff[z]>0)
+         $('#split-table-contents-ref').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_NEGATIVE + ';">'+split_record_string_ref[z]+'</td>');
+         else
+         $('#split-table-contents-ref').append('<td align="center" width='+tbl_width+'align="center" style="color:'+ COLOR_POSITIVE + ';">'+split_record_string_ref[z]+'</td>');
+         }
+         */
+        UpdateRadarGuideComments(0);
+
+        // ********************* drawing radar chart ******************** //
+        // drawing radar chart
+        d3.select('#radar_chart')
+            .selectAll('svg')
+            .append('svg')
+            .attr("width", radar_chart_width)
+            .attr("height", radar_chart_height);
+    });
+}
 
 
 // This function supports parsing the column from input data.
@@ -1141,7 +1148,7 @@ function zoomTo(range, sector_type){
     // 2) calculate the target index (middle of first and second index)
     middle_index = Math.round((first_index+second_index)/2);
 
-
+    console.log(merged_track_data);
     // 3) Gratuitous zoom the area
     d3.select("#track_canvas").call(trackZoom).transition()
         .duration(400)

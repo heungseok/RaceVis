@@ -343,20 +343,23 @@ function drawTrack_withTwoLaps(){
     track_svg.append("path")
         .data([merged_track_data.inline])
         .attr("class", "line boundary inline")
-        .attr("d", track_line);
+        .attr("d", track_line)
+        .style("stroke-width", track_boundary_width[TRACK_TYPE]);
 
 
     track_svg.append("path")
         .data([merged_track_data.outline])
         .attr("class", "line boundary outline")
-        .attr("d", track_line);
+        .attr("d", track_line)
+        .style("stroke-width", track_boundary_width[TRACK_TYPE]);
 
 
     // draw track line, ref line & focus element (circle)
     track_svg.append("path")
         .data([merged_track_data.ref])
         .attr("class", "line ref")
-        .attr("d", track_line);
+        .attr("d", track_line)
+        .style("stroke-width", track_line_width[TRACK_TYPE]);
 
     var ref_track_focus = track_svg.append("g")
         .attr("id", "track_focus1-ref");
@@ -366,7 +369,8 @@ function drawTrack_withTwoLaps(){
     track_svg.append("path")
         .data([merged_track_data.origin])
         .attr("class", "line")
-        .attr("d", track_line);
+        .attr("d", track_line)
+        .style("stroke-width", track_line_width[TRACK_TYPE]);
 
     var track_focus = track_svg.append("g")
         .attr("id", "track_focus1");
@@ -1201,6 +1205,6 @@ function transform_nav_track_byTrackType(){
         // return "translate(" + nav_track_width/2 + ", " + nav_track_height/4 + ") rotate(90)";
         return "translate(" + nav_track_width/4 + ", " + nav_track_height/4 + ")";
     else
-        return;
+        return "translate(" + nav_track_width/4 + ", " + nav_track_height/4 + ")";
 }
 
