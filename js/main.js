@@ -1316,7 +1316,7 @@ function track_selector(element){
     console.log(selText);
     if(!$(this).parent().hasClass("disabled")) {
         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText + '<span class="caret"></span>');
-        $("#sel_session").removeClass("hidden");
+        //$("#sel_session").removeClass("hidden");
     }
 }
 
@@ -1343,7 +1343,7 @@ function session_selector(){
 
     if(!$(this).parent().hasClass("disabled")) {
         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText[0] + '<span class="caret"></span>');
-        $("#sel_lap").removeClass("hidden");
+        //$("#sel_lap").removeClass("hidden");
 
         d3.json("./data/session_info/info_std_oragi_kicshort_86_session-0.json", function (error, session_info) {
             console.log(session_info);
@@ -1376,7 +1376,7 @@ function reference_session_selector(){
     //console.log(sessName);
     if(!$(this).parent().hasClass("disabled")) {
         $(this).parents('.dropdown').find('.dropdown-toggle').html(selText[0] + '<span class="caret"></span>');
-        $("#sel_lap_ref").removeClass("hidden");
+        //$("#sel_lap_ref").removeClass("hidden");
 
         d3.json("./data/session_info/info_std_oragi_kicshort_86_session-0.json", function (error, session_info) {
             console.log(session_info);
@@ -1401,7 +1401,7 @@ function SelectOriginLap(lap,laptime)
     $("#sel_lap_list").parents('.dropdown').find('.dropdown-toggle').html('<font color="'+COLOR_ORIGIN+'">' + (lap + 1) + ' Lap (' + GetStringFromSec(laptime)+') <span class="caret"></span>');
 
     lap_original = lap + 1;
-    $("#sel_session_ref").removeClass("hidden");
+    //$("#sel_session_ref").removeClass("hidden");
 }
 
 function SelectReferenceLap(lap,laptime)
@@ -1411,7 +1411,7 @@ function SelectReferenceLap(lap,laptime)
 
     lap_reference = lap + 1;
 
-    $("#finish_select").removeClass("hidden");
+    //$("#finish_select").removeClass("hidden");
 
 }
 
