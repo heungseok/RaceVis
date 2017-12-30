@@ -62,7 +62,8 @@ var vis_type = 2; // 1: one lap, 2: two laps
 var x = d3.scaleLinear().range([0, width]);
 var zoom_x = d3.scaleLinear().range([0, zoom_width]);
 var y = d3.local();
-var zoom_limit = 15; // zoom region limit as 15m
+var zoom_limit_pidx = 15; // zoom region limit as 15m
+var zoom_limit_time = 2; // zoom region limit as 2 seconds
 
 var line = d3.local();
 var bisect = d3.bisector(function (d) { return d.x; }).left;
@@ -598,10 +599,23 @@ function brushedOnChart(){
 
         // limit zoom range
         var temp = s.map(x.invert, x);
-        if(temp[1]-temp[0] < zoom_limit){
-            d3.select("#canvas").selectAll(".chartBrush").call(brush_onChart.move, null);
-            return;
+
+        if(root_x == "PositionIndex"){
+
+            if(temp[1]-temp[0] < zoom_limit_pidx){
+                d3.select("#canvas").selectAll(".chartBrush").call(brush_onChart.move, null);
+                return;
+            }
+
+        }else if(root_x == "TimeStamp"){
+
+            if(temp[1]-temp[0] < zoom_limit_time){
+                d3.select("#canvas").selectAll(".chartBrush").call(brush_onChart.move, null);
+                return;
+            }
+
         }
+
 
         console.log("brushed on chart!");
         console.log("current x domain is (before change from brush): " + x.domain());
@@ -646,9 +660,14 @@ function brushed(){
 
     // limit zoom range
     var temp = s.map(zoom_x.invert, zoom_x);
-    if(temp[1]-temp[0] < zoom_limit){
-        return;
+
+    // check zoom limit
+    if(root_x == "PositionIndex"){
+        if(temp[1]-temp[0] < zoom_limit_pidx) return;
+    }else if(root_x == "TimeStamp"){
+        if(temp[1]-temp[0] < zoom_limit_time) return;
     }
+
 
     // update x domain by zoom range
     x.domain(s.map(zoom_x.invert, zoom_x));
@@ -1451,9 +1470,10 @@ function setDeltaColorRange(delta_option){
         delta_MAX_threshold = 5;
         animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold, 0, delta_MAX_threshold]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
     }else if(delta_option == "GripUsageA" || delta_option == "GripUsageB"){
-        delta_MIN_threshold = 0;
+        delta_MIN_threshold = 20;
         delta_MAX_threshold = 100;
-        animation_track_color = d3.scaleLinear().domain([0, 100]).range(['WhiteSmoke', 'red']);
+        animation_track_color = d3.scaleLinear().domain([0, 100]).range(['yellow', 'red']);
+        // animation_track_color = d3.scaleLinear().domain([0, 100]).range(['WhiteSmoke', 'red']);
     }
     else if(delta_option == "OFF"){
         // nothing;
