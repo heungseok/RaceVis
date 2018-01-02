@@ -957,6 +957,8 @@ function drawing_animationPath() {
         // Disable split selector if root_x is TimeStamp
         if(root_x=="TimeStamp")
             d3.select("#table_split_selector").attr("class","hidden");
+        else
+            d3.select("#table_split_selector").attr("class","");
     }
 
 
