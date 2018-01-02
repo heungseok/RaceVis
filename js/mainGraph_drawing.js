@@ -208,6 +208,16 @@ function drawLineGraph_withTwoLaps() {
         .attr("y1", -height)
         .attr("y2", height);
 
+
+    // ******** init x axis value tooltip ******** //
+    focus.append("text")
+        .attr("class", "chart_tooltip-x_value")
+        .attr("x", -50)
+        .attr("dy", ".35em")
+        .style("fill", "white")
+        .text("");
+
+
     // ******** reference tooltip ********** //
     var ref_focus = svg.append("g")
         .attr("class", "focus-ref")
@@ -670,10 +680,18 @@ function mousemove_twoLaps() {
         return "translate(" + x(d.values[index].x) + "," + height +")";
 
     });
+
+    // control xAxis value
+    focuses.select("text.chart_tooltip-x_value")
+        .text(function(d){ return +d.values[index].x.toFixed(3); });
+    focuses.select("text.chart_tooltip-x_value")
+        .attr("x", function(d){ return x(d.values[index].x)-50; })
+        .attr("dy", d3.mouse(this)[1]+10);
+
+
     var plot_focuses = d3.select("#canvas").selectAll("svg")
         .selectAll("text.plot_info_focus");
     plot_focuses.text(function (d){ return +d.values[index].feature_val.toFixed(3); });
-
 
 
 
@@ -1014,6 +1032,14 @@ function addChart_withTwoLaps(id) {
         .style("opacity", 0.9)
         .attr("y1", -height)
         .attr("y2", height);
+
+    // append x-value tooltip.
+    focus.append("text")
+        .attr("class", "chart_tooltip-x_value")
+        .attr("x", -50)
+        .attr("dy", ".30em")
+        .style("fill", "WhiteSmoke")
+        .text("");
 
     // ******** reference tooltip ********** //
     var ref_focus = svg.append("g")

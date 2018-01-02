@@ -70,6 +70,7 @@ var bisect = d3.bisector(function (d) { return d.x; }).left;
 var bisect_for_animation = d3.bisector(function (d) { return d; }).left;
 
 var xAxis = d3.axisBottom(x);
+var xAxis_tooltip;
 var zoom_xAxis = d3.axisBottom(zoom_x);
 
 var svg, zoom_svg,

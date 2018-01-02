@@ -78,6 +78,14 @@ function trackAnimation_withTwoLaps(){
             return "translate(" + x(d.values[animation_index].x) + "," + height +")";
         });
 
+        // control xAxis value
+        focuses.select("text.chart_tooltip-x_value")
+            .text(function(d){ return +d.values[animation_index].x.toFixed(3); });
+        focuses.select("text.chart_tooltip-x_value")
+            .attr("x", function(d){ return x(d.values[animation_index].x)-50; })
+            .attr("dy", function(d){ return y.get(this)(d.values[animation_index].feature_val)+10 });
+
+
         var plot_focuses = d3.select("#canvas").selectAll("svg")
             .selectAll("text.plot_info_focus");
         plot_focuses.text( function(d){ return +d.values[animation_index].feature_val.toFixed(3); });
