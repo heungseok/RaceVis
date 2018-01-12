@@ -1186,8 +1186,7 @@ function clearAllSVG_for_xAxis_switch() {
     track_data = [];
     all_features= [], selected_features = [], animation_track_data = [], animation_time_delta=[];
 
-    console.log("user:"+userID);
-    init2(vis_type,userID);
+    init(vis_type);
 }
 
 function clearAllSVG() {
