@@ -109,6 +109,7 @@ var nav_track_line = d3.line()
 var animation_index =0,
     animation_range = [],
     ref_animation_index = 0,
+    ref_animation_range = [],
     animation_flag = false,
     resume_flag = false,
     animation_state = "play",
@@ -217,6 +218,7 @@ function init(init_type) {
     document.getElementById("loading").style.display = "block";
 
     if(window.innerWidth <= MIN_WIDTH || window.innerHeight <= MIN_HEIGHT){
+        console.log("current width:" + window.innerWidth + ", current height:" + window.innerHeight);
         document.getElementById("warningModal").style.display = "block";
         // document.getElementById("loading").style.display = "none";
         //     return;
@@ -799,6 +801,8 @@ function setAnimationRange_fromZoom(s){
             // setting animation range and initializing animation_index ( 애니메이션 인덱스 재조절)
             animation_range.push(targetX0);
             animation_range.push(targetX1);
+            setRefAnimationRange_fromOrigin();
+
             animation_index = targetX0;
 
             return;
@@ -808,6 +812,27 @@ function setAnimationRange_fromZoom(s){
         drawing_animationPath()
 
 }
+
+function setRefAnimationRange_fromOrigin(){
+
+    // init ref_animation_range
+    ref_animation_range = [];
+
+    // extract referances x value array
+    var ref_x_values =  _.pluck(selected_features[0].ref_values, 'x'); // ref_x_values == position Index of x
+
+    // find ref strat & end position with origin x value array
+    var ref_start = bisect_for_animation(ref_x_values, selected_features[0].values[animation_range[0]].x, 0, ref_x_values.length-1);
+    var ref_end = bisect_for_animation(ref_x_values, selected_features[0].values[animation_range[1]].x, 0, ref_x_values.length-1);
+
+    // update ref_animation range
+    ref_animation_range.push(ref_start);
+    ref_animation_range.push(ref_end);
+
+    return;
+
+}
+
 function setMinMax_by_animationRange(){
 
     selected_features.forEach(function(data, i){

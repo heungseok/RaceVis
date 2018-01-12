@@ -1180,38 +1180,45 @@ function clearAllSVG_for_xAxis_switch() {
     // data clean
     animation_range = [];
     animation_index = 0;
+    ref_animation_range = [];
+    ref_animation_index = 0;
     steer_data = [], brake_data = [], gas_data = [], gear_data = [];
     track_data = [];
     all_features= [], selected_features = [], animation_track_data = [], animation_time_delta=[];
 
-    init(vis_type);
+    console.log("user:"+userID);
+    init2(vis_type,userID);
 }
 
 function clearAllSVG() {
 
+    console.log("CLEAR ALL SVG & DATA");
+
     d3.selectAll("path.animation_path").remove(); // animation path remove
     d3.select("#zoom_canvas").select("svg").remove();
     d3.select("#canvas").selectAll("svg").remove();
+    d3.select("#canvas").selectAll("div").remove();
+    d3.select("#track_canvas").selectAll("path").remove();
     d3.select("#track_canvas").selectAll("svg").remove();
     d3.select("#track_canvas").selectAll("div").remove();
     d3.select("#track_nav_canvas").selectAll("svg").remove();
+    d3.select("#track_nav_canvas").selectAll("div").remove();
     d3.select("#sub_canvas").selectAll("svg").remove();
     d3.select("#sub_canvas").selectAll("div").remove();
 
     // remove section split buttons & info
-    var temp_node = document.getElementById("split-table-header");
-    while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
-    temp_node = document.getElementById("split-table-contents");
-    while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
-    temp_node = document.getElementById("split-table-contents-ref");
+    var temp_node = document.getElementById("split-table-contents");
     while (temp_node.firstChild) temp_node.removeChild(temp_node.firstChild);
 
     // data clean
     animation_range = [];
     animation_index = 0;
+    ref_animation_range = [];
+    ref_animation_index = 0;
     steer_data = [], brake_data = [], gas_data = [], gear_data = [];
-    track_data = [], inline_track = [], outline_track = [];
+    track_data = [], ref_track_data = [], inline_track = [], outline_track = [];
     all_features= [], selected_features = [], animation_track_data = [], animation_time_delta=[];
+    merged_track_data = {};
 }
 
 // working..
