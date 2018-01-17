@@ -396,6 +396,7 @@ function init_with_twoLaps() {
                             x: parseInt(data["PositionIndex"]), // x is pidx
                             TimeDelta: parseFloat(data["DeltaTimeDelta"]), // 일단 소수점 3자리로 round
                             SpeedDelta: parseFloat(data["DeltaGPS_Speed"]),
+                            GripDelta: parseFloat(data["DeltaGripUsage"]),
                             GripA: parseFloat(data["GripUsageA"]),
                             GripB: parseFloat(data["GripUsageB"])
                         }
@@ -929,6 +930,8 @@ function drawing_animationPath() {
                 animation_delta_data.push(track_delta[i].GripA);
             else if(delta_value_option == "GripUsageB")
                 animation_delta_data.push(track_delta[i].GripB);
+            else if(delta_value_option == "DeltaGripUsage")
+                animation_delta_data.push(track_delta[i].GripDelta);
         }
 
         // setting the time delta color palette (지금은 안씀. 이 코드는 매번 선택된 레인지에 따라서 변화할 때만 사용.
@@ -1497,7 +1500,11 @@ function setDeltaColorRange(delta_option){
         delta_MIN_threshold = -5;
         delta_MAX_threshold = 5;
         animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold, 0, delta_MAX_threshold]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
-    }else if(delta_option == "GripUsageA" || delta_option == "GripUsageB"){
+    }else if(delta_option == "DeltaGripUsage"){
+        delta_MIN_threshold = -5;
+        delta_MAX_threshold = 5;
+        animation_track_color = d3.scaleLinear().domain([delta_MIN_threshold, 0, delta_MAX_threshold]).range(['red', 'rgba(255,255,255, 0.7)', 'green']);
+    } else if(delta_option == "GripUsageA" || delta_option == "GripUsageB"){
         delta_MIN_threshold = 20;
         delta_MAX_threshold = 100;
         animation_track_color = d3.scaleLinear().domain([0, 100]).range(['yellow', 'red']);
