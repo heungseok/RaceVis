@@ -685,13 +685,22 @@ function brushed(){
 
     // **** update y scale **** //
     d3.select("#canvas").selectAll("svg").select("g").each(function(d){
-        var origin_y0 = d3.extent(d.values, function(c) {
-            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
-        });
-        var ref_y0 = d3.extent(d.ref_values, function(c) {
-            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
-        });
-        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+
+        var union_y0;
+
+        if(d.ref_values !== undefined){
+            var origin_y0 = d3.extent(d.values, function(c) {
+                if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+            });
+            var ref_y0 = d3.extent(d.ref_values, function(c) {
+                if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+            });
+            union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+        }else{
+            union_y0 = d3.extent(d.values, function(c) {
+                if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+            });
+        }
 
         var ty = y.set(this, d3.scaleLinear()
             .range([height, 0]))
@@ -706,16 +715,23 @@ function brushed(){
     // **** update y axis **** //
     for (var i=0; i<selected_features.length; i++){
         var id = "g#" + selected_features[i].id.split(" ")[0];
+        var union_y0;
 
-        var origin_y0 = d3.extent(selected_features[i].values, function(c) {
-            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
-        });
-        var ref_y0 = d3.extent(selected_features[i].ref_values, function(c) {
-            if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
-        });
-        var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+        if(selected_features[i].ref_values !== undefined){
+            var origin_y0 = d3.extent(selected_features[i].values, function(c) {
+                if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+            });
+            var ref_y0 = d3.extent(selected_features[i].ref_values, function(c) {
+                if(c.x >=x.domain()[0] && c.x <=x.domain()[1]) { return +c.feature_val; }
+            });
+            union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+        }else{
+            union_y0 = d3.extent(selected_features[i].values, function(c) {
+                if (c.x >= x.domain()[0] && c.x <= x.domain()[1]) return +c.feature_val;
+            });
+        }
+
         var y_range = d3.scaleLinear().range([height, 0]).domain(union_y0);
-
         d3.select(id).select(".axis.axis--y").call(d3.axisLeft(y_range).ticks(3));
     }
 
@@ -845,19 +861,31 @@ function setMinMax_by_animationRange(){
     selected_features.forEach(function(data, i){
 
         var temp_arr = _.pluck(data.values, "feature_val").slice(animation_range[0], animation_range[1]);
-        var temp_arr_ref = _.pluck(data.ref_values, "feature_val").slice(animation_range[0], animation_range[1]);
+
         var origin_extent = d3.extent(temp_arr);
-        var ref_extent = d3.extent(temp_arr_ref);
+
         selected_features[i].origin_max = origin_extent[1];
         selected_features[i].origin_min = origin_extent[0];
-        selected_features[i].ref_max = ref_extent[1];
-        selected_features[i].ref_min = ref_extent[0];
 
         var id = "g#" + data.id.split(" ")[0];
         d3.select(id).select(".plot_info_focus_max").text('\ue093 '+selected_features[i].origin_max.toFixed(3));
         d3.select(id).select(".plot_info_focus_min").text('\ue094 '+selected_features[i].origin_min.toFixed(3));
-        d3.select(id).select(".plot_info_focus_max-ref").text('\ue093 '+selected_features[i].ref_max.toFixed(3));
-        d3.select(id).select(".plot_info_focus_min-ref").text('\ue094 '+selected_features[i].ref_min.toFixed(3));
+
+
+
+        // reference's values
+        if(data.ref_values !== undefined){
+            var temp_arr_ref = _.pluck(data.ref_values, "feature_val").slice(animation_range[0], animation_range[1]);
+            var ref_extent = d3.extent(temp_arr_ref);
+            selected_features[i].ref_max = ref_extent[1];
+            selected_features[i].ref_min = ref_extent[0];
+            d3.select(id).select(".plot_info_focus_max-ref").text('\ue093 '+selected_features[i].ref_max.toFixed(3));
+            d3.select(id).select(".plot_info_focus_min-ref").text('\ue094 '+selected_features[i].ref_min.toFixed(3));
+        }else{
+            d3.select(id).select(".plot_info_focus_max-ref").text("");
+            d3.select(id).select(".plot_info_focus_min-ref").text("");
+        }
+
 
         // var id = "g#" + data.id.split(" ")[0];
         // d3.select(id).select(".plot_info_focus_max").text(selected_features[i].origin_max.toFixed(3));

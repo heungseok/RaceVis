@@ -51,7 +51,7 @@ function trackAnimation_withTwoLaps(){
         // 우선 postion?일 경우일 때는 origin lap의 데이터에 맞는 reference data의 index를 먼저 구해야함.
 
         var origin_x_value = Number(selected_features[0].values[animation_index].x);
-        // console.log("x value: " + origin_x_value + ", positionIndex: " + all_features[39].);
+
         var ref_x_values =  _.pluck(selected_features[0].ref_values, 'x'); // ref_x_values == position Index of x
         ref_animation_index = bisect_for_animation(ref_x_values, origin_x_value, 0, ref_x_values.length-1);
         // console.log("x value: " + origin_x_value + ", ref x value: " + ref_x_values[ref_animation_index]);
@@ -97,17 +97,22 @@ function trackAnimation_withTwoLaps(){
 
         ref_focuses.selectAll(".chart_tooltip-ref").attr("transform", function(d){
             var ty = y.get(this);
-            return "translate(" + x(d.ref_values[ref_animation_index].x) + "," + ty(d.ref_values[ref_animation_index].feature_val) + ")";
+            if(d.ref_values !== undefined) return "translate(" + x(d.ref_values[ref_animation_index].x) + "," + ty(d.ref_values[ref_animation_index].feature_val) + ")";
+            else return;
 
         });
         ref_focuses.selectAll("text.chart_tooltip-ref")
             .text( function (d) {
-                return +d.ref_values[ref_animation_index].feature_val.toFixed(3);
+                if(d.ref_values !== undefined) return +d.ref_values[ref_animation_index].feature_val.toFixed(3);
+                else return;
             });
 
         var ref_plot_focuses = d3.select("#canvas").selectAll("svg")
             .selectAll("text.plot_info_focus-ref");
-        ref_plot_focuses.text( function(d){ return +d.ref_values[ref_animation_index].feature_val.toFixed(3); });
+        ref_plot_focuses.text( function(d){
+            if(d.ref_values !== undefined) return +d.ref_values[ref_animation_index].feature_val.toFixed(3);
+            else return;
+        });
 
         // ************** block for animation things *************** //
         var track_focus = d3.select("#track_focus1");
@@ -182,9 +187,9 @@ function trackAnimation_withTwoLaps(){
 
         var speed_focus = d3.select("#rpm_focus1");
         speed_focus .select("text.value")
-            .text(speed_data[animation_index].toFixed(3));
+            .text(speed_data[animation_index].toFixed(1));
         rpm_focus.select("text.value-ref")
-            .text(ref_speed_data[ref_animation_index].toFixed(3));
+            .text(ref_speed_data[ref_animation_index].toFixed(1));
 
 
         // ************** END of animation code *************** //

@@ -743,19 +743,26 @@ function mousemove_twoLaps() {
     ref_focuses.style("display", null);
 
     ref_focuses.selectAll(".chart_tooltip-ref").attr("transform", function(d){
-        ref_index = bisect(d.ref_values, x_value, 0, d.ref_values.length -1);
-        var ty = y.get(this);
-        return "translate(" + x(d.ref_values[ref_index].x) + "," + ty(d.ref_values[ref_index].feature_val) + ")";
-
+        if(d.ref_values !== undefined){
+            ref_index = bisect(d.ref_values, x_value, 0, d.ref_values.length -1);
+            var ty = y.get(this);
+            return "translate(" + x(d.ref_values[ref_index].x) + "," + ty(d.ref_values[ref_index].feature_val) + ")";
+        }else{
+            return;
+        }
     });
 
     ref_focuses.selectAll("text.chart_tooltip-ref")
         .text( function (d) {
-            return +d.ref_values[ref_index].feature_val.toFixed(3);
+            if(d.ref_values !== undefined) return +d.ref_values[ref_index].feature_val.toFixed(3);
+            else return;
         });
     var ref_plot_focuses = d3.select("#canvas").selectAll("svg")
         .selectAll("text.plot_info_focus-ref");
-    ref_plot_focuses.text(function (d){ return +d.ref_values[ref_index].feature_val.toFixed(3); });
+    ref_plot_focuses.text(function (d){
+        if(d.ref_values !== undefined) return +d.ref_values[ref_index].feature_val.toFixed(3);
+        else return;
+    });
 
 
     // ****************** moving Track *********************** //
@@ -830,9 +837,9 @@ function mousemove_twoLaps() {
 
     var speed_focus = d3.select("#speed_focus1");
     speed_focus.select("text.value")
-        .text(speed_data[index].toFixed(3));
+        .text(speed_data[index].toFixed(1));
     speed_focus.select("text.value-ref")
-        .text(ref_speed_data[ref_index].toFixed(3));
+        .text(ref_speed_data[ref_index].toFixed(1));
 
 
 }
@@ -888,9 +895,13 @@ function addChart_withTwoLaps(id) {
 
     // extract target data which is stored in last index of selected_features
     var target_data = selected_features[selected_features.length-1];
+    var flag_only_data_in_A = target_data.ref_values === undefined;
+
+    console.log("Whether this feature only exists in A session: " + flag_only_data_in_A);
 
     ///////////////// update Chart /////////////////// => d3.document 참고해서 수정할것..
     console.log(target_data);
+
     svg = d3.select("#canvas").selectAll("svg").data(selected_features).enter()
         .append("div").classed("svg-container.line-chart", true) // container class to make it responsive
         .append("svg")
@@ -901,19 +912,28 @@ function addChart_withTwoLaps(id) {
         .append("g")
         .attr("id", function (d) {
             return d.id.split(" ")[0];
-            // return d.id.replace(/\s/g, ''); // regx, remove space for setting id
+            // return d.id.replace(/\s/g, ''); // regular expression, remove space for setting id
         })
         .attr("transform", "translate(" + margin.left + "," + margin.top + ")")
         .each(function (d) {
+            var origin_y0, ref_y0, union_y0, ty;
 
-            var origin_y0 = d3.extent(d.values, function(c) { return +c.feature_val;});
-            var ref_y0 = d3.extent(d.ref_values, function(c) { return +c.feature_val;});
+            if(!flag_only_data_in_A){
+                origin_y0 = d3.extent(d.values, function(c) { return +c.feature_val;});
+                ref_y0 = d3.extent(d.ref_values, function(c) { return +c.feature_val;});
 
-            var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
-            var ty = y.set(this, d3.scaleLinear()
-                .range([height, 0]))
-            // local feature에 대한 y range setting
-                .domain(union_y0);
+                union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+                ty = y.set(this, d3.scaleLinear()
+                    .range([height, 0]))
+                // local feature에 대한 y range setting
+                    .domain(union_y0);
+            }else{
+                origin_y0 = d3.extent(d.values, function(c) { return +c.feature_val;});
+                ty = y.set(this, d3.scaleLinear()
+                    .range([height, 0]))
+                // local feature에 대한 y range setting
+                    .domain(origin_y0);
+            }
 
             line.set(this, d3.line().curve(d3.curveBasis)
                 .x(function(c){ return x(c.x);})
@@ -928,17 +948,20 @@ function addChart_withTwoLaps(id) {
         })
         .append("rect")
         .attr("width", width)
-        .attr("height", height)
+        .attr("height", height);
 
     // assign clipPath to each line area.
 
     // ************* draw each path line (ref Lap 먼저, 다음 origin Lap) *********************//
-    svg.append("path")
-        .attr("class", "line ref")
-        .attr("d", function(d) { return line.get(this)(d.ref_values); })
-        .attr("clip-path", function (d) {
-            return "url(#clip_" + d.id.split(" ")[0] + ")";
-        });
+    if(!flag_only_data_in_A){
+        svg.append("path")
+            .attr("class", "line ref")
+            .attr("d", function(d) { return line.get(this)(d.ref_values); })
+            .attr("clip-path", function (d) {
+                return "url(#clip_" + d.id.split(" ")[0] + ")";
+            });
+    }
+
 
     svg.append("path")
         .attr("class", "line")
@@ -1002,7 +1025,6 @@ function addChart_withTwoLaps(id) {
         .style("fill", COLOR_REF)
         .style("font-size", "12px")
         .text("max");
-    // .text(functio?n(d){ return d.ref_max.toFixed(3); });
 
     // svg.append("image")
     //     .attr("class", "plot_info_focus_max_arrow")
@@ -1017,7 +1039,6 @@ function addChart_withTwoLaps(id) {
         .style("fill", COLOR_REF)
         .style("font-size", "12px")
         .text("min");
-    // .text(function(d){ return d.ref_min.toFixed(3); });
 
     // svg.append("image")
     //     .attr("class", "plot_info_focus_max_arrow")
@@ -1026,10 +1047,16 @@ function addChart_withTwoLaps(id) {
     //     .attr("transform", "translate(" + (width+additional_margin+margin_for_plot_info*.4) + ", " + (height*.6) + ")")
 
     // ************** x axis, y axis 생성 ************************ //
-    var origin_y0 = d3.extent(target_data.values, function(c) { return +c.feature_val;});
-    var ref_y0 = d3.extent(target_data.ref_values, function(c) { return +c.feature_val;});
+    var union_y0;
 
-    var union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+    if(flag_only_data_in_A === 0) {
+        var origin_y0 = d3.extent(target_data.values, function(c) { return +c.feature_val;});
+        var ref_y0 = d3.extent(target_data.ref_values, function(c) { return +c.feature_val;});
+        union_y0 = d3.extent(_.union(origin_y0, ref_y0));
+    }else{
+        union_y0 = d3.extent(target_data.values, function(c) { return +c.feature_val;});
+    }
+
     var y_range = d3.scaleLinear()
         .range([height, 0])
         .domain(union_y0);
@@ -1044,8 +1071,6 @@ function addChart_withTwoLaps(id) {
         .attr("id", "x-axis")
         .attr("class", "axis axis--x")
         .attr("transform", "translate(" + 0 + "," + height + ")");
-
-
 
     // ***  chart title ***
     svg.append("text").attr("class", "chart_label")
@@ -1089,26 +1114,29 @@ function addChart_withTwoLaps(id) {
         .text("");
 
     // ******** reference tooltip ********** //
-    var ref_focus = svg.append("g")
-        .attr("class", "focus-ref")
-        .style("display", "none");
+    if(!flag_only_data_in_A) {
+        var ref_focus = svg.append("g")
+            .attr("class", "focus-ref")
+            .style("display", "none");
 
-    // append the circle at the interaction
-    ref_focus.append("circle")
-        .attr("class", "chart_tooltip-ref")
-        .attr("r", 4.5);
-    // place the value at the interaction
-    ref_focus.append("text")
-        .attr("class", "chart_tooltip-ref")
-        .attr("x", 9)
-        .attr("dy", ".35em")
-        .style("fill", COLOR_REF)
-        .text("nothing");
+        // append the circle at the interaction
+        ref_focus.append("circle")
+            .attr("class", "chart_tooltip-ref")
+            .attr("r", 4.5);
+        // place the value at the interaction
+        ref_focus.append("text")
+            .attr("class", "chart_tooltip-ref")
+            .attr("x", 9)
+            .attr("dy", ".35em")
+            .style("fill", COLOR_REF)
+            .text("nothing");
+    }
+
 
 
     // focus line을 마지막 line x-axis에 맞추기.
     var foc_lines = document.getElementsByClassName("tooltip_line");
-    for (var i =0; i<foc_lines.length-1; i++){
+    for (var i =0; i<foc_lines.length-1; i++) {
         foc_lines[i].setAttribute("y2", height);
     }
     foc_lines[foc_lines.length - 1].setAttribute("y2", 0);
@@ -1132,6 +1160,7 @@ function addChart_withTwoLaps(id) {
         .on("mouseover", function() { focus.style("display", null); })
         .on("mousemove", mousemove_twoLaps);
 
+
     // ************ set the all circles as invisible ************//
     d3.select("#canvas").selectAll("svg")
         .selectAll(".focus")
@@ -1139,7 +1168,6 @@ function addChart_withTwoLaps(id) {
     d3.select("#canvas").selectAll("svg")
         .selectAll(".focus-ref")
         .style("display", "none");
-
 
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, current_zoomRange);
 
