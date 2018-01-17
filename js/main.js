@@ -134,12 +134,14 @@ var steer_data =[],
     gas_data = [],
     gear_data = [],
     rpm_data = [],
+    speed_data = [],
     timeDelta_data = [];
 
 var ref_steer_data = [],
     ref_brake_data = [],
     ref_gas_data = [],
     ref_gear_data = [],
+    ref_speed_data = [],
     ref_rpm_data = [];
 
 
@@ -307,6 +309,10 @@ function init_with_twoLaps() {
                             selected_feat_names.push(d.id);
                             $('.checkbox_wrapper').append("<li class ='checkbox'> " +
                                 "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
+                            if(d.id == "GPS_Speed"){
+                                speed_data = _.pluck(d.values, 'feature_val');
+                                ref_speed_data = _.pluck(d.ref_values, 'feature_val');
+                            }
 
                         } else if (d.id == "RPM"){
                             rpm_data = _.pluck(d.values, 'feature_val');

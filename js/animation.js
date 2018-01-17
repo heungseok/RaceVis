@@ -180,6 +180,12 @@ function trackAnimation_withTwoLaps(){
         rpm_focus.select("text.value-ref")
             .text(Math.round(ref_rpm_data[ref_animation_index]));
 
+        var speed_focus = d3.select("#rpm_focus1");
+        speed_focus .select("text.value")
+            .text(speed_data[animation_index].toFixed(3));
+        rpm_focus.select("text.value-ref")
+            .text(ref_speed_data[ref_animation_index].toFixed(3));
+
 
         // ************** END of animation code *************** //
         animation_index++;
