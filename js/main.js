@@ -875,7 +875,7 @@ function setMinMax_by_animationRange(){
 
         // reference's values
         if(data.ref_values !== undefined){
-            var temp_arr_ref = _.pluck(data.ref_values, "feature_val").slice(animation_range[0], animation_range[1]);
+            var temp_arr_ref = _.pluck(data.ref_values, "feature_val").slice(ref_animation_range[0], ref_animation_range[1]);
             var ref_extent = d3.extent(temp_arr_ref);
             selected_features[i].ref_max = ref_extent[1];
             selected_features[i].ref_min = ref_extent[0];
