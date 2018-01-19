@@ -76,11 +76,13 @@ var zoom_xAxis = d3.axisBottom(zoom_x);
 var svg, zoom_svg,
     track_svg, sub_svg, nav_track_svg;
 
-
+// feature variables
 var all_features=[];
 var selected_features = [];
 var selected_feat_names = [];
+var exceptional_features_name = ["Distance", "RefinedPosLon", "RefinedPosLat", "TimeStamp", "PosLat", "PosLon", "AccelForward", "AccelLateral", "Internal Batte", "GPS_PosAccuracy", "GPS_Slope", "PositionIndex", "LapNo", "unknown-channel"]
 
+// x-axis feature
 var root_x = "PositionIndex";
 
 
@@ -169,8 +171,7 @@ var context;
 
 // ************* Track, Session, Lap variables for top navigation bar ************* //
 var TRACK_TYPE = "KIC_SHORT"; //
-var session_original;
-var session_reference;
+
 
 var lap_original=-1;
 var lap_reference=-1;
@@ -297,23 +298,29 @@ function init_with_twoLaps() {
 
                     $('.checkbox_wrapper').html('');
                     all_features.forEach(function (d) {
+
+                        // 먼저 exceptional_features_name에 있는 id가 걸릴 경우 break;
+                        if (exceptional_features_name.includes(d.id))
+                            return;
+
                         /*
                          // 각 칼럼의 첫번째 raw 값을 check, nan일 경우 set check box as unavailable
                          if(isNaN(d.values[0].feature_val)){
                          $("input[type=checkbox]").filter(function() { return this.value == d.id }).attr("disabled", true);
                          }
                          */
-                        // default feature로 GPS_Speed, RPM 을 plotting.
+
+                        // process default feature: GPS_Speed, gripUsage
                         if (d.id == "GPS_Speed" || d.id == "GripUsage") {
                             selected_features.push(d)
                             selected_feat_names.push(d.id);
-                            $('.checkbox_wrapper').append("<li class ='checkbox'> " +
-                                "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
+
                             if(d.id == "GPS_Speed"){
                                 speed_data = _.pluck(d.values, 'feature_val');
                                 ref_speed_data = _.pluck(d.ref_values, 'feature_val');
                             }
 
+                        // process sub info, track coordination
                         } else if (d.id == "RPM"){
                             rpm_data = _.pluck(d.values, 'feature_val');
                             ref_rpm_data = _.pluck(d.ref_values, 'feature_val');
@@ -337,12 +344,12 @@ function init_with_twoLaps() {
                             ref_gas_data = _.pluck(d.ref_values, 'feature_val')
                         } else if (d.id == "timeDelta"){
                             timeDelta_data = _.pluck(d.values, 'feature_val');
-                            $('.checkbox_wrapper').append("<li class ='checkbox'> " +
-                                "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
-                        } else {
-                            $('.checkbox_wrapper').append("<li class ='checkbox'> " +
-                                "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
                         }
+
+                        // check box items assign
+                        $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                            "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
+
 
                     });
                     console.log("finished generating checkbox by each features, and assigning focus data");
