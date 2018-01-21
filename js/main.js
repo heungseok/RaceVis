@@ -320,36 +320,42 @@ function init_with_twoLaps() {
                                 ref_speed_data = _.pluck(d.ref_values, 'feature_val');
                             }
 
-                        // process sub info, track coordination
-                        } else if (d.id == "RPM"){
-                            rpm_data = _.pluck(d.values, 'feature_val');
-                            ref_rpm_data = _.pluck(d.ref_values, 'feature_val');
-                        } else if (d.id == "PosLocalY") {
-                            temp_lat = _.pluck(d.values, 'feature_val');
-                            ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
-                        } else if (d.id == "PosLocalX") {
-                            temp_long = _.pluck(d.values, 'feature_val');
-                            ref_temp_long = _.pluck(d.ref_values, 'feature_val');
-                        } else if (d.id == "Steer_angle") {
-                            steer_data = _.pluck(d.values, 'feature_val')
-                            ref_steer_data = _.pluck(d.ref_values, 'feature_val')
-                        } else if (d.id == "Pedal_brake") {
-                            brake_data = _.pluck(d.values, 'feature_val')
-                            ref_brake_data = _.pluck(d.ref_values, 'feature_val')
-                        } else if (d.id == "Gear") {
-                            gear_data = _.pluck(d.values, 'feature_val')
-                            ref_gear_data = _.pluck(d.ref_values, 'feature_val')
-                        } else if (d.id == "Pedal_throttle") {
-                            gas_data = _.pluck(d.values, 'feature_val')
-                            ref_gas_data = _.pluck(d.ref_values, 'feature_val')
-                        } else if (d.id == "timeDelta"){
-                            timeDelta_data = _.pluck(d.values, 'feature_val');
+                            // check box items assign
+                            $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                                "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this); checked='checked'>" + d.id + "</label></li>");
+
+                            // process sub info, track coordination
+                        } else{
+                            if (d.id == "RPM"){
+                                rpm_data = _.pluck(d.values, 'feature_val');
+                                ref_rpm_data = _.pluck(d.ref_values, 'feature_val');
+                            } else if (d.id == "PosLocalY") {
+                                temp_lat = _.pluck(d.values, 'feature_val');
+                                ref_temp_lat = _.pluck(d.ref_values, 'feature_val');
+                            } else if (d.id == "PosLocalX") {
+                                temp_long = _.pluck(d.values, 'feature_val');
+                                ref_temp_long = _.pluck(d.ref_values, 'feature_val');
+                            } else if (d.id == "Steer_angle") {
+                                steer_data = _.pluck(d.values, 'feature_val')
+                                ref_steer_data = _.pluck(d.ref_values, 'feature_val')
+                            } else if (d.id == "Pedal_brake") {
+                                brake_data = _.pluck(d.values, 'feature_val')
+                                ref_brake_data = _.pluck(d.ref_values, 'feature_val')
+                            } else if (d.id == "Gear") {
+                                gear_data = _.pluck(d.values, 'feature_val')
+                                ref_gear_data = _.pluck(d.ref_values, 'feature_val')
+                            } else if (d.id == "Pedal_throttle") {
+                                gas_data = _.pluck(d.values, 'feature_val')
+                                ref_gas_data = _.pluck(d.ref_values, 'feature_val')
+                            } else if (d.id == "timeDelta"){
+                                timeDelta_data = _.pluck(d.values, 'feature_val');
+                            }
+
+                            // check box items assign
+                            $('.checkbox_wrapper').append("<li class ='checkbox'> " +
+                                "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
+
                         }
-
-                        // check box items assign
-                        $('.checkbox_wrapper').append("<li class ='checkbox'> " +
-                            "<label><input type='checkbox' value=" + d.id + " onclick=handleCBclick(this);>" + d.id + "</label></li>");
-
 
                     });
                     console.log("finished generating checkbox by each features, and assigning focus data");
