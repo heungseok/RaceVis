@@ -153,10 +153,12 @@ rect.selection{
 }
 #track_nav_canvas{
     padding-top:30px;
-    width: 28vw;
+    width: 23vw;
+
 }
 #sub_canvas{
-    width: 30vw;
+    width: 20vw;
+
     height: 40vh;
 }
 #track_canvas, #track_nav_canvas{
@@ -583,15 +585,15 @@ div.animation_track_controller_wrapper{
 }
 
 /*body > div.row, body > div.top {*/
-    /*border-style: solid;*/
-    /*border-color: #222;*/
-    /*border-style: solid;*/
-    /*border-width: 0.1px;*/
+/*border-style: solid;*/
+/*border-color: #222;*/
+/*border-style: solid;*/
+/*border-width: 0.1px;*/
 /*}*/
 
 /*#top-left-components, #track_wrapper, #sub_canvas{*/
-    /*border-style: solid;*/
-    /*border-color: #333;*/
+/*border-style: solid;*/
+/*border-color: #333;*/
 /*}*/
 
 .navbar-default {
@@ -616,7 +618,6 @@ div.animation_track_controller_wrapper{
     color: white;
     box-shadow: 0px 3px 9px rgba(0, 0, 0, .15);
 }
-
 
 #animation_index_controller.active {
     stroke: WhiteSmoke;
