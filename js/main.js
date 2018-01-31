@@ -770,8 +770,7 @@ function brushed(){
         .selectAll(".focus-ref");
     focuses_ref.style("display", "none");
 
-    // update current zoom range
-
+    // update current triangle position
     d3.select("#animation_index_controller")
         .attr("transform", function(d){
             d.x = current_zoomRange[0];
