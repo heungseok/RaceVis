@@ -770,6 +770,14 @@ function brushed(){
         .selectAll(".focus-ref");
     focuses_ref.style("display", "none");
 
+    // update current zoom range
+
+    d3.select("#animation_index_controller")
+        .attr("transform", function(d){
+            d.x = current_zoomRange[0];
+            return "translate(" + current_zoomRange[0] + ", " +  "-5 ) rotate(180)";
+        })
+
 }
 
 
@@ -866,6 +874,13 @@ function setRefAnimationRange_fromOrigin(){
     ref_animation_range.push(ref_end);
 
     return;
+
+}
+
+function setAnimationIndex_by_triangle(dragged_x){
+
+    var transformed_x = zoom_x.invert(dragged_x);
+    animation_index = bisect(selected_features[0].values, transformed_x, 0, selected_features[0].values.length -1);
 
 }
 
@@ -1168,6 +1183,15 @@ function zoomed(){
 
     // context select
     d3.select("#zoom_canvas").select("g.brush").call(brush.move, x.range().map(t.invertX, t));
+
+}
+
+function update_current_zoom(changed_zoom_range){
+    console.log("update zoom_range");
+    console.log(changed_zoom_range);
+    current_zoomRange = changed_zoom_range;
+    d3.select("#animation_index_controller")
+        .attr("transform", "translate(" + current_zoomRange[0] + ", " +  "-5 ) rotate(180)")
 
 }
 

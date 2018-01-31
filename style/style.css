@@ -616,3 +616,9 @@ div.animation_track_controller_wrapper{
     color: white;
     box-shadow: 0px 3px 9px rgba(0, 0, 0, .15);
 }
+
+
+#animation_index_controller.active {
+    stroke: WhiteSmoke;
+    stroke-width: 2px;
+}

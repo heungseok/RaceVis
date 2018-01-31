@@ -247,6 +247,7 @@ function drawLineGraph_withTwoLaps() {
     // .on("mousemove", mousemove)
     //
 
+
     // ############################### BRUSH on CHART ##############################
     svg.append("g")
         .attr("class", "chartBrush")
@@ -266,12 +267,31 @@ function drawLineGraph_withTwoLaps() {
         .append("g")
         .attr("transform", "translate(" + zoom_margin.left + "," + zoom_margin.top + ")")
 
+    // add a triangle on the top of the brush
+    zoom_svg.selectAll("path")
+        .data([{x:0}])
+        .enter()
+        .append("path")
+        .attr("id", "animation_index_controller")
+        .attr("d", d3.symbol().type(d3.symbolTriangle))
+        .attr("fill", "red")
+        .attr("stroke", "#000")
+        .attr("stroke-width", 1)
+        .attr("transform", function(d){
+            return "translate(" + d.x + ", " +  "-5 ) rotate(180)";
+        })
+        .call(d3.drag()
+            .on("start", triangle_drag_started)
+            .on("drag", triangle_dragged)
+            .on("end", triangle_drag_ended));
+
+
     context = zoom_svg.append("g")
         .attr("class", "context");
 
     context.append("g")
         .attr("class", "axis axis--x")
-        .attr("transform", "translate(" + 0+ "," + zoom_height + ")")
+        .attr("transform", "translate(" + 0 + "," + zoom_height + ")")
         .call(zoom_xAxis);
 
     context.append("g")
@@ -296,6 +316,38 @@ function drawLineGraph_withTwoLaps() {
         .on("mousemove", mousemove_twoLaps);
 
 }
+
+function triangle_drag_started(d){
+    console.log("start dragged")
+    d3.select(this).raise().classed("active", true);
+}
+
+function triangle_dragged(d){
+    console.log("dragged")
+
+    if(d3.event.x <= current_zoomRange[1] && d3.event.x >= current_zoomRange[0]){
+
+        d3.select(this)
+            .attr("transform", "translate(" + d3.event.x + ", " +  "-5 ) rotate(180)")
+        d.x = d3.event.x;
+    
+        // console.log("current d.x")
+        // console.log(d.x);
+        // console.log("transformed d.x")
+        // console.log(x.invert(d.x));
+
+        setAnimationIndex_by_triangle(d.x);
+
+    }
+
+}
+
+function triangle_drag_ended(d){
+    console.log("end dragged")
+    d3.select(this).raise().classed("active", false);
+
+}
+
 
 function drawTrack_withTwoLaps(){
 
