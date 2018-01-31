@@ -192,6 +192,16 @@ function trackAnimation_withTwoLaps(){
             .text(ref_speed_data[ref_animation_index].toFixed(1));
 
 
+        // move triangle on the top of the brush zoom
+        d3.select("#animation_index_controller")
+            .attr("transform", function(d){
+                // transform origin x value to fit with brush svg
+                d.x = zoom_x(origin_x_value);
+                return "translate(" + d.x + ", " +  "-5 ) rotate(180)";
+            });
+
+
+
         // ************** END of animation code *************** //
         animation_index++;
         // if ( animation_index < animation_length){ => origin ver.

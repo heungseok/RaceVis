@@ -323,7 +323,7 @@ function triangle_drag_started(d){
 }
 
 function triangle_dragged(d){
-    console.log("dragged")
+    // console.log("dragged")
 
     if(d3.event.x <= current_zoomRange[1] && d3.event.x >= current_zoomRange[0]){
 
